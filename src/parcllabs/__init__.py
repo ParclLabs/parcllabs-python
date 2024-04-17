@@ -7,6 +7,9 @@ api_key: Optional[str] = None
 api_base = DEFAULT_API_BASE
 
 
+from parcllabs.plabs_client import ParclLabsClient
+
+
 from parcllabs.services.investor_metrics import (
     InvestorMetricsHousingStockOwnership, 
     InvesetorMetricsNewListingsForSaleRollingCounts,
