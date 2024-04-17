@@ -16,3 +16,13 @@ from parcllabs.services.investor_metrics import (
     InvestorMetricsPurchaseToSaleRatio,
     InvestorMetricsHousingEventCounts
 )
+
+from parcllabs.services.market_metrics import (
+    MarketMetricsHousingEventPrices,
+    MarketMetricsHousingStock,
+    MarketMetricsHousingEventCounts
+)
+
+from parcllabs.services.for_sale_market_metrics import (
+    ForSaleMarketMetricsNewListingsRollingCounts
+)

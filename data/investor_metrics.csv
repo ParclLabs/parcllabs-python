@@ -1,118 +1,301 @@
-Common Name,Official MSA Name,parcl_id,date,acquisitions,dispositions,new_listings_for_sale,new_rental_listings
-New York,New York-Newark-Jersey City,2900187,2024-03-01,2721,1815,1283,812
-New York,New York-Newark-Jersey City,2900187,2024-02-01,3156,2013,1214,721
-New York,New York-Newark-Jersey City,2900187,2024-01-01,3740,2322,1187,939
-New York,New York-Newark-Jersey City,2900187,2023-12-01,3233,2089,763,621
-New York,New York-Newark-Jersey City,2900187,2023-11-01,3290,2296,1082,879
-New York,New York-Newark-Jersey City,2900187,2023-10-01,3516,2322,1508,850
-New York,New York-Newark-Jersey City,2900187,2023-09-01,3192,2272,1335,943
-New York,New York-Newark-Jersey City,2900187,2023-08-01,3871,2565,1186,889
-New York,New York-Newark-Jersey City,2900187,2023-07-01,3283,2212,1226,934
-New York,New York-Newark-Jersey City,2900187,2023-06-01,3661,2523,1541,1038
-New York,New York-Newark-Jersey City,2900187,2023-05-01,3766,2660,1542,1164
-New York,New York-Newark-Jersey City,2900187,2023-04-01,3345,2146,1314,802
-New York,New York-Newark-Jersey City,2900187,2023-03-01,3882,2669,1503,1003
-New York,New York-Newark-Jersey City,2900187,2023-02-01,3308,2156,1201,782
-New York,New York-Newark-Jersey City,2900187,2023-01-01,3803,2491,1215,956
-New York,New York-Newark-Jersey City,2900187,2022-12-01,3477,2480,773,725
-New York,New York-Newark-Jersey City,2900187,2022-11-01,3638,2359,1182,935
-New York,New York-Newark-Jersey City,2900187,2022-10-01,3580,2548,1382,1255
-New York,New York-Newark-Jersey City,2900187,2022-09-01,3681,2646,1560,605
-New York,New York-Newark-Jersey City,2900187,2022-08-01,4540,2977,1286,472
-New York,New York-Newark-Jersey City,2900187,2022-07-01,4297,2727,1304,457
-New York,New York-Newark-Jersey City,2900187,2022-06-01,4413,3214,1419,402
-New York,New York-Newark-Jersey City,2900187,2022-05-01,3794,2810,1308,366
-New York,New York-Newark-Jersey City,2900187,2022-04-01,3761,2776,1118,295
-New York,New York-Newark-Jersey City,2900187,2022-03-01,4829,3464,1147,294
-New York,New York-Newark-Jersey City,2900187,2022-02-01,3859,2681,906,247
-New York,New York-Newark-Jersey City,2900187,2022-01-01,4893,3502,863,264
-New York,New York-Newark-Jersey City,2900187,2021-12-01,3996,2935,514,203
-New York,New York-Newark-Jersey City,2900187,2021-11-01,3664,2699,770,259
-New York,New York-Newark-Jersey City,2900187,2021-10-01,3935,3022,632,264
-New York,New York-Newark-Jersey City,2900187,2021-09-01,3676,2874,671,275
-New York,New York-Newark-Jersey City,2900187,2021-08-01,3859,3167,642,332
-New York,New York-Newark-Jersey City,2900187,2021-07-01,3944,3306,427,370
-New York,New York-Newark-Jersey City,2900187,2021-06-01,3991,3433,400,348
-New York,New York-Newark-Jersey City,2900187,2021-05-01,3708,3175,330,363
-New York,New York-Newark-Jersey City,2900187,2021-04-01,3451,3148,298,369
-New York,New York-Newark-Jersey City,2900187,2021-03-01,3890,3506,261,380
-New York,New York-Newark-Jersey City,2900187,2021-02-01,2962,2657,205,302
-New York,New York-Newark-Jersey City,2900187,2021-01-01,3791,3166,349,382
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2024-03-01,1145,3038,2161,2354
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2024-02-01,1161,2751,2018,2240
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2024-01-01,1144,2694,2066,2966
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-12-01,1497,3084,1085,1946
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-11-01,1137,2785,1772,2343
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-10-01,1388,3256,2153,2825
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-09-01,1590,2853,2192,2600
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-08-01,1449,3474,2211,2853
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-07-01,1266,3009,2308,2903
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-06-01,1396,3564,2526,2811
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-05-01,1327,3458,2825,2718
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-04-01,1216,3036,2240,2290
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-03-01,1447,3493,2388,2871
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-02-01,1051,2732,1938,2314
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-01-01,1185,2652,2007,2772
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-12-01,1476,3165,1232,1918
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-11-01,1252,2900,1938,2281
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-10-01,1415,3343,2421,3094
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-09-01,1632,3821,2579,1425
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-08-01,1630,4067,2842,1083
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-07-01,1635,3763,3135,854
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-06-01,1991,4678,3552,777
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-05-01,1856,4905,3119,723
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-04-01,2019,5283,2916,622
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-03-01,2087,6173,2716,644
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-02-01,1750,4970,2309,536
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-01-01,1805,5378,2327,557
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2021-12-01,2490,6845,1619,459
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2021-11-01,1859,6084,2073,485
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2021-10-01,2018,6667,2675,542
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2021-09-01,2080,7101,2806,641
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2021-08-01,2299,7991,2260,594
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2021-07-01,2045,7330,1408,562
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2021-06-01,2032,7994,820,639
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2021-05-01,1816,8529,616,567
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2021-04-01,1885,9668,504,563
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2021-03-01,2091,10617,481,607
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2021-02-01,1605,10795,396,540
-Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2021-01-01,14786,9864,460,647
-Chicago,Chicago-Naperville-Elgin,2899845,2024-03-01,2478,2701,1898,1382
-Chicago,Chicago-Naperville-Elgin,2899845,2024-02-01,2262,2251,1862,1296
-Chicago,Chicago-Naperville-Elgin,2899845,2024-01-01,2554,2372,1464,1153
-Chicago,Chicago-Naperville-Elgin,2899845,2023-12-01,2493,2636,1064,945
-Chicago,Chicago-Naperville-Elgin,2899845,2023-11-01,2456,2477,1600,1164
-Chicago,Chicago-Naperville-Elgin,2899845,2023-10-01,2827,2907,1942,1537
-Chicago,Chicago-Naperville-Elgin,2899845,2023-09-01,2610,2964,2125,1222
-Chicago,Chicago-Naperville-Elgin,2899845,2023-08-01,2663,3334,2234,1385
-Chicago,Chicago-Naperville-Elgin,2899845,2023-07-01,2116,2937,2250,1425
-Chicago,Chicago-Naperville-Elgin,2899845,2023-06-01,2639,3407,2475,1549
-Chicago,Chicago-Naperville-Elgin,2899845,2023-05-01,2713,3475,2326,1437
-Chicago,Chicago-Naperville-Elgin,2899845,2023-04-01,2327,2940,2108,1185
-Chicago,Chicago-Naperville-Elgin,2899845,2023-03-01,3094,3294,2253,1380
-Chicago,Chicago-Naperville-Elgin,2899845,2023-02-01,2066,2341,1912,1130
-Chicago,Chicago-Naperville-Elgin,2899845,2023-01-01,2552,2616,1857,1159
-Chicago,Chicago-Naperville-Elgin,2899845,2022-12-01,2499,2833,1269,872
-Chicago,Chicago-Naperville-Elgin,2899845,2022-11-01,2518,3008,1890,1073
-Chicago,Chicago-Naperville-Elgin,2899845,2022-10-01,2848,3262,2320,1483
-Chicago,Chicago-Naperville-Elgin,2899845,2022-09-01,2967,3530,2642,788
-Chicago,Chicago-Naperville-Elgin,2899845,2022-08-01,3140,3797,2584,599
-Chicago,Chicago-Naperville-Elgin,2899845,2022-07-01,2907,3837,2573,543
-Chicago,Chicago-Naperville-Elgin,2899845,2022-06-01,3115,4269,2179,524
-Chicago,Chicago-Naperville-Elgin,2899845,2022-05-01,2871,3964,1407,500
-Chicago,Chicago-Naperville-Elgin,2899845,2022-04-01,2926,3893,945,381
-Chicago,Chicago-Naperville-Elgin,2899845,2022-03-01,3831,4383,687,414
-Chicago,Chicago-Naperville-Elgin,2899845,2022-02-01,2829,3393,401,342
-Chicago,Chicago-Naperville-Elgin,2899845,2022-01-01,3069,3635,387,308
-Chicago,Chicago-Naperville-Elgin,2899845,2021-12-01,2802,4054,444,234
-Chicago,Chicago-Naperville-Elgin,2899845,2021-11-01,2632,3872,337,231
-Chicago,Chicago-Naperville-Elgin,2899845,2021-10-01,2616,4070,328,307
-Chicago,Chicago-Naperville-Elgin,2899845,2021-09-01,2785,4470,337,303
-Chicago,Chicago-Naperville-Elgin,2899845,2021-08-01,2751,4626,341,346
-Chicago,Chicago-Naperville-Elgin,2899845,2021-07-01,2969,4779,307,397
-Chicago,Chicago-Naperville-Elgin,2899845,2021-06-01,2654,5038,307,375
-Chicago,Chicago-Naperville-Elgin,2899845,2021-05-01,2720,4324,308,348
-Chicago,Chicago-Naperville-Elgin,2899845,2021-04-01,3568,4998,273,392
-Chicago,Chicago-Naperville-Elgin,2899845,2021-03-01,3327,4649,296,403
-Chicago,Chicago-Naperville-Elgin,2899845,2021-02-01,2802,3962,198,329
-Chicago,Chicago-Naperville-Elgin,2899845,2021-01-01,5841,3879,294,370
+Common Name,Official MSA Name,parcl_id,date,rolling_7_day,rolling_30_day,rolling_60_day,rolling_90_day
+New York,New York-Newark-Jersey City,2900187,2024-04-08,4320,15666,30990,45132
+New York,New York-Newark-Jersey City,2900187,2024-04-01,2991,15200,30626,44186
+New York,New York-Newark-Jersey City,2900187,2024-03-25,3707,15942,30476,42364
+New York,New York-Newark-Jersey City,2900187,2024-03-18,4119,15387,29681,39754
+New York,New York-Newark-Jersey City,2900187,2024-03-11,3839,14622,28911,37664
+New York,New York-Newark-Jersey City,2900187,2024-03-04,3829,14560,28254,36236
+New York,New York-Newark-Jersey City,2900187,2024-02-26,3167,13903,26482,35184
+New York,New York-Newark-Jersey City,2900187,2024-02-19,3398,13694,24335,33671
+New York,New York-Newark-Jersey City,2900187,2024-02-12,3697,13627,22728,33173
+New York,New York-Newark-Jersey City,2900187,2024-02-05,3293,13004,21319,32849
+New York,New York-Newark-Jersey City,2900187,2024-01-29,2907,12502,20688,32707
+New York,New York-Newark-Jersey City,2900187,2024-01-22,3328,10565,19706,33953
+New York,New York-Newark-Jersey City,2900187,2024-01-15,3093,8673,18847,34569
+New York,New York-Newark-Jersey City,2900187,2024-01-08,3012,7880,19054,35120
+New York,New York-Newark-Jersey City,2900187,2024-01-01,1006,7245,19334,35997
+New York,New York-Newark-Jersey City,2900187,2023-12-25,1303,8973,22537,38842
+New York,New York-Newark-Jersey City,2900187,2023-12-18,2229,9386,24461,41150
+New York,New York-Newark-Jersey City,2900187,2023-12-11,2336,10366,26388,42838
+New York,New York-Newark-Jersey City,2900187,2023-12-04,2904,11262,27451,45215
+New York,New York-Newark-Jersey City,2900187,2023-11-27,1521,11427,28805,44942
+New York,New York-Newark-Jersey City,2900187,2023-11-20,3238,14101,30912,46476
+New York,New York-Newark-Jersey City,2900187,2023-11-13,3147,14969,31435,46836
+New York,New York-Newark-Jersey City,2900187,2023-11-06,3128,15280,32597,47176
+New York,New York-Newark-Jersey City,2900187,2023-10-30,4142,16216,32945,47947
+New York,New York-Newark-Jersey City,2900187,2023-10-23,4054,15852,31782,47384
+New York,New York-Newark-Jersey City,2900187,2023-10-16,3494,15529,31112,47331
+New York,New York-Newark-Jersey City,2900187,2023-10-09,4030,16013,31188,47815
+New York,New York-Newark-Jersey City,2900187,2023-10-02,3761,16116,30874,47748
+New York,New York-Newark-Jersey City,2900187,2023-09-25,3752,15275,30880,47541
+New York,New York-Newark-Jersey City,2900187,2023-09-18,3908,14678,30970,48477
+New York,New York-Newark-Jersey City,2900187,2023-09-11,4324,14337,30960,49145
+New York,New York-Newark-Jersey City,2900187,2023-09-04,2860,13716,31053,49119
+New York,New York-Newark-Jersey City,2900187,2023-08-28,3133,14588,31399,51474
+New York,New York-Newark-Jersey City,2900187,2023-08-21,3547,15143,32594,51570
+New York,New York-Newark-Jersey City,2900187,2023-08-14,3609,15636,33907,53714
+New York,New York-Newark-Jersey City,2900187,2023-08-07,3836,16278,34551,54401
+New York,New York-Newark-Jersey City,2900187,2023-07-31,3581,16005,35717,55142
+New York,New York-Newark-Jersey City,2900187,2023-07-24,4038,16224,35764,56094
+New York,New York-Newark-Jersey City,2900187,2023-07-17,4186,17238,36922,56651
+New York,New York-Newark-Jersey City,2900187,2023-07-10,3592,17269,37259,57168
+New York,New York-Newark-Jersey City,2900187,2023-07-03,3743,18072,38177,56979
+New York,New York-Newark-Jersey City,2900187,2023-06-26,5223,18818,39050,57647
+New York,New York-Newark-Jersey City,2900187,2023-06-19,4058,18248,38476,56445
+New York,New York-Newark-Jersey City,2900187,2023-06-12,4377,19063,38952,56462
+New York,New York-Newark-Jersey City,2900187,2023-06-05,4734,19024,38352,56367
+New York,New York-Newark-Jersey City,2900187,2023-05-29,4428,18975,37828,55907
+New York,New York-Newark-Jersey City,2900187,2023-05-22,5048,18955,37504,54968
+New York,New York-Newark-Jersey City,2900187,2023-05-15,4223,18598,36534,53322
+New York,New York-Newark-Jersey City,2900187,2023-05-08,4696,18830,36536,52695
+New York,New York-Newark-Jersey City,2900187,2023-05-01,4405,17829,35999,51794
+New York,New York-Newark-Jersey City,2900187,2023-04-24,4613,17575,35412,50733
+New York,New York-Newark-Jersey City,2900187,2023-04-17,4760,17046,34163,49456
+New York,New York-Newark-Jersey City,2900187,2023-04-10,3290,16397,32915,48032
+New York,New York-Newark-Jersey City,2900187,2023-04-03,4385,17381,33373,48352
+New York,New York-Newark-Jersey City,2900187,2023-03-27,4080,17025,32555,45475
+New York,New York-Newark-Jersey City,2900187,2023-03-20,3992,16329,31686,42604
+New York,New York-Newark-Jersey City,2900187,2023-03-13,4396,15855,31082,40651
+New York,New York-Newark-Jersey City,2900187,2023-03-06,4088,15129,30274,38859
+New York,New York-Newark-Jersey City,2900187,2023-02-27,3381,14727,28473,37694
+New York,New York-Newark-Jersey City,2900187,2023-02-20,3546,14641,26210,36280
+New York,New York-Newark-Jersey City,2900187,2023-02-13,3625,14413,24493,35964
+New York,New York-Newark-Jersey City,2900187,2023-02-06,3698,14228,23297,35629
+New York,New York-Newark-Jersey City,2900187,2023-01-30,3404,13788,22468,35786
+New York,New York-Newark-Jersey City,2900187,2023-01-23,3237,11489,21165,36127
+New York,New York-Newark-Jersey City,2900187,2023-01-16,3442,9749,20834,37047
+New York,New York-Newark-Jersey City,2900187,2023-01-09,3461,8557,20714,37825
+New York,New York-Newark-Jersey City,2900187,2023-01-02,1254,7742,20898,38433
+New York,New York-Newark-Jersey City,2900187,2022-12-26,1332,9411,23414,41820
+New York,New York-Newark-Jersey City,2900187,2022-12-19,2177,10111,26239,45431
+New York,New York-Newark-Jersey City,2900187,2022-12-12,2564,11234,28126,48098
+New York,New York-Newark-Jersey City,2900187,2022-12-05,3101,12155,29775,51465
+New York,New York-Newark-Jersey City,2900187,2022-11-28,1820,12851,31193,51591
+New York,New York-Newark-Jersey City,2900187,2022-11-21,3280,14875,34246,53481
+New York,New York-Newark-Jersey City,2900187,2022-11-14,3412,15785,35661,54134
+New York,New York-Newark-Jersey City,2900187,2022-11-07,3809,16558,37677,54963
+New York,New York-Newark-Jersey City,2900187,2022-10-31,3787,17104,38103,55955
+New York,New York-Newark-Jersey City,2900187,2022-10-24,4247,17711,37881,56797
+New York,New York-Newark-Jersey City,2900187,2022-10-17,4117,18543,37561,57065
+New York,New York-Newark-Jersey City,2900187,2022-10-10,4180,19675,37635,58587
+New York,New York-Newark-Jersey City,2900187,2022-10-03,4574,20430,37874,60409
+New York,New York-Newark-Jersey City,2900187,2022-09-26,5064,19384,38277,60192
+New York,New York-Newark-Jersey City,2900187,2022-09-19,5184,18164,37649,60900
+New York,New York-Newark-Jersey City,2900187,2022-09-12,5134,17014,37628,61095
+New York,New York-Newark-Jersey City,2900187,2022-09-05,3508,16180,38492,61394
+New York,New York-Newark-Jersey City,2900187,2022-08-29,3771,17590,39576,63485
+New York,New York-Newark-Jersey City,2900187,2022-08-22,4002,18389,41365,63868
+New York,New York-Newark-Jersey City,2900187,2022-08-15,4287,19115,42758,64948
+New York,New York-Newark-Jersey City,2900187,2022-08-08,4916,20600,43887,65887
+New York,New York-Newark-Jersey City,2900187,2022-08-01,4592,20876,44478,65799
+New York,New York-Newark-Jersey City,2900187,2022-07-25,4477,21325,44198,66115
+New York,New York-Newark-Jersey City,2900187,2022-07-18,5632,22416,44920,66483
+New York,New York-Newark-Jersey City,2900187,2022-07-11,5474,22250,44490,64699
+New York,New York-Newark-Jersey City,2900187,2022-07-04,4878,22113,43819,64242
+New York,New York-Newark-Jersey City,2900187,2022-06-27,5667,22184,44039,64414
+New York,New York-Newark-Jersey City,2900187,2022-06-20,5454,21276,43137,63278
+New York,New York-Newark-Jersey City,2900187,2022-06-13,5386,20940,41812,62352
+New York,New York-Newark-Jersey City,2900187,2022-06-06,5177,20678,41109,61288
+New York,New York-Newark-Jersey City,2900187,2022-05-30,4542,20524,41119,60451
+New York,New York-Newark-Jersey City,2900187,2022-05-23,5150,20770,41079,59808
+New York,New York-Newark-Jersey City,2900187,2022-05-16,5196,20261,40400,57783
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2024-04-08,3276,11809,24328,36283
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2024-04-01,2266,11506,23762,35784
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2024-03-25,2875,12252,24159,34433
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2024-03-18,2976,12004,24037,32410
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2024-03-11,2968,11947,23926,31254
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2024-03-04,3015,11394,23750,30273
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2024-02-26,2611,11192,22326,29576
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2024-02-19,2997,11369,20484,28387
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2024-02-12,2399,11207,19022,27748
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2024-02-05,2821,11687,18640,28002
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2024-01-29,2778,11181,17975,27934
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2024-01-22,2797,9150,16908,27678
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2024-01-15,2937,7499,16119,27649
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2024-01-08,2510,6461,15811,27859
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2024-01-01,770,5977,16025,28185
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-12-25,1013,7588,17816,30161
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-12-18,1879,7885,19502,31757
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-12-11,2002,8518,20541,32694
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-12-04,2442,9222,21606,33681
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-11-27,1265,9426,21973,33572
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-11-20,2440,10759,23328,34797
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-11-13,2690,11181,23659,35097
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-11-06,2712,11645,23887,35244
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-10-30,2554,11751,23696,35696
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-10-23,2853,11831,23623,36067
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-10-16,3053,11644,23313,36589
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-10-09,2873,11409,23142,36816
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-10-02,2677,11275,23229,36868
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-09-25,2685,11105,23706,36853
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-09-18,2772,10919,24223,37441
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-09-11,2810,10913,24800,37793
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-09-04,2504,11038,25230,38315
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-08-28,2523,11700,25170,39298
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-08-21,2701,12307,25698,39326
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-08-14,2907,12877,26245,40060
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-08-07,3155,13216,26477,40986
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-07-31,3035,12805,26982,42770
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-07-24,3325,12537,26633,42806
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-07-17,3249,12503,26480,42629
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-07-10,2759,12402,26438,42627
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-07-03,2783,13151,29371,42468
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-06-26,3288,13364,29739,42611
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-06-19,3147,12962,29512,41945
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-06-12,3451,13187,29559,41527
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-06-05,3135,15317,29047,41117
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-05-29,2774,15454,28686,40936
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-05-22,3486,15703,28589,40672
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-05-15,4962,15430,27777,40048
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-05-08,3832,13703,25746,37812
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-05-01,3040,12449,24889,36967
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-04-24,3140,12254,24526,36586
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-04-17,3347,11685,24188,36299
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-04-10,2441,11128,23521,35461
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-04-03,2957,11836,24049,35640
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-03-27,2580,11589,23843,33858
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-03-20,2735,11712,24078,32251
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-03-13,3070,11749,23949,31211
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-03-06,2885,11472,23422,30177
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-02-27,2484,11501,22235,29845
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-02-20,2930,11697,20656,28767
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-02-13,2749,11536,19317,28323
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-02-06,2950,11347,18453,28479
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-01-30,2686,10762,17880,28826
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-01-23,2793,8973,16941,29145
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-01-16,2554,7431,16250,29598
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-01-09,2532,6656,16644,30355
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2023-01-02,1011,6239,17162,30948
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-12-26,1035,7774,19257,33350
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-12-19,1767,8151,21442,35731
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-12-12,2077,9135,23021,37429
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-12-05,2650,10003,24016,39114
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-11-28,1262,10454,24742,39337
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-11-21,2622,12354,26857,41495
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-11-14,2937,12977,27669,42314
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-11-07,3216,13246,28346,43084
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-10-31,3113,13304,28279,43495
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-10-24,3204,13583,28452,44136
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-10-17,3247,13823,28711,44708
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-10-10,3237,14012,29028,46962
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-10-03,3385,14253,29537,49796
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-09-26,3414,13955,29910,51014
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-09-19,3494,13995,30195,53477
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-09-12,3503,14046,31640,56146
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-09-05,3092,14258,34196,58330
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-08-29,3441,14891,35935,61049
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-08-22,3516,15051,38078,62007
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-08-15,3702,15827,40710,64004
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-08-08,3724,17860,42824,65768
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-08-01,3586,19553,44930,66947
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-07-25,3859,21048,45908,68958
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-07-18,5609,23204,47363,70527
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-07-11,5647,23670,47233,69390
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-07-04,4945,23699,46710,68516
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-06-27,5900,24037,47081,68520
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-06-20,6159,22869,46618,67126
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-06-13,5706,22338,45379,65687
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-06-06,5533,21959,44493,64532
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-05-30,4637,21593,43881,63494
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-05-23,5611,22489,43685,63129
+Los Angeles,Los Angeles-Long Beach-Anaheim,2900078,2022-05-16,5452,22130,42661,61083
+Chicago,Chicago-Naperville-Elgin,2899845,2024-04-08,3885,13611,27936,38251
+Chicago,Chicago-Naperville-Elgin,2899845,2024-04-01,2452,13151,26986,37052
+Chicago,Chicago-Naperville-Elgin,2899845,2024-03-25,3253,14180,26770,35817
+Chicago,Chicago-Naperville-Elgin,2899845,2024-03-18,3631,13963,25716,33648
+Chicago,Chicago-Naperville-Elgin,2899845,2024-03-11,3409,13610,24228,31983
+Chicago,Chicago-Naperville-Elgin,2899845,2024-03-04,3504,12973,23358,31037
+Chicago,Chicago-Naperville-Elgin,2899845,2024-02-26,3068,12079,21558,30009
+Chicago,Chicago-Naperville-Elgin,2899845,2024-02-19,3297,11245,19549,28518
+Chicago,Chicago-Naperville-Elgin,2899845,2024-02-12,2715,10058,18047,28016
+Chicago,Chicago-Naperville-Elgin,2899845,2024-02-05,2722,9756,17740,28275
+Chicago,Chicago-Naperville-Elgin,2899845,2024-01-29,2249,9299,17380,28650
+Chicago,Chicago-Naperville-Elgin,2899845,2024-01-22,2140,8120,16860,29390
+Chicago,Chicago-Naperville-Elgin,2899845,2024-01-15,2334,7418,17225,30592
+Chicago,Chicago-Naperville-Elgin,2899845,2024-01-08,2402,7478,17865,31609
+Chicago,Chicago-Naperville-Elgin,2899845,2024-01-01,1110,7252,18531,32697
+Chicago,Chicago-Naperville-Elgin,2899845,2023-12-25,1334,8567,20408,35124
+Chicago,Chicago-Naperville-Elgin,2899845,2023-12-18,2382,8973,22380,37225
+Chicago,Chicago-Naperville-Elgin,2899845,2023-12-11,2098,9400,23338,38503
+Chicago,Chicago-Naperville-Elgin,2899845,2023-12-04,2526,10313,24592,40456
+Chicago,Chicago-Naperville-Elgin,2899845,2023-11-27,1548,10836,25711,41366
+Chicago,Chicago-Naperville-Elgin,2899845,2023-11-20,2839,12368,27561,43712
+Chicago,Chicago-Naperville-Elgin,2899845,2023-11-13,3026,12908,28327,44422
+Chicago,Chicago-Naperville-Elgin,2899845,2023-11-06,3040,13164,29121,45083
+Chicago,Chicago-Naperville-Elgin,2899845,2023-10-30,3049,13793,29431,46127
+Chicago,Chicago-Naperville-Elgin,2899845,2023-10-23,3363,14126,30555,46925
+Chicago,Chicago-Naperville-Elgin,2899845,2023-10-16,3298,14271,30832,47826
+Chicago,Chicago-Naperville-Elgin,2899845,2023-10-09,3623,14627,31049,48814
+Chicago,Chicago-Naperville-Elgin,2899845,2023-10-02,3430,14739,31441,49188
+Chicago,Chicago-Naperville-Elgin,2899845,2023-09-25,3487,15100,31980,49329
+Chicago,Chicago-Naperville-Elgin,2899845,2023-09-18,3642,15446,32627,50167
+Chicago,Chicago-Naperville-Elgin,2899845,2023-09-11,3749,15354,33224,50526
+Chicago,Chicago-Naperville-Elgin,2899845,2023-09-04,3751,15403,33992,51215
+Chicago,Chicago-Naperville-Elgin,2899845,2023-08-28,3900,15668,33437,51925
+Chicago,Chicago-Naperville-Elgin,2899845,2023-08-21,3517,15717,33794,51423
+Chicago,Chicago-Naperville-Elgin,2899845,2023-08-14,3770,16509,34342,52144
+Chicago,Chicago-Naperville-Elgin,2899845,2023-08-07,4009,17132,34859,52307
+Chicago,Chicago-Naperville-Elgin,2899845,2023-07-31,3935,16670,35390,52553
+Chicago,Chicago-Naperville-Elgin,2899845,2023-07-24,4265,16574,34985,52506
+Chicago,Chicago-Naperville-Elgin,2899845,2023-07-17,4359,16522,34879,52112
+Chicago,Chicago-Naperville-Elgin,2899845,2023-07-10,3634,16359,34502,51875
+Chicago,Chicago-Naperville-Elgin,2899845,2023-07-03,3818,17204,35041,51416
+Chicago,Chicago-Naperville-Elgin,2899845,2023-06-26,4290,17294,35262,51122
+Chicago,Chicago-Naperville-Elgin,2899845,2023-06-19,4132,16880,34723,50239
+Chicago,Chicago-Naperville-Elgin,2899845,2023-06-12,4428,16865,34677,49520
+Chicago,Chicago-Naperville-Elgin,2899845,2023-06-05,4010,16454,33643,48705
+Chicago,Chicago-Naperville-Elgin,2899845,2023-05-29,3773,16752,33215,48339
+Chicago,Chicago-Naperville-Elgin,2899845,2023-05-22,4284,16725,32749,47896
+Chicago,Chicago-Naperville-Elgin,2899845,2023-05-15,3877,16388,31948,46949
+Chicago,Chicago-Naperville-Elgin,2899845,2023-05-08,4358,16503,31540,46238
+Chicago,Chicago-Naperville-Elgin,2899845,2023-05-01,3740,15525,30804,44881
+Chicago,Chicago-Naperville-Elgin,2899845,2023-04-24,3942,15053,30544,43988
+Chicago,Chicago-Naperville-Elgin,2899845,2023-04-17,4161,14550,29904,43056
+Chicago,Chicago-Naperville-Elgin,2899845,2023-04-10,3125,13853,28950,41707
+Chicago,Chicago-Naperville-Elgin,2899845,2023-04-03,3446,14361,28855,41534
+Chicago,Chicago-Naperville-Elgin,2899845,2023-03-27,3406,14489,28301,39673
+Chicago,Chicago-Naperville-Elgin,2899845,2023-03-20,3433,14386,27894,37399
+Chicago,Chicago-Naperville-Elgin,2899845,2023-03-13,3610,14358,27278,35952
+Chicago,Chicago-Naperville-Elgin,2899845,2023-03-06,3613,13838,26648,34779
+Chicago,Chicago-Naperville-Elgin,2899845,2023-02-27,3299,13144,25046,33942
+Chicago,Chicago-Naperville-Elgin,2899845,2023-02-20,3460,12784,22873,32483
+Chicago,Chicago-Naperville-Elgin,2899845,2023-02-13,3070,12234,21271,32048
+Chicago,Chicago-Naperville-Elgin,2899845,2023-02-06,2981,12149,20492,32374
+Chicago,Chicago-Naperville-Elgin,2899845,2023-01-30,2888,11773,20194,33161
+Chicago,Chicago-Naperville-Elgin,2899845,2023-01-23,2951,10089,19361,33971
+Chicago,Chicago-Naperville-Elgin,2899845,2023-01-16,2911,8608,19174,34891
+Chicago,Chicago-Naperville-Elgin,2899845,2023-01-09,2824,7837,19554,36044
+Chicago,Chicago-Naperville-Elgin,2899845,2023-01-02,1338,7514,20287,37379
+Chicago,Chicago-Naperville-Elgin,2899845,2022-12-26,1274,8977,22664,40465
+Chicago,Chicago-Naperville-Elgin,2899845,2022-12-19,2083,9569,25207,43653
+Chicago,Chicago-Naperville-Elgin,2899845,2022-12-12,2464,10643,27160,46154
+Chicago,Chicago-Naperville-Elgin,2899845,2022-12-05,2880,11607,28810,48834
+Chicago,Chicago-Naperville-Elgin,2899845,2022-11-28,1734,12516,30304,49934
+Chicago,Chicago-Naperville-Elgin,2899845,2022-11-21,3122,14467,32953,52691
+Chicago,Chicago-Naperville-Elgin,2899845,2022-11-14,3405,15323,34474,54341
+Chicago,Chicago-Naperville-Elgin,2899845,2022-11-07,3774,15885,35879,55559
+Chicago,Chicago-Naperville-Elgin,2899845,2022-10-31,3730,16487,36434,56626
+Chicago,Chicago-Naperville-Elgin,2899845,2022-10-24,3908,17118,37191,57579
+Chicago,Chicago-Naperville-Elgin,2899845,2022-10-17,4013,17748,38011,58333
+Chicago,Chicago-Naperville-Elgin,2899845,2022-10-10,4256,18318,38660,59099
+Chicago,Chicago-Naperville-Elgin,2899845,2022-10-03,4472,18713,39141,59608
+Chicago,Chicago-Naperville-Elgin,2899845,2022-09-26,4455,18690,39443,58272
+Chicago,Chicago-Naperville-Elgin,2899845,2022-09-19,4567,18745,39626,58001
+Chicago,Chicago-Naperville-Elgin,2899845,2022-09-12,4704,18980,39842,57116
+Chicago,Chicago-Naperville-Elgin,2899845,2022-09-05,4393,18942,39891,55626
+Chicago,Chicago-Naperville-Elgin,2899845,2022-08-29,4535,19389,38948,54482
+Chicago,Chicago-Naperville-Elgin,2899845,2022-08-22,4790,19466,38451,52061
+Chicago,Chicago-Naperville-Elgin,2899845,2022-08-15,4654,19356,37509,49877
+Chicago,Chicago-Naperville-Elgin,2899845,2022-08-08,4890,19506,36217,47451
+Chicago,Chicago-Naperville-Elgin,2899845,2022-08-01,4557,18653,34599,44431
+Chicago,Chicago-Naperville-Elgin,2899845,2022-07-25,4667,17748,32376,41652
+Chicago,Chicago-Naperville-Elgin,2899845,2022-07-18,4807,17169,30267,38535
+Chicago,Chicago-Naperville-Elgin,2899845,2022-07-11,4217,15966,27754,35022
+Chicago,Chicago-Naperville-Elgin,2899845,2022-07-04,3555,14945,25590,32153
+Chicago,Chicago-Naperville-Elgin,2899845,2022-06-27,4186,14162,23822,29936
+Chicago,Chicago-Naperville-Elgin,2899845,2022-06-20,3619,12434,21240,26696
+Chicago,Chicago-Naperville-Elgin,2899845,2022-06-13,3201,11301,19013,24056
+Chicago,Chicago-Naperville-Elgin,2899845,2022-06-06,2869,10268,17124,21759
+Chicago,Chicago-Naperville-Elgin,2899845,2022-05-30,2394,9269,15718,20054
+Chicago,Chicago-Naperville-Elgin,2899845,2022-05-23,2583,8569,14291,18462
+Chicago,Chicago-Naperville-Elgin,2899845,2022-05-16,2234,7491,12717,16610
