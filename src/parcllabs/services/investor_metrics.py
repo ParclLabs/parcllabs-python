@@ -1,6 +1,6 @@
 from typing import Any, Mapping, Optional, List
 
-from parcllabs._parcllabs_service import ParclLabsService
+from parcllabs.services.base_service import ParclLabsService
 
 
 class InvestorMetricsHousingStockOwnership(ParclLabsService):

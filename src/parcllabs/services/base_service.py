@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from typing import Any, Mapping, Optional, List
 
 import pandas as pd
@@ -25,3 +26,11 @@ class ParclLabsService(object):
             tmp['parcl_id'] = k
             out.append(tmp)
         return pd.concat(out)
+    
+    @abstractmethod
+    def retrieve(
+            self,
+            parcl_id: int,
+            params: Optional[Mapping[str, Any]] = None
+    ):
+        pass
