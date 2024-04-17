@@ -1,7 +1,5 @@
-# parcllabs-python
-Parcl Labs Python SDK
-
 ![Logo](img/labs.jpg)
+# parcllabs-python
 
 ## Rental Market Metrics
 
