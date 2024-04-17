@@ -1,6 +1,50 @@
 # parcllabs-python
 Parcl Labs Python SDK
 
+## Rental Market Metrics
+
+### Gross Yield
+Gets the percent gross yield for a specified <parcl_id>. At the market level, identified by <parcl_id>, gross yield is calculated by dividing the annual median rental income—derived from multiplying the monthly median new rental listing price by 12—by its median new listings for sale price.
+
+### Rental Units Concentration
+Gets the number of rental units, total units, and percent rental unit concentration for a specified <parcl_id>.
+
+#### Get all rental market metrics
+```python
+import os
+
+from parcllabs.search.top_markets import get_top_n_metros
+from parcllabs import (
+    ParclLabsClient,
+    RentalMarketMetricsRentalUnitsConcentration,
+    RentalMarketMetricsGrossYield
+)
+
+api_key = os.getenv('PARCLLABS_API_KEY')
+client = ParclLabsClient(api_key)
+
+top_markets = get_top_n_metros(n=10)
+top_market_parcl_ids = top_markets['parcl_id'].tolist()
+
+rental_units_concentration = RentalMarketMetricsRentalUnitsConcentration(client)
+rental_gross_yield = RentalMarketMetricsGrossYield(client)
+
+start_date = '2020-01-01'
+end_date = '2024-04-01'
+
+results_rental_units_concentration = rental_units_concentration.retrieve_many(
+    parcl_ids=top_market_parcl_ids,
+    start_date=start_date,
+    end_date=end_date
+)
+
+results_gross_yield = rental_gross_yield.retrieve_many(
+    parcl_ids=top_market_parcl_ids,
+    start_date=start_date,
+    end_date=end_date
+)
+```
+
 ## For Sale Market Metrics
 
 ### New Listings Rolling Counts

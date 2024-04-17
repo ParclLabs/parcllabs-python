@@ -26,3 +26,8 @@ from parcllabs.services.market_metrics import (
 from parcllabs.services.for_sale_market_metrics import (
     ForSaleMarketMetricsNewListingsRollingCounts
 )
+
+from parcllabs.services.rental_market_metrics import (
+    RentalMarketMetricsRentalUnitsConcentration,
+    RentalMarketMetricsGrossYield
+)
