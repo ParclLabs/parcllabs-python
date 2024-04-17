@@ -1,6 +1,8 @@
 # parcllabs-python
 Parcl Labs Python SDK
 
+![Logo](img/labs.jpg)
+
 ## Rental Market Metrics
 
 ### Gross Yield
