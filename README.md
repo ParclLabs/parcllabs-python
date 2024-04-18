@@ -14,11 +14,7 @@ Gets the number of rental units, total units, and percent rental unit concentrat
 import os
 
 from parcllabs.search.top_markets import get_top_n_metros
-from parcllabs import (
-    ParclLabsClient,
-    RentalMarketMetricsRentalUnitsConcentration,
-    RentalMarketMetricsGrossYield
-)
+from parcllabs import ParclLabsClient
 
 api_key = os.getenv('PARCLLABS_API_KEY')
 client = ParclLabsClient(api_key)
@@ -26,19 +22,17 @@ client = ParclLabsClient(api_key)
 top_markets = get_top_n_metros(n=10)
 top_market_parcl_ids = top_markets['parcl_id'].tolist()
 
-rental_units_concentration = RentalMarketMetricsRentalUnitsConcentration(client)
-rental_gross_yield = RentalMarketMetricsGrossYield(client)
 
 start_date = '2020-01-01'
 end_date = '2024-04-01'
 
-results_rental_units_concentration = rental_units_concentration.retrieve_many(
+results_rental_units_concentration = client.rental_market_metrics_rental_units_concentration.retrieve_many(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
     end_date=end_date
 )
 
-results_gross_yield = rental_gross_yield.retrieve_many(
+results_gross_yield = client.rental_market_metrics_gross_yield.retrieve_many(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
     end_date=end_date
@@ -56,10 +50,7 @@ Gets weekly updated rolling counts of newly listed for sale properties, segmente
 import os
 
 from parcllabs.search.top_markets import get_top_n_metros
-from parcllabs import (
-    ParclLabsClient,
-    ForSaleMarketMetricsNewListingsRollingCounts
-)
+from parcllabs import ParclLabsClient
 
 api_key = os.getenv('PARCLLABS_API_KEY')
 client = ParclLabsClient(api_key)
@@ -67,13 +58,11 @@ client = ParclLabsClient(api_key)
 top_markets = get_top_n_metros(n=10)
 top_market_parcl_ids = top_markets['parcl_id'].tolist()
 
-for_sale_new_listings = ForSaleMarketMetricsNewListingsRollingCounts(client)
-
 start_date = '2020-01-01'
 end_date = '2024-04-01'
 property_type = 'single_family'
 
-results_for_sale_new_listings = for_sale_new_listings.retrieve_many(
+results_for_sale_new_listings = client.for_sale_market_metrics_new_listings_rolling_counts.retrieve_many(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
     end_date=end_date,
@@ -98,12 +87,8 @@ Gets monthly statistics on prices for housing events, including sales, new for-s
 import os
 
 from parcllabs.search.top_markets import get_top_n_metros
-from parcllabs import (
-    ParclLabsClient,
-    MarketMetricsHousingEventPrices,
-    MarketMetricsHousingStock,
-    MarketMetricsHousingEventCounts
-)
+from parcllabs import ParclLabsClient
+
 
 api_key = os.getenv('PARCLLABS_API_KEY')
 client = ParclLabsClient(api_key)
@@ -111,26 +96,22 @@ client = ParclLabsClient(api_key)
 top_markets = get_top_n_metros(n=10)
 top_market_parcl_ids = top_markets['parcl_id'].tolist()
 
-housing_event_prices = MarketMetricsHousingEventPrices(client)
-housing_stock = MarketMetricsHousingStock(client)
-housing_event_counts = MarketMetricsHousingEventCounts(client)
-
 start_date = '2020-01-01'
 end_date = '2024-04-01'
 
-results_housing_event_prices = housing_event_prices.retrieve_many(
+results_housing_event_prices = client.market_metrics_housing_event_prices.retrieve_many(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
     end_date=end_date
 )
 
-results_housing_stock = housing_stock.retrieve_many(
+results_housing_stock = client.market_metrics_housing_stock.retrieve_many(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
     end_date=end_date
 )
 
-results_housing_event_counts = housing_event_counts.retrieve_many(
+results_housing_event_counts = client.market_metrics_housing_event_counts.retrieve_many(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
     end_date=end_date
@@ -156,13 +137,8 @@ Gets counts of investor-owned properties and their corresponding percentage owne
 import os
 
 from parcllabs.search.top_markets import get_top_n_metros
-from parcllabs import (
-    ParclLabsClient,
-    InvestorMetricsHousingStockOwnership, 
-    InvesetorMetricsNewListingsForSaleRollingCounts,
-    InvestorMetricsPurchaseToSaleRatio,
-    InvestorMetricsHousingEventCounts
-)
+from parcllabs import ParclLabsClient
+
 
 api_key = os.getenv('PARCLLABS_API_KEY')
 client = ParclLabsClient(api_key)
@@ -170,33 +146,28 @@ client = ParclLabsClient(api_key)
 top_markets = get_top_n_metros(n=10)
 top_market_parcl_ids = top_markets['parcl_id'].tolist()
 
-housing_stock_ownership = InvestorMetricsHousingStockOwnership(client)
-new_listings_for_sale_rolling_counts = InvesetorMetricsNewListingsForSaleRollingCounts(client)
-purchase_to_sale_ratio = InvestorMetricsPurchaseToSaleRatio(client)
-housing_event_counts = InvestorMetricsHousingEventCounts(client)
-
 start_date = '2020-01-01'
 end_date = '2024-04-01'
 
-results_housing_stock_ownership = housing_stock_ownership.retrieve_many(
+results_housing_stock_ownership = client.investor_metrics_housing_stock_ownership.retrieve_many(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
     end_date=end_date
 )
 
-results_new_listings_for_sale_rolling_counts = new_listings_for_sale_rolling_counts.retrieve_many(
+results_new_listings_for_sale_rolling_counts = client.investor_metrics_new_listings_for_sale_rolling_counts.retrieve_many(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
     end_date=end_date
 )
 
-results_purchase_to_sale_ratio = purchase_to_sale_ratio.retrieve_many(
+results_purchase_to_sale_ratio = client.investor_metrics_purchase_to_sale_ratio.retrieve_many(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
     end_date=end_date
 )
 
-results_housing_event_counts = housing_event_counts.retrieve_many(
+results_housing_event_counts = client.investor_metrics_housing_event_counts.retrieve_many(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
     end_date=end_date

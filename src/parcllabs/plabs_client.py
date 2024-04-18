@@ -6,6 +6,28 @@ import pandas as pd
 
 from parcllabs import api_base
 
+from parcllabs.services.investor_metrics import (
+    InvestorMetricsHousingStockOwnership, 
+    InvesetorMetricsNewListingsForSaleRollingCounts,
+    InvestorMetricsPurchaseToSaleRatio,
+    InvestorMetricsHousingEventCounts
+)
+
+from parcllabs.services.market_metrics import (
+    MarketMetricsHousingEventPrices,
+    MarketMetricsHousingStock,
+    MarketMetricsHousingEventCounts
+)
+
+from parcllabs.services.for_sale_market_metrics import (
+    ForSaleMarketMetricsNewListingsRollingCounts
+)
+
+from parcllabs.services.rental_market_metrics import (
+    RentalMarketMetricsRentalUnitsConcentration,
+    RentalMarketMetricsGrossYield
+)
+
 
 class ParclLabsClient:
     def __init__(
@@ -16,6 +38,18 @@ class ParclLabsClient:
             raise ValueError('api_key is required')
         self.api_key = api_key
         self.api_url = api_base
+
+        # top-level services: The client is responsible for creating instances of these services
+        self.investor_metrics_housing_stock_ownership = InvestorMetricsHousingStockOwnership(client=self)
+        self.investor_metrics_new_listings_for_sale_rolling_counts = InvesetorMetricsNewListingsForSaleRollingCounts(client=self)
+        self.investor_metrics_purchase_to_sale_ratio = InvestorMetricsPurchaseToSaleRatio(client=self)
+        self.investor_metrics_housing_event_counts = InvestorMetricsHousingEventCounts(client=self)
+        self.market_metrics_housing_event_prices = MarketMetricsHousingEventPrices(client=self)
+        self.market_metrics_housing_stock = MarketMetricsHousingStock(client=self)
+        self.market_metrics_housing_event_counts = MarketMetricsHousingEventCounts(client=self)
+        self.for_sale_market_metrics_new_listings_rolling_counts = ForSaleMarketMetricsNewListingsRollingCounts(client=self)
+        self.rental_market_metrics_rental_units_concentration = RentalMarketMetricsRentalUnitsConcentration(client=self)
+        self.rental_market_metrics_gross_yield = RentalMarketMetricsGrossYield(client=self)
 
     def get(self, url: str, params: dict = None):
         """
