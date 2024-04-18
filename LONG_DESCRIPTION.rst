@@ -24,7 +24,7 @@ Sign up for Parcl Labs at https://dashboard.parcllabs.com/signup.
 Using the Parcl Labs API
 ------------------------
 
-Documentation for the python bindings can be found alongside Stripe's other bindings here:
+Documentation for Parcl Labs API can be found at:
 
 - https://api.parcllabs.com/docs
 
