@@ -1,5 +1,5 @@
 Official Parcl Labs Bindings for Python
-===================================
+=======================================
 
 A Python library for Parcl Labs API.
 
@@ -17,12 +17,12 @@ Or:
 
 
 Setting up a Parcl Labs Account
----------------------------
+-------------------------------
 
 Sign up for Stripe at https://dashboard.parcllabs.com/signup.
 
 Using the Parcl Labs API
---------------------
+------------------------
 
 Documentation for the python bindings can be found alongside Stripe's other bindings here:
 
