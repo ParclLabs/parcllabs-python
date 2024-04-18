@@ -19,7 +19,7 @@ Or:
 Setting up a Parcl Labs Account
 -------------------------------
 
-Sign up for Stripe at https://dashboard.parcllabs.com/signup.
+Sign up for Parcl Labs at https://dashboard.parcllabs.com/signup.
 
 Using the Parcl Labs API
 ------------------------
