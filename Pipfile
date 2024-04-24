@@ -8,7 +8,9 @@ requests = "*"
 pandas = "*"
 
 [dev-packages]
-parcllabs = {path = "src/.", editable = true}
+black = "*"
+parcllabs = {path = ".", editable = true}
+twine = "*"
 
 [requires]
 python_version = "3.9"

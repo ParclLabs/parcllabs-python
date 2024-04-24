@@ -1,7 +1,7 @@
 from typing import Optional
 
 # Constants
-DEFAULT_API_BASE = 'https://api.parcllabs.com'
+DEFAULT_API_BASE = "https://api.parcllabs.com"
 
 api_key: Optional[str] = None
 api_base = DEFAULT_API_BASE
@@ -11,23 +11,23 @@ from parcllabs.plabs_client import ParclLabsClient
 
 
 from parcllabs.services.investor_metrics import (
-    InvestorMetricsHousingStockOwnership, 
+    InvestorMetricsHousingStockOwnership,
     InvesetorMetricsNewListingsForSaleRollingCounts,
     InvestorMetricsPurchaseToSaleRatio,
-    InvestorMetricsHousingEventCounts
+    InvestorMetricsHousingEventCounts,
 )
 
 from parcllabs.services.market_metrics import (
     MarketMetricsHousingEventPrices,
     MarketMetricsHousingStock,
-    MarketMetricsHousingEventCounts
+    MarketMetricsHousingEventCounts,
 )
 
 from parcllabs.services.for_sale_market_metrics import (
-    ForSaleMarketMetricsNewListingsRollingCounts
+    ForSaleMarketMetricsNewListingsRollingCounts,
 )
 
 from parcllabs.services.rental_market_metrics import (
     RentalMarketMetricsRentalUnitsConcentration,
-    RentalMarketMetricsGrossYield
+    RentalMarketMetricsGrossYield,
 )
