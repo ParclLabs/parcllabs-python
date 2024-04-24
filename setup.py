@@ -8,7 +8,9 @@ with open(os.path.join(here, "LONG_DESCRIPTION.rst"), "r", encoding="utf-8") as 
     long_description = fp.read()
 
 version_contents = {}
-with open(os.path.join(here, "parcllabs", "__version__.py"), "r", encoding="utf-8") as fp:
+with open(
+    os.path.join(here, "parcllabs", "__version__.py"), "r", encoding="utf-8"
+) as fp:
     exec(fp.read(), version_contents)
 
 setup(
@@ -30,7 +32,7 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11"
+        "Programming Language :: Python :: 3.11",
     ],
-    setup_requires=['wheel']
+    setup_requires=["wheel"],
 )
