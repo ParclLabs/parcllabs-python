@@ -4,17 +4,14 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-requests = "*"
-pandas = "*"
+requests = ">=2.25,<3"
+pandas = ">=1.2,<2"
 
 [dev-packages]
-black = "*"
+black = ">=22.0,<23"
 parcllabs = {path = ".", editable = true}
-twine = "*"
-pytest = "*"
-requests-mock = "*"
-requests = "*"
-build = "*"
+pytest = ">=6.0,<7"
+requests-mock = ">=1.8,<2"
 
 [requires]
-python_version = "3.9"
+python_version = ">=3.9, <3.12"

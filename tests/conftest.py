@@ -4,16 +4,21 @@ from datetime import datetime
 import requests_mock
 from parcllabs import ParclLabsClient
 
-from parcllabs.services.base_service import ParclLabsService  # Adjust the import based on your project structure
+from parcllabs.services.base_service import (
+    ParclLabsService,
+)  # Adjust the import based on your project structure
+
 
 # Setup for tests
 @pytest.fixture
 def client_mock():
     return Mock()
 
+
 @pytest.fixture
 def service(client_mock):
     return ParclLabsService(client=client_mock)
+
 
 import pytest
 import requests
@@ -22,6 +27,7 @@ import requests
 @pytest.fixture
 def api_key():
     return "fake_api_key"
+
 
 @pytest.fixture
 def client(api_key):
