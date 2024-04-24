@@ -33,13 +33,14 @@ jobs:
       - name: Run Lint
         run: pipenv run make lint  # Use makefile to run lint (assumes 'make lint' is setup)
 
-      - name: Extract version from parcllabs/__version__.py
+      - name: Extract version
         id: get_version
         run: |
           VERSION_LINE=$(grep 'VERSION' parcllabs/__version__.py)
           VERSION=$(echo $VERSION_LINE | cut -d '"' -f 2)
           echo "Extracted version: $VERSION"
-          echo "name=VERSION::$VERSION" >> $GITHUB_OUTPUT
+          echo "::set-output name=VERSION::$VERSION"
+      
 
 
       - name: Tag Repository
@@ -55,6 +56,7 @@ jobs:
               ref: ref,
               sha: context.sha
             });
+        
 
       - name: Build Package
         if: github.event_name == 'push'
