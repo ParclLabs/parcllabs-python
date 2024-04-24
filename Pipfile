@@ -11,6 +11,8 @@ pandas = "*"
 black = "*"
 parcllabs = {path = ".", editable = true}
 twine = "*"
+pytest = "*"
+requests-mock = "*"
 
 [requires]
 python_version = "3.9"
