@@ -33,12 +33,14 @@ jobs:
       - name: Run Lint
         run: pipenv run make lint  # Use makefile to run lint (assumes 'make lint' is setup)
 
-      - name: Extract version from __version__.py
+      - name: Extract version from parcllabs/__version__.py
         id: get_version
         run: |
-          VERSION=$(grep 'VERSION' __version__.py | cut -d '"' -f 2)
-          echo "Extracted Version: $VERSION"
-          echo "::set-output name=VERSION::$VERSION"      
+          VERSION_LINE=$(grep 'VERSION' parcllabs/__version__.py)
+          VERSION=$(echo $VERSION_LINE | cut -d '"' -f 2)
+          echo "Extracted version: $VERSION"
+          echo "name=VERSION::$VERSION" >> $GITHUB_OUTPUT
+
 
       - name: Tag Repository
         uses: actions/github-script@v5
