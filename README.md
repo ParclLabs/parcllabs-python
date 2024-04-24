@@ -1,6 +1,9 @@
 ![Logo](img/labs.jpg)
 # parcllabs-python
 
+## Sign Up for an API Key
+To use the ParclLabs API, you need an API key. To get an API key, sign up at [ParclLabs](https://dashboard.parcllabs.com/signup).
+
 ## Rental Market Metrics
 
 ### Gross Yield
