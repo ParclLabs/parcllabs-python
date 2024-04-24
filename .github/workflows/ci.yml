@@ -35,7 +35,10 @@ jobs:
 
       - name: Extract version from __version__.py
         id: get_version
-        run: echo "::set-output name=VERSION::$(python -c "import parcllabs; print(parcllabs.__version__)")"
+        run: |
+          VERSION=$(grep 'VERSION' __version__.py | cut -d '"' -f 2)
+          echo "Extracted Version: $VERSION"
+          echo "::set-output name=VERSION::$VERSION"      
 
       - name: Tag Repository
         uses: actions/github-script@v5
