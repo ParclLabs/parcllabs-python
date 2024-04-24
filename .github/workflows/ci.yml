@@ -33,7 +33,7 @@ jobs:
       - name: Run Lint
         run: pipenv run make lint  # Use makefile to run lint (assumes 'make lint' is setup)
 
-      - name: Extract version from __version__.py
+      - name: Extract version from parcllabs/__version__.py
         id: get_version
         run: echo "::set-output name=VERSION::$(python -c "import parcllabs; print(parcllabs.__version__)")"
 
