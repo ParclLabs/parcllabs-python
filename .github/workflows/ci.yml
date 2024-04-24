@@ -41,6 +41,7 @@ jobs:
           echo "Extracted version: $VERSION"
           echo "name=VERSION::$VERSION" >> $GITHUB_OUTPUT
 
+
       - name: Tag Repository
         uses: actions/github-script@v5
         if: github.event_name == 'push'  # Only tag on push events to main
