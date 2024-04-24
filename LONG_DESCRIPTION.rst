@@ -1,13 +1,13 @@
-Official Parcl Labs Bindings for Python
-=======================================
+Official Parcl Labs Python SDK
+==============================
 
-A Python library for Parcl Labs API.
+A python library for Parcl Labs API.
 
 
 Setup
 -----
 
-You can install this package by using the pip tool and installing:
+You can install this package using pip package manager tool:
 
     $ pip install parcllabs
 
@@ -15,11 +15,10 @@ Or:
 
     $ easy_install parcllabs
 
-
 Setting up a Parcl Labs Account
 -------------------------------
 
-Sign up for Parcl Labs at https://dashboard.parcllabs.com/signup.
+Sign up for a Parcl Labs account at https://dashboard.parcllabs.com/signup.
 
 Using the Parcl Labs API
 ------------------------
