@@ -1,4 +1,4 @@
-name: Parcl Labs Python Package Release Workflow
+name: Publish Package
 
 on:
   push:
@@ -73,4 +73,4 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_KEY }}
         run: |
-          twine upload --repository dist/*
+          twine upload dist/*
