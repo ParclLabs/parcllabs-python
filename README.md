@@ -5,15 +5,23 @@
 
 To use the ParclLabs API, you need an API key. To get an API key, sign up at [ParclLabs](https://dashboard.parcllabs.com/signup).
 
-## Rental Market Metrics
+## Installation
 
-### Gross Yield
+You can install the package via pip:
+
+```bash
+pip install parcllabs
+```
+
+### Rental Market Metrics
+
+#### Gross Yield
 Gets the percent gross yield for a specified <parcl_id>. At the market level, identified by <parcl_id>, gross yield is calculated by dividing the annual median rental income—derived from multiplying the monthly median new rental listing price by 12—by its median new listings for sale price.
 
-### Rental Units Concentration
+#### Rental Units Concentration
 Gets the number of rental units, total units, and percent rental unit concentration for a specified <parcl_id>.
 
-#### Get all rental market metrics
+##### Get all rental market metrics
 ```python
 import os
 
@@ -43,13 +51,13 @@ results_gross_yield = client.rental_market_metrics_gross_yield.retrieve_many(
 )
 ```
 
-## For Sale Market Metrics
+### For Sale Market Metrics
 
-### New Listings Rolling Counts
+#### New Listings Rolling Counts
 Gets weekly updated rolling counts of newly listed for sale properties, segmented into 7, 30, 60, and 90 day periods ending on a specified date, based on a given <parcl_id>.
 
 
-#### Get all for sale market metrics
+##### Get all for sale market metrics
 ```python
 import os
 
@@ -74,19 +82,19 @@ results_for_sale_new_listings = client.for_sale_market_metrics_new_listings_roll
 )
 ```
 
-## Market Metrics
+### Market Metrics
 
-### Housing Event Counts
+#### Housing Event Counts
 Gets monthly counts of housing events, including sales, new sale listings, and new rental listings, based on a specified <parcl_id>.
 
-### Housing Stock
+#### Housing Stock
 Gets housing stock for a specified <parcl_id>. Housing stock represents the total number of properties, broken out by single family homes, townhouses, and condos.
 
-### Housing Event Prices
+#### Housing Event Prices
 Gets monthly statistics on prices for housing events, including sales, new for-sale listings, and new rental listings, based on a specified <parcl_id>.
 
 
-#### Get all market metrics
+##### Get all market metrics
 ```python
 import os
 
@@ -122,21 +130,21 @@ results_housing_event_counts = client.market_metrics_housing_event_counts.retrie
 )
 ```
 
-## Investor Metrics
+### Investor Metrics
 
-### Housing Event Counts
+#### Housing Event Counts
 Gets monthly counts of investor housing events, including acquisitions, dispositions, new sale listings, and new rental listings, based on a specified <parcl_id>.
 
-### Purchase to Sale Ratio
+#### Purchase to Sale Ratio
 Gets the monthly investor purchase to sale ratio for a specified <parcl_id>.
 
-### New Listings for Sale Rolling Counts
+#### New Listings for Sale Rolling Counts
 Gets weekly updated rolling counts of investor-owned properties newly listed for sale, and their corresponding percentage share of the total for-sale listings market. These metrics are segmented into 7, 30, 60, and 90-day periods ending on a specified date, based on a given <parcl_id>
 
-### Housing Stock Ownership
+#### Housing Stock Ownership
 Gets counts of investor-owned properties and their corresponding percentage ownership share of the total housing stock, for a specified <parcl_id>.
 
-#### Get all investor metrics
+##### Get all investor metrics
 ```python
 import os
 
