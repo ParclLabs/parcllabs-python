@@ -199,7 +199,7 @@ results_housing_event_counts = client.investor_metrics_housing_event_counts.retr
 #### Portfolio Metrics
 Gets counts of investor-owned single family properties and their corresponding percentage of the total single family housing stock, segmented by portfolio size, for a specified <parcl_id>. The data series for portfolio metrics begins on March 1, 2024 (2024-03-01).
 
-##### Get all investor metrics
+##### Single Family Home Portfolio Metrics
 ```python
 import os
 
