@@ -32,3 +32,5 @@ from parcllabs.services.rental_market_metrics import (
     RentalMarketMetricsRentalUnitsConcentration,
     RentalMarketMetricsGrossYield,
 )
+
+from parcllabs.services.portfolio_metrics import PortfolioMetricsSFHousingStockOwnership

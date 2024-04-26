@@ -28,6 +28,8 @@ from parcllabs.services.rental_market_metrics import (
     RentalMarketMetricsGrossYield,
 )
 
+from parcllabs.services.portfolio_metrics import PortfolioMetricsSFHousingStockOwnership
+
 
 class ParclLabsClient:
     def __init__(self, api_key: str):
@@ -64,6 +66,9 @@ class ParclLabsClient:
         )
         self.rental_market_metrics_gross_yield = RentalMarketMetricsGrossYield(
             client=self
+        )
+        self.portfolio_metrics_sf_housing_stock_ownership = (
+            PortfolioMetricsSFHousingStockOwnership(client=self)
         )
 
     def get(self, url: str, params: dict = None):
