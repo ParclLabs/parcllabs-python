@@ -29,7 +29,7 @@ from parcllabs.services.rental_market_metrics import (
 )
 
 from parcllabs.services.portfolio_metrics import PortfolioMetricsSFHousingStockOwnership
-
+from parcllabs.services.search import SearchMarkets
 
 class ParclLabsClient:
     def __init__(self, api_key: str):
@@ -70,6 +70,7 @@ class ParclLabsClient:
         self.portfolio_metrics_sf_housing_stock_ownership = (
             PortfolioMetricsSFHousingStockOwnership(client=self)
         )
+        self.search_markets = SearchMarkets(client=self)
 
     def get(self, url: str, params: dict = None):
         """

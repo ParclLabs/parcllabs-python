@@ -3,7 +3,7 @@
 
 ## Sign Up for an API Key
 
-To use the ParclLabs API, you need an API key. To get an API key, sign up at [ParclLabs](https://dashboard.parcllabs.com/signup).
+To use the Parcl Labs API, you need an API key. To get an API key, sign up at [ParclLabs](https://dashboard.parcllabs.com/signup).
 
 ## Installation
 
@@ -11,6 +11,34 @@ You can install the package via pip:
 
 ```bash
 pip install parcllabs
+```
+
+### Search
+Search is your entry point into finding one or many of over 70,000 markets in the United States. You can search for markets by name, state, region, fips, or zip code. You can also search for markets by their Parcl ID.
+
+#### Search Markets
+```python
+import os
+
+from parcllabs import ParclLabsClient
+
+
+api_key = os.getenv('PARCLLABS_API_KEY')
+client = ParclLabsClient(api_key)
+
+# all cities in EAST_NORTH_CENTRAL census region
+results = client.search.markets.retrieve_many(
+    location_type='CITY',
+    region='EAST_NORTH_CENTRAL',
+    as_dataframe=True
+)
+print(results.head())
+#     parcl_id country    geoid state_fips_code             name state_abbreviation              region location_type
+# 0    5333443     USA  5500100              55  Abbotsford City                 WI  EAST_NORTH_CENTRAL          CITY
+# 1    5387920     USA  1700113              17    Abingdon City                 IL  EAST_NORTH_CENTRAL          CITY
+# 2    5403368     USA  5500275              55       Adams City                 WI  EAST_NORTH_CENTRAL          CITY
+# 3    5278505     USA  2600440              26      Adrian City                 MI  EAST_NORTH_CENTRAL          CITY
+# 4    5332624     USA  3901000              39       Akron City                 OH  EAST_NORTH_CENTRAL          CITY
 ```
 
 ### Rental Market Metrics
