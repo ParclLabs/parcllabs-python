@@ -5,6 +5,10 @@
 
 To use the Parcl Labs API, you need an API key. To get an API key, sign up at [ParclLabs](https://dashboard.parcllabs.com/signup).
 
+## Examples
+
+We maintain a repository of examples that demonstrate how to use the Parcl Labs API for analysis. You can find the examples in the [ParclLabs Examples](https://github.com/parcllabs/parcllabs-examples)
+
 ## Installation
 
 You can install the package via pip:

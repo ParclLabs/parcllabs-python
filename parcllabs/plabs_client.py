@@ -1,8 +1,7 @@
+import json
 import requests
-from typing import Dict, Union
+from typing import Dict
 from requests.exceptions import RequestException
-
-import pandas as pd
 
 from parcllabs import api_base
 
@@ -31,10 +30,13 @@ from parcllabs.services.rental_market_metrics import (
 from parcllabs.services.portfolio_metrics import PortfolioMetricsSFHousingStockOwnership
 from parcllabs.services.search import SearchMarkets
 
+
 class ParclLabsClient:
     def __init__(self, api_key: str):
         if api_key is None:
-            raise ValueError("api_key is required")
+            raise ValueError(
+                "API Key is required. Please visit https://dashboard.parcllabs.com/signup to get an API key."
+            )
         self.api_key = api_key
         self.api_url = api_base
 
@@ -84,14 +86,28 @@ class ParclLabsClient:
             dict: The JSON response as a dictionary.
         """
         try:
-            url = self.api_url + url
+            full_url = self.api_url + url
             headers = self._get_headers()
-            response = requests.get(url, headers=headers, params=params)
-            response.raise_for_status()  # Raises a HTTPError for bad responses
+            response = requests.get(full_url, headers=headers, params=params)
+            response.raise_for_status()
             return response.json()
-        except RequestException as e:
-            print(f"Request failed: {e}")
-            return None
+        except requests.exceptions.HTTPError:
+            try:
+                error_details = response.json()
+                error_message = error_details.get("detail", "No detail provided by API")
+            except json.JSONDecodeError:
+                error_message = "Failed to decode JSON error response"
+            type_of_error = ""
+            if 400 <= response.status_code < 500:
+                type_of_error = "Client"
+            elif 500 <= response.status_code < 600:
+                type_of_error = "Server"
+            msg = f"{response.status_code} {type_of_error} Error: {error_message}. Visit https://dashboard.parcllabs.com for more information or reach out to team@parcllabs.com."
+            raise RequestException(msg)
+        except requests.exceptions.RequestException as err:
+            raise RequestException(f"Request failed: {str(err)}")
+        except Exception as e:
+            raise RequestException(f"An unexpected error occurred: {str(e)}")
 
     def _get_headers(self) -> Dict[str, str]:
         return {
