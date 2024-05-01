@@ -1,8 +1,7 @@
+import json
 import requests
-from typing import Dict, Union
+from typing import Dict
 from requests.exceptions import RequestException
-
-import pandas as pd
 
 from parcllabs import api_base
 
@@ -84,14 +83,22 @@ class ParclLabsClient:
             dict: The JSON response as a dictionary.
         """
         try:
-            url = self.api_url + url
+            full_url = self.api_url + url
             headers = self._get_headers()
-            response = requests.get(url, headers=headers, params=params)
-            response.raise_for_status()  # Raises a HTTPError for bad responses
+            response = requests.get(full_url, headers=headers, params=params)
+            response.raise_for_status()
             return response.json()
-        except RequestException as e:
-            print(f"Request failed: {e}")
-            return None
+        except requests.exceptions.HTTPError as http_err:
+            try:
+                error_details = response.json()
+                error_message = error_details.get('detail', 'No detail provided by API')
+            except json.JSONDecodeError:
+                error_message = 'Failed to decode JSON error response'
+            raise RequestException(f"{response.status_code} Error: {error_message}")
+        except requests.exceptions.RequestException as err:
+            raise RequestException(f"Request failed: {str(err)}")
+        except Exception as e:
+            raise RequestException(f"An unexpected error occurred: {str(e)}")
 
     def _get_headers(self) -> Dict[str, str]:
         return {
