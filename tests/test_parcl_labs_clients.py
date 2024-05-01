@@ -1,5 +1,6 @@
 import pytest
 import requests
+from requests.exceptions import RequestException
 import requests_mock
 from parcllabs import ParclLabsClient
 
@@ -24,12 +25,20 @@ def test_get_successful(client):
 
 def test_get_with_failed_request(client):
     with requests_mock.Mocker() as m:
-        m.get("https://example.com/api/data", status_code=400)
+        m.get(
+            "https://example.com/api/data",
+            status_code=400,
+            json={"detail": "Client Error"},
+        )
         client.api_url = "https://example.com/api"
-        response = client.get("/data")
-        assert (
-            response is None
-        )  # Since we're returning None on exception in the client code
+
+        # Use pytest.raises to check for the RequestException
+        with pytest.raises(RequestException) as excinfo:
+            response = client.get("/data")
+
+        # Assert that the exception message contains '400 Client Error'
+        assert "400 Client Error" in str(excinfo.value)
+        assert "Client Error" in str(excinfo.value)
 
 
 def test_get_headers(client):
@@ -47,16 +56,6 @@ def test_get_headers(client):
         history = m.request_history[0]
         assert history.headers["Authorization"] == "fake_api_key"
         assert history.headers["Content-Type"] == "application/json"
-
-
-def test_get_request_exception(client, capsys):
-    with requests_mock.Mocker() as m:
-        m.get("https://example.com/api/data", exc=requests.exceptions.ConnectTimeout)
-        client.api_url = "https://example.com/api"
-        response = client.get("/data")
-        assert response is None
-        captured = capsys.readouterr()
-        assert "Request failed:" in captured.out
 
 
 def test_service_initialization(client):

@@ -146,6 +146,7 @@ valid_state_fips_codes = [
     "ALL",
 ]
 
+
 class SearchMarkets(ParclLabsService):
     """
     Gets weekly updated rolling counts of newly listed for sale properties, segmented into 7, 30, 60, and 90 day periods ending on a specified date, based on a given <parcl_id>.
@@ -167,17 +168,31 @@ class SearchMarkets(ParclLabsService):
         as_dataframe: bool = False,
     ):
         if location_type is not None and location_type not in valid_locations:
-            raise ValueError(f"location_type value error. Valid values are: {valid_locations}. Received: {location_type}")
-        
+            raise ValueError(
+                f"location_type value error. Valid values are: {valid_locations}. Received: {location_type}"
+            )
+
         if region is not None and region not in valid_regions:
-            raise ValueError(f"region value error. Valid values are: {valid_regions}. Received: {region}")
-        
-        if state_abbreviation is not None and state_abbreviation not in valid_state_abbreviations:
-            raise ValueError(f"state_abbreviation value error. Valid values are: {valid_state_abbreviations}. Received: {state_abbreviation}")
-        
-        if state_fips_code is not None and state_fips_code not in valid_state_fips_codes:
-            raise ValueError(f"state_fips_code value error. Valid values are: {valid_state_fips_codes}. Received: {state_fips_code}")
-        
+            raise ValueError(
+                f"region value error. Valid values are: {valid_regions}. Received: {region}"
+            )
+
+        if (
+            state_abbreviation is not None
+            and state_abbreviation not in valid_state_abbreviations
+        ):
+            raise ValueError(
+                f"state_abbreviation value error. Valid values are: {valid_state_abbreviations}. Received: {state_abbreviation}"
+            )
+
+        if (
+            state_fips_code is not None
+            and state_fips_code not in valid_state_fips_codes
+        ):
+            raise ValueError(
+                f"state_fips_code value error. Valid values are: {valid_state_fips_codes}. Received: {state_fips_code}"
+            )
+
         params = {
             "query": query,
             "location_type": location_type,
@@ -188,10 +203,8 @@ class SearchMarkets(ParclLabsService):
             "geoid": geoid,
             **(params or {}),
         }
-        results = self._request(
-            url="/v1/search/markets", params=params
-        )
+        results = self._request(url="/v1/search/markets", params=params)
 
         if as_dataframe:
-            return self._as_pd_dataframe(results.get('items'))
+            return self._as_pd_dataframe(results.get("items"))
         return results
