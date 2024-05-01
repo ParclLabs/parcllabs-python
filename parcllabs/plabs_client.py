@@ -74,7 +74,7 @@ class ParclLabsClient:
         )
         self.search_markets = SearchMarkets(client=self)
 
-    def get(self, url: str, params: dict = None):
+    def get(self, url: str, params: dict = None, is_next: bool = False):
         """
         Send a GET request to the specified URL with the given parameters.
 
@@ -86,7 +86,10 @@ class ParclLabsClient:
             dict: The JSON response as a dictionary.
         """
         try:
-            full_url = self.api_url + url
+            if is_next:
+                full_url = url
+            else:
+                full_url = self.api_url + url
             headers = self._get_headers()
             response = requests.get(full_url, headers=headers, params=params)
             response.raise_for_status()

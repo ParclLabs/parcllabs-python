@@ -204,6 +204,11 @@ class SearchMarkets(ParclLabsService):
             **(params or {}),
         }
         results = self._request(url="/v1/search/markets", params=params)
+        tmp = results.copy()
+        while results['links'].get('next') is not None:
+            results = self._request(url=results['links']['next'].replace('http', 'https'), is_next=True)
+            tmp['items'].extend(results['items'])
+
 
         if as_dataframe:
             return self._as_pd_dataframe(results.get("items"))
