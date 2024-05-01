@@ -11,7 +11,10 @@ class ParclLabsService(object):
         self.client = client
 
     def _request(
-        self, url: str, params: Optional[Mapping[str, Any]] = None, is_next: bool = False
+        self,
+        url: str,
+        params: Optional[Mapping[str, Any]] = None,
+        is_next: bool = False,
     ) -> Any:
         return self.client.get(url=url, params=params, is_next=is_next)
 

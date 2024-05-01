@@ -32,13 +32,14 @@ from parcllabs.services.search import SearchMarkets
 
 
 class ParclLabsClient:
-    def __init__(self, api_key: str):
+    def __init__(self, api_key: str, limit: int = 12):
         if api_key is None:
             raise ValueError(
                 "API Key is required. Please visit https://dashboard.parcllabs.com/signup to get an API key."
             )
         self.api_key = api_key
         self.api_url = api_base
+        self.limit = limit
 
         # top-level services: The client is responsible for creating instances of these services
         self.investor_metrics_housing_stock_ownership = (
@@ -85,6 +86,9 @@ class ParclLabsClient:
         Returns:
             dict: The JSON response as a dictionary.
         """
+        if params:
+            if not params.get("limit"):
+                params["limit"] = self.limit
         try:
             if is_next:
                 full_url = url
