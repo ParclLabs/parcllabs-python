@@ -166,6 +166,7 @@ class SearchMarkets(ParclLabsService):
         geoid: str = None,
         params: Optional[Mapping[str, Any]] = None,
         as_dataframe: bool = False,
+        auto_paginate: bool = True,
     ):
         if location_type is not None and location_type not in valid_locations:
             raise ValueError(
@@ -205,6 +206,17 @@ class SearchMarkets(ParclLabsService):
         }
         results = self._request(url="/v1/search/markets", params=params)
 
+        if auto_paginate:
+            tmp = results.copy()
+            while results["links"].get("next") is not None:
+                results = self._request(
+                    url=results["links"]["next"].replace("http", "https"), is_next=True
+                )
+                tmp["items"].extend(results["items"])
+            tmp["links"] = results["links"]
+            results = tmp
+
         if as_dataframe:
             return self._as_pd_dataframe(results.get("items"))
+
         return results
