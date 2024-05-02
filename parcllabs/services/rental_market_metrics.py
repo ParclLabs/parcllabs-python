@@ -126,7 +126,7 @@ class RentalMarketMetricsRentalUnitsConcentration(ParclLabsService):
             return self._as_pd_dataframe(results)
 
         return results
-    
+
 
 class RentalMarketMetricsNewListingsForRentRollingCounts(ParclLabsService):
     """

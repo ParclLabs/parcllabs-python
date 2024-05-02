@@ -83,6 +83,11 @@ results_gross_yield = client.rental_market_metrics_gross_yield.retrieve_many(
     end_date=end_date,
     as_dataframe=True
 )
+
+rentals_new_listings_rolling_counts = client.rental_market_metrics_new_listings_for_rent_rolling_counts.retrieve_many(
+        parcl_ids=[2900187, 5374167],
+        as_dataframe=True
+    )
 ```
 
 ### For Sale Market Metrics
@@ -249,4 +254,11 @@ results_housing_stock_ownership = client.portfolio_metrics_sf_housing_stock_owne
     parcl_ids=top_market_parcl_ids,
     as_dataframe=True
 )
+
+# get new listings for specific portfolio sizes
+portfolio_metrics_new_listings = client.portfolio_metrics_new_listings_for_sale_rolling_counts.retrieve_many(
+        parcl_ids=top_market_parcl_ids,
+        as_dataframe=True,
+        portfolio_size='PORTFOLIO_1000_PLUS',
+    )
 ```

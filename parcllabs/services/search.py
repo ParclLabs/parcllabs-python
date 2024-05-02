@@ -147,15 +147,16 @@ valid_state_fips_codes = [
 ]
 
 valid_sort_by = [
-    'TOTAL_POPULATION',
-    'MEDIAN_INCOME',
-    'CASE_SHILLER_20_MARKET',
-    'CASE_SHILLER_10_MARKET',
-    'PRICEFEED_MARKET',
-    'PARCL_EXCHANGE_MARKET'
+    "TOTAL_POPULATION",
+    "MEDIAN_INCOME",
+    "CASE_SHILLER_20_MARKET",
+    "CASE_SHILLER_10_MARKET",
+    "PRICEFEED_MARKET",
+    "PARCL_EXCHANGE_MARKET",
 ]
 
-valid_sort_order = ['ASC', 'DESC']
+valid_sort_order = ["ASC", "DESC"]
+
 
 class SearchMarkets(ParclLabsService):
     """
@@ -205,12 +206,12 @@ class SearchMarkets(ParclLabsService):
             raise ValueError(
                 f"state_fips_code value error. Valid values are: {valid_state_fips_codes}. Received: {state_fips_code}"
             )
-        
+
         if sort_by is not None and sort_by not in valid_sort_by:
             raise ValueError(
                 f"sort_by value error. Valid values are: {valid_sort_by}. Received: {sort_by}"
             )
-        
+
         if sort_order is not None and sort_order not in valid_sort_order:
             raise ValueError(
                 f"sort_order value error. Valid values are: {valid_sort_order}. Received: {sort_order}"
@@ -224,7 +225,7 @@ class SearchMarkets(ParclLabsService):
             "state_fips_code": state_fips_code,
             "parcl_id": parcl_id,
             "sort_by": sort_by,
-            'sort_order': sort_order,
+            "sort_order": sort_order,
             "geoid": geoid,
             **(params or {}),
         }
@@ -233,9 +234,7 @@ class SearchMarkets(ParclLabsService):
         if auto_paginate:
             tmp = results.copy()
             while results["links"].get("next") is not None:
-                results = self._request(
-                    url=results["links"]["next"], is_next=True
-                )
+                results = self._request(url=results["links"]["next"], is_next=True)
                 tmp["items"].extend(results["items"])
             tmp["links"] = results["links"]
             results = tmp
