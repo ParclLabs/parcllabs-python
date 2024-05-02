@@ -146,6 +146,16 @@ valid_state_fips_codes = [
     "ALL",
 ]
 
+valid_sort_by = [
+    'TOTAL_POPULATION',
+    'MEDIAN_INCOME',
+    'CASE_SHILLER_20_MARKET',
+    'CASE_SHILLER_10_MARKET',
+    'PRICEFEED_MARKET',
+    'PARCL_EXCHANGE_MARKET'
+]
+
+valid_sort_order = ['ASC', 'DESC']
 
 class SearchMarkets(ParclLabsService):
     """
@@ -164,6 +174,8 @@ class SearchMarkets(ParclLabsService):
         state_fips_code: str = None,
         parcl_id: int = None,
         geoid: str = None,
+        sort_by: str = None,
+        sort_order: str = None,
         params: Optional[Mapping[str, Any]] = None,
         as_dataframe: bool = False,
         auto_paginate: bool = True,
@@ -193,6 +205,16 @@ class SearchMarkets(ParclLabsService):
             raise ValueError(
                 f"state_fips_code value error. Valid values are: {valid_state_fips_codes}. Received: {state_fips_code}"
             )
+        
+        if sort_by is not None and sort_by not in valid_sort_by:
+            raise ValueError(
+                f"sort_by value error. Valid values are: {valid_sort_by}. Received: {sort_by}"
+            )
+        
+        if sort_order is not None and sort_order not in valid_sort_order:
+            raise ValueError(
+                f"sort_order value error. Valid values are: {valid_sort_order}. Received: {sort_order}"
+            )
 
         params = {
             "query": query,
@@ -201,6 +223,8 @@ class SearchMarkets(ParclLabsService):
             "state_abbreviation": state_abbreviation,
             "state_fips_code": state_fips_code,
             "parcl_id": parcl_id,
+            "sort_by": sort_by,
+            'sort_order': sort_order,
             "geoid": geoid,
             **(params or {}),
         }
@@ -210,7 +234,7 @@ class SearchMarkets(ParclLabsService):
             tmp = results.copy()
             while results["links"].get("next") is not None:
                 results = self._request(
-                    url=results["links"]["next"].replace("http", "https"), is_next=True
+                    url=results["links"]["next"], is_next=True
                 )
                 tmp["items"].extend(results["items"])
             tmp["links"] = results["links"]

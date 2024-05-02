@@ -247,7 +247,7 @@ class MarketMetricsHousingEventPrices(ParclLabsService):
                 )
                 tmp["parcl_id"] = k
                 out.append(tmp)
-        return pd.concat(out)
+        return pd.concat(out).reset_index(drop=True)
 
     def retrieve(
         self,

@@ -31,7 +31,11 @@ from parcllabs.services.for_sale_market_metrics import (
 from parcllabs.services.rental_market_metrics import (
     RentalMarketMetricsRentalUnitsConcentration,
     RentalMarketMetricsGrossYield,
+    RentalMarketMetricsNewListingsForRentRollingCounts
 )
 
-from parcllabs.services.portfolio_metrics import PortfolioMetricsSFHousingStockOwnership
+from parcllabs.services.portfolio_metrics import (
+    PortfolioMetricsSFHousingStockOwnership,
+    PortfolioMetricsNewListingsForSaleRollingCounts
+)
 from parcllabs.services.search import SearchMarkets

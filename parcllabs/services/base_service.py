@@ -24,7 +24,7 @@ class ParclLabsService(object):
             tmp = pd.DataFrame(v)
             tmp["parcl_id"] = k
             out.append(tmp)
-        return pd.concat(out)
+        return pd.concat(out).reset_index(drop=True)
 
     def validate_date(self, date_str: str) -> str:
         """
