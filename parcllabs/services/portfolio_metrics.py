@@ -10,8 +10,9 @@ valid_portfolio_sizes = [
     "PORTOFLIO_10_TO_99",
     "PORTFOLIO_100_TO_999",
     "PORTFOLIO_1000_PLUS",
-    "ALL_PORTFOLIOS"
+    "ALL_PORTFOLIOS",
 ]
+
 
 class PortfolioMetricsSFHousingStockOwnership(ParclLabsService):
     """
@@ -115,7 +116,7 @@ class PortfolioMetricsSFHousingStockOwnership(ParclLabsService):
             return self._as_pd_dataframe(results)
 
         return results
-    
+
 
 class PortfolioMetricsNewListingsForSaleRollingCounts(ParclLabsService):
     """
@@ -186,11 +187,11 @@ class PortfolioMetricsNewListingsForSaleRollingCounts(ParclLabsService):
         if as_dataframe:
             fmt = {results.get("parcl_id"): results.get("items")}
             df = self._as_pd_dataframe(fmt)
-            df['portfolio_size'] = results.get('portfolio_size')
+            df["portfolio_size"] = results.get("portfolio_size")
             return df
-        
+
         return results
-    
+
     def retrieve_many(
         self,
         parcl_ids: List[int],
@@ -217,14 +218,12 @@ class PortfolioMetricsNewListingsForSaleRollingCounts(ParclLabsService):
         results = {}
         for parcl_id in parcl_ids:
             output = self.retrieve(parcl_id=parcl_id, params=params)
-            results[parcl_id] = output.get(
-                "items"
-            )
-            p_size = output.get('portfolio_size')
+            results[parcl_id] = output.get("items")
+            p_size = output.get("portfolio_size")
 
         if as_dataframe:
             df = self._as_pd_dataframe(results)
-            df['portfolio_size'] = p_size
+            df["portfolio_size"] = p_size
             return df
 
         return results

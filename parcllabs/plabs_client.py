@@ -25,12 +25,12 @@ from parcllabs.services.for_sale_market_metrics import (
 from parcllabs.services.rental_market_metrics import (
     RentalMarketMetricsRentalUnitsConcentration,
     RentalMarketMetricsGrossYield,
-    RentalMarketMetricsNewListingsForRentRollingCounts
+    RentalMarketMetricsNewListingsForRentRollingCounts,
 )
 
 from parcllabs.services.portfolio_metrics import (
     PortfolioMetricsSFHousingStockOwnership,
-    PortfolioMetricsNewListingsForSaleRollingCounts
+    PortfolioMetricsNewListingsForSaleRollingCounts,
 )
 from parcllabs.services.search import SearchMarkets
 
@@ -74,14 +74,14 @@ class ParclLabsClient:
         self.rental_market_metrics_gross_yield = RentalMarketMetricsGrossYield(
             client=self
         )
-        self.rental_market_metrics_new_listings_for_rent_rolling_counts = RentalMarketMetricsNewListingsForRentRollingCounts(
-            client=self
+        self.rental_market_metrics_new_listings_for_rent_rolling_counts = (
+            RentalMarketMetricsNewListingsForRentRollingCounts(client=self)
         )
         self.portfolio_metrics_sf_housing_stock_ownership = (
             PortfolioMetricsSFHousingStockOwnership(client=self)
         )
-        self.portfolio_metrics_new_listings_for_sale_rolling_counts = PortfolioMetricsNewListingsForSaleRollingCounts(
-            client=self
+        self.portfolio_metrics_new_listings_for_sale_rolling_counts = (
+            PortfolioMetricsNewListingsForSaleRollingCounts(client=self)
         )
         self.search_markets = SearchMarkets(client=self)
 
