@@ -1,3 +1,7 @@
+### v0.1.12
+- bug fix: dataframe index's on `retrieve_many` methods
+- Update readme examples
+
 ### v0.1.11
 
 - Update `search` to accomodate `sort_order`, `sort_by`
