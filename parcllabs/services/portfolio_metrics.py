@@ -180,7 +180,7 @@ class PortfolioMetricsNewListingsForSaleRollingCounts(ParclLabsService):
             **(params or {}),
         }
         results = self._request(
-            url=f"/v1/portfolio_metrics/{parcl_id}/new_listings_for_sale_rolling_counts",
+            url=f"/v1/portfolio_metrics/{parcl_id}/sf_new_listings_for_sale_rolling_counts",
             params=params,
         )
 
