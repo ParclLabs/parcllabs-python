@@ -7,7 +7,7 @@ from parcllabs.services.base_service import ParclLabsService
 
 valid_portfolio_sizes = [
     "PORTFOLIO_2_TO_9",
-    "PORTOFLIO_10_TO_99",
+    "PORTFOLIO_10_TO_99",
     "PORTFOLIO_100_TO_999",
     "PORTFOLIO_1000_PLUS",
     "ALL_PORTFOLIOS",
