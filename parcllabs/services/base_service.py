@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from datetime import datetime
+from requests.exceptions import RequestException
 from typing import Any, Mapping, Optional, List, Dict
 
 import pandas as pd
@@ -66,8 +67,13 @@ class ParclLabsService(object):
         results = {}
         with alive_bar(len(parcl_ids)) as bar:
             for parcl_id in parcl_ids:
-                output = self.retrieve(parcl_id=parcl_id, params=params)
-                results[parcl_id] = output.get("items")
+                try:
+                    output = self.retrieve(parcl_id=parcl_id, params=params)
+                    results[parcl_id] = output.get("items")
+                except RequestException as e:
+                    # continue if no data is found for the parcl_id
+                    if '404' in str(e):
+                        continue
                 bar()
 
         additional_output = None
