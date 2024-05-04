@@ -106,11 +106,7 @@ class PortfolioMetricsSFHousingStockOwnership(ParclLabsService):
             "end_date": end_date,
             **(params or {}),
         }
-        results = {}
-        for parcl_id in parcl_ids:
-            results[parcl_id] = self.retrieve(parcl_id=parcl_id, params=params).get(
-                "items"
-            )
+        results, _ = self.retrieve_many_items(parcl_ids=parcl_ids, params=params)
 
         if as_dataframe:
             return self._as_pd_dataframe(results)
@@ -215,11 +211,10 @@ class PortfolioMetricsNewListingsForSaleRollingCounts(ParclLabsService):
             "portfolio_size": portfolio_size,
             **(params or {}),
         }
-        results = {}
-        for parcl_id in parcl_ids:
-            output = self.retrieve(parcl_id=parcl_id, params=params)
-            results[parcl_id] = output.get("items")
-            p_size = output.get("portfolio_size")
+
+        results, p_size = self.retrieve_many_items(
+            parcl_ids=parcl_ids, params=params, get_key_on_last_request="portfolio_size"
+        )
 
         if as_dataframe:
             df = self._as_pd_dataframe(results)

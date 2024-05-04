@@ -1,8 +1,9 @@
 from abc import abstractmethod
 from datetime import datetime
-from typing import Any, Mapping, Optional, List
+from typing import Any, Mapping, Optional, List, Dict
 
 import pandas as pd
+from alive_progress import alive_bar
 
 
 class ParclLabsService(object):
@@ -55,3 +56,22 @@ class ParclLabsService(object):
     @abstractmethod
     def retrieve(self, parcl_id: int, params: Optional[Mapping[str, Any]] = None):
         pass
+
+    def retrieve_many_items(
+        self,
+        parcl_ids: List[int],
+        params: Optional[Mapping[str, Any]] = None,
+        get_key_on_last_request: str = None,
+    ) -> Dict[str, Any]:
+        results = {}
+        with alive_bar(len(parcl_ids)) as bar:
+            for parcl_id in parcl_ids:
+                output = self.retrieve(parcl_id=parcl_id, params=params)
+                results[parcl_id] = output.get("items")
+                bar()
+
+        additional_output = None
+        if get_key_on_last_request:
+            additional_output = output.get(get_key_on_last_request)
+
+        return results, additional_output

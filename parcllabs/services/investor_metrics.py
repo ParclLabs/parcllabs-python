@@ -41,11 +41,7 @@ class InvestorMetricsHousingEventCounts(ParclLabsService):
         start_date = self.validate_date(start_date)
         end_date = self.validate_date(end_date)
         params = {"start_date": start_date, "end_date": end_date, **(params or {})}
-        results = {}
-        for parcl_id in parcl_ids:
-            results[parcl_id] = self.retrieve(parcl_id=parcl_id, params=params).get(
-                "items"
-            )
+        results, _ = self.retrieve_many_items(parcl_ids=parcl_ids, params=params)
 
         if as_dataframe:
             return self._as_pd_dataframe(results)
@@ -89,11 +85,7 @@ class InvestorMetricsPurchaseToSaleRatio(ParclLabsService):
         start_date = self.validate_date(start_date)
         end_date = self.validate_date(end_date)
         params = {"start_date": start_date, "end_date": end_date, **(params or {})}
-        results = {}
-        for parcl_id in parcl_ids:
-            results[parcl_id] = self.retrieve(parcl_id=parcl_id, params=params).get(
-                "items"
-            )
+        results, _ = self.retrieve_many_items(parcl_ids=parcl_ids, params=params)
 
         if as_dataframe:
             return self._as_pd_dataframe(results)
@@ -138,11 +130,7 @@ class InvestorMetricsHousingStockOwnership(ParclLabsService):
         start_date = self.validate_date(start_date)
         end_date = self.validate_date(end_date)
         params = {"start_date": start_date, "end_date": end_date, **(params or {})}
-        results = {}
-        for parcl_id in parcl_ids:
-            results[parcl_id] = self.retrieve(parcl_id=parcl_id, params=params).get(
-                "items"
-            )
+        results, _ = self.retrieve_many_items(parcl_ids=parcl_ids, params=params)
 
         if as_dataframe:
             return self._as_pd_dataframe(results)
@@ -234,11 +222,7 @@ class InvesetorMetricsNewListingsForSaleRollingCounts(ParclLabsService):
             "property_type": property_type,
             **(params or {}),
         }
-        results = {}
-        for parcl_id in parcl_ids:
-            results[parcl_id] = self.retrieve(parcl_id=parcl_id, params=params).get(
-                "items"
-            )
+        results, _ = self.retrieve_many_items(parcl_ids=parcl_ids, params=params)
 
         if as_dataframe:
             return self._as_pd_dataframe(results)
@@ -283,11 +267,7 @@ class InvestorMetricsHousingStockOwnership(ParclLabsService):
         start_date = self.validate_date(start_date)
         end_date = self.validate_date(end_date)
         params = {"start_date": start_date, "end_date": end_date, **(params or {})}
-        results = {}
-        for parcl_id in parcl_ids:
-            results[parcl_id] = self.retrieve(parcl_id=parcl_id, params=params).get(
-                "items"
-            )
+        results, _ = self.retrieve_many_items(parcl_ids=parcl_ids, params=params)
 
         if as_dataframe:
             return self._as_pd_dataframe(results)

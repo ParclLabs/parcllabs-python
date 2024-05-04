@@ -1,3 +1,6 @@
+### v0.1.15
+- Include progress bar for `retrieve_many` methods
+
 ### v0.1.14
 - Update `portfolio_metrics` endpoint name from `new_listings_for_sale_rolling_counts` to `sf_new_listings_for_sale_rolling_counts` to reflect the new endpoint name.
 
