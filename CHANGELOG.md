@@ -1,3 +1,6 @@
+### v0.1.16
+- Gracefully handle no data found in retrieve_many methods
+
 ### v0.1.15
 - Include progress bar for `retrieve_many` methods
 
