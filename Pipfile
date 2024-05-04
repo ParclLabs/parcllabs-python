@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 requests = ">=2.25,<3"
 pandas = ">=1.2,<2"
+alive-progress = "*"
 
 [dev-packages]
 black = ">=22.0,<23"
