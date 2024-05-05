@@ -31,18 +31,18 @@ api_key = os.getenv('PARCLLABS_API_KEY')
 client = ParclLabsClient(api_key)
 
 # all cities in EAST_NORTH_CENTRAL census region
-results = client.search.markets.retrieve_many(
+results = client.search_markets.retrieve(
     location_type='CITY',
     region='EAST_NORTH_CENTRAL',
     as_dataframe=True
 )
 print(results.head())
-#     parcl_id country    geoid state_fips_code             name state_abbreviation              region location_type
-# 0    5333443     USA  5500100              55  Abbotsford City                 WI  EAST_NORTH_CENTRAL          CITY
-# 1    5387920     USA  1700113              17    Abingdon City                 IL  EAST_NORTH_CENTRAL          CITY
-# 2    5403368     USA  5500275              55       Adams City                 WI  EAST_NORTH_CENTRAL          CITY
-# 3    5278505     USA  2600440              26      Adrian City                 MI  EAST_NORTH_CENTRAL          CITY
-# 4    5332624     USA  3901000              39       Akron City                 OH  EAST_NORTH_CENTRAL          CITY
+#       parcl_id country    geoid state_fips_code                         name state_abbreviation              region location_type  total_population  median_income  parcl_exchange_market  pricefeed_market  case_shiller_10_market  case_shiller_20_market
+# 0      5387853     USA  1714000              17                 Chicago City                 IL  EAST_NORTH_CENTRAL          CITY           2721914        71673.0                      1                 1                       0                       0
+# 1      5332060     USA  3918000              39                Columbus City                 OH  EAST_NORTH_CENTRAL          CITY            902449        62994.0                      0                 1                       0                       0
+# 2      5288667     USA  1836003              18  Indianapolis City (Balance)                 IN  EAST_NORTH_CENTRAL          CITY            882006        59110.0                      0                 0                       0                       0
+# 3      5278514     USA  2622000              26                 Detroit City                 MI  EAST_NORTH_CENTRAL          CITY            636787        37761.0                      0                 1                       0                       0
+# 4      5333209     USA  5553000              55               Milwaukee City                 WI  EAST_NORTH_CENTRAL          CITY            573299        49733.0                      0                 1                       0                       0
 ```
 
 ### Rental Market Metrics
@@ -57,15 +57,20 @@ Gets the number of rental units, total units, and percent rental unit concentrat
 ```python
 import os
 
-from parcllabs.search.top_markets import get_top_n_metros
 from parcllabs import ParclLabsClient
 
 api_key = os.getenv('PARCLLABS_API_KEY')
 client = ParclLabsClient(api_key)
 
-top_markets = get_top_n_metros(n=10)
-top_market_parcl_ids = top_markets['parcl_id'].tolist()
-
+# get all metros and sort by total population
+markets = client.search_markets.retrieve(
+        location_type='CBSA',
+        sort_by='TOTAL_POPULATION',
+        sort_order='DESC',
+        as_dataframe=True
+    )
+# top 10 metros based on population
+top_market_parcl_ids = markets['parcl_id'].tolist()[0:10]
 
 start_date = '2020-01-01'
 end_date = '2024-04-01'
@@ -100,14 +105,20 @@ Gets weekly updated rolling counts of newly listed for sale properties, segmente
 ```python
 import os
 
-from parcllabs.search.top_markets import get_top_n_metros
 from parcllabs import ParclLabsClient
 
 api_key = os.getenv('PARCLLABS_API_KEY')
 client = ParclLabsClient(api_key)
 
-top_markets = get_top_n_metros(n=10)
-top_market_parcl_ids = top_markets['parcl_id'].tolist()
+# get all metros and sort by total population
+markets = client.search_markets.retrieve(
+        location_type='CBSA',
+        sort_by='TOTAL_POPULATION',
+        sort_order='DESC',
+        as_dataframe=True
+    )
+# top 10 metros based on population
+top_market_parcl_ids = markets['parcl_id'].tolist()[0:10]
 
 start_date = '2020-01-01'
 end_date = '2024-04-01'
@@ -138,15 +149,21 @@ Gets monthly statistics on prices for housing events, including sales, new for-s
 ```python
 import os
 
-from parcllabs.search.top_markets import get_top_n_metros
 from parcllabs import ParclLabsClient
 
 
 api_key = os.getenv('PARCLLABS_API_KEY')
 client = ParclLabsClient(api_key)
 
-top_markets = get_top_n_metros(n=10)
-top_market_parcl_ids = top_markets['parcl_id'].tolist()
+# get all metros and sort by total population
+markets = client.search_markets.retrieve(
+        location_type='CBSA',
+        sort_by='TOTAL_POPULATION',
+        sort_order='DESC',
+        as_dataframe=True
+    )
+# top 10 metros based on population
+top_market_parcl_ids = markets['parcl_id'].tolist()[0:10]
 
 start_date = '2020-01-01'
 end_date = '2024-04-01'
@@ -191,15 +208,21 @@ Gets counts of investor-owned properties and their corresponding percentage owne
 ```python
 import os
 
-from parcllabs.search.top_markets import get_top_n_metros
 from parcllabs import ParclLabsClient
 
 
 api_key = os.getenv('PARCLLABS_API_KEY')
 client = ParclLabsClient(api_key)
 
-top_markets = get_top_n_metros(n=10)
-top_market_parcl_ids = top_markets['parcl_id'].tolist()
+# get all metros and sort by total population
+markets = client.search_markets.retrieve(
+        location_type='CBSA',
+        sort_by='TOTAL_POPULATION',
+        sort_order='DESC',
+        as_dataframe=True
+    )
+# top 10 metros based on population
+top_market_parcl_ids = markets['parcl_id'].tolist()[0:10]
 
 start_date = '2020-01-01'
 end_date = '2024-04-01'
@@ -240,15 +263,21 @@ Gets counts of investor-owned single family properties and their corresponding p
 ```python
 import os
 
-from parcllabs.search.top_markets import get_top_n_metros
 from parcllabs import ParclLabsClient
 
 
 api_key = os.getenv('PARCLLABS_API_KEY')
 client = ParclLabsClient(api_key)
 
-top_markets = get_top_n_metros(n=10)
-top_market_parcl_ids = top_markets['parcl_id'].tolist()
+# get all metros and sort by total population
+markets = client.search_markets.retrieve(
+        location_type='CBSA',
+        sort_by='TOTAL_POPULATION',
+        sort_order='DESC',
+        as_dataframe=True
+    )
+# top 10 metros based on population
+top_market_parcl_ids = markets['parcl_id'].tolist()[0:10]
 
 results_housing_stock_ownership = client.portfolio_metrics_sf_housing_stock_ownership.retrieve_many(
     parcl_ids=top_market_parcl_ids,
