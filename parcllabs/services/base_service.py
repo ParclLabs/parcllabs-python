@@ -72,7 +72,7 @@ class ParclLabsService(object):
                     results[parcl_id] = output.get("items")
                 except RequestException as e:
                     # continue if no data is found for the parcl_id
-                    if '404' in str(e):
+                    if "404" in str(e):
                         continue
                 bar()
 
