@@ -20,7 +20,7 @@ jobs:
       - name: Install Pip amd Dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install pipenv twine build
+          python -m pip install pipenv twine build hatch
           pipenv install --dev --python python
 
       - name: Run Lint
@@ -54,9 +54,9 @@ jobs:
       - name: Build Package
         run: |
           set -e
-          python -m build --sdist --wheel --outdir dist/
+          hatch build
 
-      - name: Upload to TestPyPI
+      - name: Upload to PyPI
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_KEY }}
