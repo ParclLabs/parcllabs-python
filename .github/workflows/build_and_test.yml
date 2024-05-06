@@ -1,0 +1,37 @@
+name: Parcl Labs Python Build & Test Workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.9
+
+      - name: Install Pip amd Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pipenv twine build
+          pipenv install --dev --python python
+
+      - name: Run Lint
+        run: |
+          set -e
+          pipenv run make lint
+
+      - name: Run tests
+        run: |
+          set -e
+          pipenv run make test
