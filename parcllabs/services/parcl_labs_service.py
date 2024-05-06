@@ -1,16 +1,23 @@
 from abc import abstractmethod
 from datetime import datetime
-from requests.exceptions import RequestException
 from typing import Any, Mapping, Optional, List, Dict
+from requests.exceptions import RequestException
 
 import pandas as pd
 from alive_progress import alive_bar
 
+from parcllabs.common import VALID_PROPERTY_TYPES
+
 
 class ParclLabsService(object):
+    """
+    Base class for working with data from the Parcl Labs API.
+    """
 
     def __init__(self, client: Any) -> None:
         self.client = client
+        if client is None:
+            raise ValueError("Missing required client object.")
 
     def _request(
         self,
@@ -21,12 +28,17 @@ class ParclLabsService(object):
         return self.client.get(url=url, params=params, is_next=is_next)
 
     def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> Any:
-        out = []
-        for k, v in data.items():
-            tmp = pd.DataFrame(v)
-            tmp["parcl_id"] = k
-            out.append(tmp)
-        return pd.concat(out).reset_index(drop=True)
+        output = []
+
+        for key, value in data.items():
+            data_df = pd.DataFrame(value)
+            data_df["parcl_id"] = key
+            output.append(data_df)
+
+        return pd.concat(output).reset_index(drop=True)
+
+    def _get_valid_property_types(self) -> List[str]:
+        return VALID_PROPERTY_TYPES
 
     def validate_date(self, date_str: str) -> str:
         """
@@ -35,7 +47,8 @@ class ParclLabsService(object):
         """
         if date_str:
             try:
-                return datetime.strptime(date_str, "%Y-%m-%d").strftime("%Y-%m-%d")
+                formatted_date = datetime.strptime(date_str, "%Y-%m-%d").strftime("%Y-%m-%d")
+                return formatted_date
             except ValueError:
                 raise ValueError(
                     f"Date {date_str} is not in the correct format YYYY-MM-DD."
@@ -46,16 +59,24 @@ class ParclLabsService(object):
         Validates the property type string and returns it in the 'single_family' or 'multi_family' format.
         Raises ValueError if the property type is invalid or not in the expected format.
         """
-        valid_property_types = ["single_family", "condo", "townhouse", "all_properties"]
+        valid_property_types = self._get_valid_property_types()
         if property_type:
             if property_type.lower() not in valid_property_types:
                 raise ValueError(
-                    f"Property type {property_type} is not valid. Must be either {', '.join(valid_property_types)}."
+                    f"Property type {property_type} is not valid. Must be one of {', '.join(valid_property_types)}."
                 )
             return property_type
 
     @abstractmethod
     def retrieve(self, parcl_id: int, params: Optional[Mapping[str, Any]] = None):
+        """
+        Retrieves data for a single parcl_id.
+
+        Args:
+            parcl_id (int): The parcl_id to retrieve data for.
+            params (dict, optional): Additional parameters to include in the request.
+
+        """
         pass
 
     def retrieve_many_items(
@@ -64,6 +85,19 @@ class ParclLabsService(object):
         params: Optional[Mapping[str, Any]] = None,
         get_key_on_last_request: str = None,
     ) -> Dict[str, Any]:
+        """
+        Retrieves data for multiple parcl_ids.
+
+        Args:
+
+            parcl_ids (List[int]): The list of parcl_ids to retrieve data for.
+            params (dict, optional): Additional parameters to include in the request.
+            get_key_on_last_request (str, optional): The key to retrieve from the last request.
+
+        Returns:
+            dict: A dictionary containing the results for each parcl_id.
+        """
+
         results = {}
         with alive_bar(len(parcl_ids)) as bar:
             for parcl_id in parcl_ids:
@@ -76,8 +110,5 @@ class ParclLabsService(object):
                         continue
                 bar()
 
-        additional_output = None
-        if get_key_on_last_request:
-            additional_output = output.get(get_key_on_last_request)
-
+        additional_output = output.get(get_key_on_last_request) if get_key_on_last_request else None
         return results, additional_output

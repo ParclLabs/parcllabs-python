@@ -1,11 +1,10 @@
-from enum import Enum
 from typing import Any, Mapping, Optional, List
 
 import pandas as pd
 
-from parcllabs.services.base_service import ParclLabsService
+from parcllabs.services.parcl_labs_service import ParclLabsService
 
-valid_locations = [
+VALID_LOCATION_TYPES = [
     "COUNTY",
     "CITY",
     "ZIP5",
@@ -16,7 +15,7 @@ valid_locations = [
     "ALL",
 ]
 
-valid_regions = [
+VALID_US_REGIONS = [
     "EAST_NORTH_CENTRAL",
     "EAST_SOUTH_CENTRAL",
     "MIDDLE_ATLANTIC",
@@ -29,7 +28,7 @@ valid_regions = [
     "ALL",
 ]
 
-valid_state_abbreviations = [
+VALID_US_STATE_ABBREV = [
     "AK",
     "AL",
     "AR",
@@ -86,7 +85,7 @@ valid_state_abbreviations = [
     "ALL",
 ]
 
-valid_state_fips_codes = [
+VALID_US_STATE_FIPS_CODES = [
     "01",
     "02",
     "04",
@@ -146,7 +145,7 @@ valid_state_fips_codes = [
     "ALL",
 ]
 
-valid_sort_by = [
+VALID_SORT_BY = [
     "TOTAL_POPULATION",
     "MEDIAN_INCOME",
     "CASE_SHILLER_20_MARKET",
@@ -155,12 +154,12 @@ valid_sort_by = [
     "PARCL_EXCHANGE_MARKET",
 ]
 
-valid_sort_order = ["ASC", "DESC"]
+VALID_SORT_ORDER = ["ASC", "DESC"]
 
 
 class SearchMarkets(ParclLabsService):
     """
-    Gets weekly updated rolling counts of newly listed for sale properties, segmented into 7, 30, 60, and 90 day periods ending on a specified date, based on a given <parcl_id>.
+    Retrieve parcl_id and metadata for geographic markets in the Parcl Labs API.
     """
 
     def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> Any:
@@ -181,40 +180,40 @@ class SearchMarkets(ParclLabsService):
         as_dataframe: bool = False,
         auto_paginate: bool = True,
     ):
-        if location_type is not None and location_type not in valid_locations:
+        if location_type is not None and location_type not in VALID_LOCATION_TYPES:
             raise ValueError(
-                f"location_type value error. Valid values are: {valid_locations}. Received: {location_type}"
+                f"location_type value error. Valid values are: {VALID_LOCATION_TYPES}. Received: {location_type}"
             )
 
-        if region is not None and region not in valid_regions:
+        if region is not None and region not in VALID_US_REGIONS:
             raise ValueError(
-                f"region value error. Valid values are: {valid_regions}. Received: {region}"
+                f"region value error. Valid values are: {VALID_US_REGIONS}. Received: {region}"
             )
 
         if (
             state_abbreviation is not None
-            and state_abbreviation not in valid_state_abbreviations
+            and state_abbreviation not in VALID_US_STATE_ABBREV
         ):
             raise ValueError(
-                f"state_abbreviation value error. Valid values are: {valid_state_abbreviations}. Received: {state_abbreviation}"
+                f"state_abbreviation value error. Valid values are: {VALID_US_STATE_ABBREV}. Received: {state_abbreviation}"
             )
 
         if (
             state_fips_code is not None
-            and state_fips_code not in valid_state_fips_codes
+            and state_fips_code not in VALID_US_STATE_FIPS_CODES
         ):
             raise ValueError(
-                f"state_fips_code value error. Valid values are: {valid_state_fips_codes}. Received: {state_fips_code}"
+                f"state_fips_code value error. Valid values are: {VALID_US_STATE_FIPS_CODES}. Received: {state_fips_code}"
             )
 
-        if sort_by is not None and sort_by not in valid_sort_by:
+        if sort_by is not None and sort_by not in VALID_SORT_BY:
             raise ValueError(
-                f"sort_by value error. Valid values are: {valid_sort_by}. Received: {sort_by}"
+                f"sort_by value error. Valid values are: {VALID_SORT_BY}. Received: {sort_by}"
             )
 
-        if sort_order is not None and sort_order not in valid_sort_order:
+        if sort_order is not None and sort_order not in VALID_SORT_ORDER:
             raise ValueError(
-                f"sort_order value error. Valid values are: {valid_sort_order}. Received: {sort_order}"
+                f"sort_order value error. Valid values are: {VALID_SORT_ORDER}. Received: {sort_order}"
             )
 
         params = {

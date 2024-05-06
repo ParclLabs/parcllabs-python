@@ -2,7 +2,7 @@ from typing import Any, Mapping, Optional, List
 
 import pandas as pd
 
-from parcllabs.services.base_service import ParclLabsService
+from parcllabs.services.parcl_labs_service import ParclLabsService
 
 
 class InvestorMetricsHousingEventCounts(ParclLabsService):
