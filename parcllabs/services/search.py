@@ -2,7 +2,7 @@ from typing import Any, Mapping, Optional, List
 
 import pandas as pd
 
-from parcllabs.services.parcl_labs_service import ParclLabsService
+from parcllabs.services.parcllabs_service import ParclLabsService
 
 VALID_LOCATION_TYPES = [
     "COUNTY",
@@ -178,7 +178,7 @@ class SearchMarkets(ParclLabsService):
         sort_order: str = None,
         params: Optional[Mapping[str, Any]] = None,
         as_dataframe: bool = False,
-        auto_paginate: bool = True,
+        auto_paginate: bool = False,
     ):
         """
         Retrieve parcl_id and metadata for geographic markets in the Parcl Labs API.

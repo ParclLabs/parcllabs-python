@@ -3,7 +3,7 @@ from typing import Any, Mapping, Optional, List
 import pandas as pd
 
 
-from parcllabs.services.parcl_labs_service import ParclLabsService
+from parcllabs.services.parcllabs_service import ParclLabsService
 
 
 class ForSaleMarketMetricsNewListingsRollingCounts(ParclLabsService):

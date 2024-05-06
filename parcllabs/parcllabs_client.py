@@ -108,6 +108,7 @@ class ParclLabsClient:
         Returns:
             dict: The JSON response as a dictionary.
         """
+
         if params:
             if not params.get("limit"):
                 params["limit"] = self.limit
