@@ -30,17 +30,29 @@ from parcllabs.services.rental_market_metrics import (
 
 from parcllabs.services.portfolio_metrics import (
     PortfolioMetricsSFHousingStockOwnership,
-    PortfolioMetricsNewListingsForSaleRollingCounts,
+    PortfolioMetricsSFNewListingsForSaleRollingCounts,
 )
 from parcllabs.services.search import SearchMarkets
 
 
 class ParclLabsClient:
     def __init__(self, api_key: str, limit: int = 12):
-        if api_key is None:
+        """
+        Create a ParclLabsClient client.
+
+        Args:
+            api_key (str): A Parcl Labs API key.
+            limit (int, optional): The number of items to return per page. Defaults to 12.
+
+        Raises:
+            ValueError: If the API key is not provided.
+
+        """
+        if not api_key:
             raise ValueError(
                 "API Key is required. Please visit https://dashboard.parcllabs.com/signup to get an API key."
             )
+
         self.api_key = api_key
         self.api_url = api_base
         self.limit = limit
@@ -81,7 +93,7 @@ class ParclLabsClient:
             PortfolioMetricsSFHousingStockOwnership(client=self)
         )
         self.portfolio_metrics_new_listings_for_sale_rolling_counts = (
-            PortfolioMetricsNewListingsForSaleRollingCounts(client=self)
+            PortfolioMetricsSFNewListingsForSaleRollingCounts(client=self)
         )
         self.search_markets = SearchMarkets(client=self)
 
@@ -96,6 +108,7 @@ class ParclLabsClient:
         Returns:
             dict: The JSON response as a dictionary.
         """
+
         if params:
             if not params.get("limit"):
                 params["limit"] = self.limit
