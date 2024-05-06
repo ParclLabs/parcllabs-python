@@ -114,7 +114,7 @@ class PortfolioMetricsSFHousingStockOwnership(ParclLabsService):
         return results
 
 
-class PortfolioMetricsNewListingsForSaleRollingCounts(ParclLabsService):
+class PortfolioMetricsSFNewListingsForSaleRollingCounts(ParclLabsService):
     """
     Get analytics on the number of new listings for sale in markets (parcl_id), segmented by the unit size of the investor's portfolio
     """
@@ -164,7 +164,7 @@ class PortfolioMetricsNewListingsForSaleRollingCounts(ParclLabsService):
         start_date = self.validate_date(start_date)
         end_date = self.validate_date(end_date)
 
-        if portfolio_size is not None and portfolio_size not in valid_portfolio_sizes:
+        if portfolio_size and portfolio_size not in valid_portfolio_sizes:
             raise ValueError(
                 f"location_type value error. Valid values are: {valid_portfolio_sizes}. Received: {portfolio_size}"
             )
@@ -200,7 +200,7 @@ class PortfolioMetricsNewListingsForSaleRollingCounts(ParclLabsService):
         start_date = self.validate_date(start_date)
         end_date = self.validate_date(end_date)
 
-        if portfolio_size is not None and portfolio_size not in valid_portfolio_sizes:
+        if portfolio_size and portfolio_size not in valid_portfolio_sizes:
             raise ValueError(
                 f"location_type value error. Valid values are: {valid_portfolio_sizes}. Received: {portfolio_size}"
             )
