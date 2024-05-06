@@ -43,7 +43,7 @@ test = [
 Homepage = "https://github.com/ParclLabs/parcllabs-python"
 
 [tool.hatch.version]
-path = "parcllabs/__init__.py"
+path = "parcllabs/__version__.py"
 
 [tool.hatch.build.targets.sdist]
 include = [
