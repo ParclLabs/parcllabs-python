@@ -8,7 +8,7 @@ api_key: Optional[str] = None
 api_base = DEFAULT_API_BASE
 
 
-from parcllabs.plabs_client import ParclLabsClient
+from parcllabs.parcllabs_client import ParclLabsClient
 
 
 from parcllabs.services.investor_metrics import (
@@ -36,6 +36,6 @@ from parcllabs.services.rental_market_metrics import (
 
 from parcllabs.services.portfolio_metrics import (
     PortfolioMetricsSFHousingStockOwnership,
-    PortfolioMetricsNewListingsForSaleRollingCounts,
+    PortfolioMetricsSFNewListingsForSaleRollingCounts,
 )
 from parcllabs.services.search import SearchMarkets
