@@ -7,7 +7,7 @@ name = "parcllabs"
 dynamic = ["version"]
 description = "Python SDK for ParclLabs API"
 readme = "README.md"
-license = ""
+license = {file = "LICENSE"}
 authors = [
     { name = "ParclLabs", email = "team@parcllabs.com" },
 ]
