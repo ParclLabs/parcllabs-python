@@ -85,7 +85,7 @@ class RentalMarketMetricsRentalUnitsConcentration(ParclLabsService):
             **(params or {}),
         }
         results = self._request(
-            url=f"/v1/rental_market_metrics/{parcl_id}/rental_units_concentation",
+            url=f"/v1/rental_market_metrics/{parcl_id}/rental_units_concentration",
             params=params,
         )
 
