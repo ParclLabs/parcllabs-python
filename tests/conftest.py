@@ -4,7 +4,7 @@ from datetime import datetime
 import requests_mock
 from parcllabs import ParclLabsClient
 
-from parcllabs.services.base_service import (
+from parcllabs.services.parcllabs_service import (
     ParclLabsService,
 )  # Adjust the import based on your project structure
 
