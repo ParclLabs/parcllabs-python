@@ -3,7 +3,7 @@
 
 ## Sign Up for an API Key
 
-To use the Parcl Labs API, you need an API key. To get an API key, sign up at [ParclLabs](https://dashboard.parcllabs.com/signup).
+To use the Parcl Labs API, you need an API key. To get an API key, sign up at [ParclLabs](https://dashboard.parcllabs.com/signup). In the subsequent examples, the API key is stored in the `PARCLLABS_API_KEY` environment variable.
 
 ## Examples
 
@@ -17,8 +17,23 @@ You can install the package via pip:
 pip install parcllabs
 ```
 
-### Search
-Search is your entry point into finding one or many of over 70,000 markets in the United States. You can search for markets by name, state, region, fips, or zip code. You can also search for markets by their Parcl ID.
+
+## Getting Started
+
+The `ParclLabsClient` class is the entry point to the Parcl Labs API. You can use the client to access methods that allow you to retrieve and analyze data from the Parcl Labs API. You'll need to pass in your API key when you create an instance of the `ParclLabsClient` class.
+
+```python
+import os
+
+from parcllabs import ParclLabsClient
+
+
+api_key = os.getenv('PARCLLABS_API_KEY')
+client = ParclLabsClient(api_key)
+```
+
+## Search
+Search is your entry point into finding one or many of over 70,000 markets in the United States. You can search for markets by `name`, `state`, `region`, `fips`, or `zip code`. You can also search for markets by their unique `parcl_id`.
 
 #### Search Markets
 ```python
@@ -44,6 +59,11 @@ print(results.head())
 # 3      5278514     USA  2622000              26                 Detroit City                 MI  EAST_NORTH_CENTRAL          CITY            636787        37761.0                      0                 1                       0                       0
 # 4      5333209     USA  5553000              55               Milwaukee City                 WI  EAST_NORTH_CENTRAL          CITY            573299        49733.0                      0                 1                       0                       0
 ```
+
+## Services
+
+Services are the core of the Parcl Labs API. They provide access to a wide range of data and analytics on the housing market. The services are divided into the following categories: `Rental Market Metrics`, `For Sale Market Metrics`, `Market Metrics`, `Investor Metrics`, and `Portfolio Metrics`.
+
 
 ### Rental Market Metrics
 
