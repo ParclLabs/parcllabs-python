@@ -36,7 +36,7 @@ jobs:
       - name: Extract version
         run: |
           set -e
-          echo "VERSION=$(python tools/print_version.py)" >> $GITHUB_ENV
+          echo "VERSION=$(pipenv run python tools/print_version.py)" >> $GITHUB_ENV
 
       - name: Tag Repository
         uses: actions/github-script@v5
