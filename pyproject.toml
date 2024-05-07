@@ -1,0 +1,51 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "parcllabs"
+dynamic = ["version"]
+description = "Python SDK for ParclLabs API"
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+    { name = "ParclLabs", email = "team@parcllabs.com" },
+]
+keywords = [
+    "analytics",
+    "api",
+    "real estate",
+    "parcllabs",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "alive-progress",
+    "numpy",
+    "pandas",
+    "requests",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "responses",
+]
+
+[project.urls]
+Homepage = "https://github.com/ParclLabs/parcllabs-python"
+
+[tool.hatch.version]
+path = "parcllabs/__version__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/parcllabs",
+]
