@@ -64,4 +64,4 @@ jobs:
           set -e
           # preflight check
           python -m twine check dist/*
-          python -m twine twine upload dist/*
+          python -m twine upload dist/*
