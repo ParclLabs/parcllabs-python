@@ -10,6 +10,7 @@ from parcllabs.services.investor_metrics import (
     InvesetorMetricsNewListingsForSaleRollingCounts,
     InvestorMetricsPurchaseToSaleRatio,
     InvestorMetricsHousingEventCounts,
+    InvestorMetricsHousingEventPrices
 )
 
 from parcllabs.services.market_metrics import (
@@ -31,6 +32,8 @@ from parcllabs.services.rental_market_metrics import (
 from parcllabs.services.portfolio_metrics import (
     PortfolioMetricsSFHousingStockOwnership,
     PortfolioMetricsSFNewListingsForSaleRollingCounts,
+    PortfolioMetricsSFHousingEventCounts,
+    PortfolioMetricsSFNewListingsForRentRollingCounts
 )
 from parcllabs.services.search import SearchMarkets
 
@@ -70,6 +73,9 @@ class ParclLabsClient:
         self.investor_metrics_housing_event_counts = InvestorMetricsHousingEventCounts(
             client=self
         )
+        self.investor_metrics_housing_event_prices = InvestorMetricsHousingEventPrices(
+            client=self
+        )
         self.market_metrics_housing_event_prices = MarketMetricsHousingEventPrices(
             client=self
         )
@@ -94,6 +100,12 @@ class ParclLabsClient:
         )
         self.portfolio_metrics_new_listings_for_sale_rolling_counts = (
             PortfolioMetricsSFNewListingsForSaleRollingCounts(client=self)
+        )
+        self.portfolio_metrics_sf_new_listings_for_rent_rolling_counts = (
+            PortfolioMetricsSFNewListingsForRentRollingCounts(client=self)
+        )
+        self.portfolio_metrics_sf_housing_event_counts = PortfolioMetricsSFHousingEventCounts(
+            client=self
         )
         self.search_markets = SearchMarkets(client=self)
 

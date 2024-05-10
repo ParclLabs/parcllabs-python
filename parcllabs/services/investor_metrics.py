@@ -273,3 +273,88 @@ class InvestorMetricsHousingStockOwnership(ParclLabsService):
             return self._as_pd_dataframe(results)
 
         return results
+    
+
+class InvestorMetricsHousingEventPrices(ParclLabsService):
+    """
+    Gets weekly updated rolling counts of investor-owned properties newly listed for sale, and their corresponding percentage share of the total for-sale listings market. These metrics are segmented into 7, 30, 60, and 90-day periods ending on a specified date, based on a given <parcl_id>
+    """
+
+    def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> Any:
+        out = []
+        for k, l in data.items():
+            for v in l:
+                date = v.get("date")
+                price_median_acquisitions = v.get('price').get("median").get("acquisitions")
+                price_median_dispositions = v.get('price').get("median").get("dispositions")
+                price_median_new_listings_for_sale = v.get('price').get("median").get("new_listings_for_sale")
+                price_median_rental_listings = v.get('price').get("median").get("rental_listings")
+                price_per_square_foot_median_acquisitions = v.get('price_per_square_foot').get("median").get("acquisitions")
+                price_per_square_foot_median_dispositions = v.get('price_per_square_foot').get("median").get("dispositions")
+                price_per_square_foot_median_new_listings_for_sale = v.get('price_per_square_foot').get("median").get("new_listings_for_sale")
+                price_per_square_foot_median_rental_listings = v.get('price_per_square_foot').get("median").get("rental_listings")
+
+                tmp = pd.DataFrame(
+                    {
+                        "date": date,
+                        "price_median_acquisitions": price_median_acquisitions,
+                        "price_median_dispositions": price_median_dispositions,
+                        "price_median_new_listings_for_sale": price_median_new_listings_for_sale,
+                        "price_median_rental_listings": price_median_rental_listings,
+                        "price_per_square_foot_median_acquisitions": price_per_square_foot_median_acquisitions,
+                        "price_per_square_foot_median_dispositions": price_per_square_foot_median_dispositions,
+                        "price_per_square_foot_median_new_listings_for_sale": price_per_square_foot_median_new_listings_for_sale,
+                        "price_per_square_foot_median_rental_listings": price_per_square_foot_median_rental_listings,
+                    },
+                    index=[0]
+                )
+                tmp["parcl_id"] = k
+                out.append(tmp)
+        return pd.concat(out).reset_index(drop=True)
+
+    def retrieve(
+        self,
+        parcl_id: int,
+        start_date: str = None,
+        end_date: str = None,
+        params: Optional[Mapping[str, Any]] = None,
+        as_dataframe: bool = False,
+    ):
+        start_date = self.validate_date(start_date)
+        end_date = self.validate_date(end_date)
+        params = {
+            "start_date": start_date,
+            "end_date": end_date,
+            **(params or {}),
+        }
+        results = self._request(
+            url=f"/v1/investor_metrics/{parcl_id}/housing_event_prices",
+            params=params,
+        )
+
+        if as_dataframe:
+            fmt = {results.get("parcl_id"): results.get("items")}
+            return self._as_pd_dataframe(fmt)
+        return results
+
+    def retrieve_many(
+        self,
+        parcl_ids: List[int],
+        start_date: str = None,
+        end_date: str = None,
+        params: Optional[Mapping[str, Any]] = None,
+        as_dataframe: bool = False,
+    ):
+        start_date = self.validate_date(start_date)
+        end_date = self.validate_date(end_date)
+        params = {
+            "start_date": start_date,
+            "end_date": end_date,
+            **(params or {}),
+        }
+        results, _ = self.retrieve_many_items(parcl_ids=parcl_ids, params=params)
+
+        if as_dataframe:
+            return self._as_pd_dataframe(results)
+
+        return results
