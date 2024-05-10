@@ -222,7 +222,7 @@ class PortfolioMetricsSFNewListingsForSaleRollingCounts(ParclLabsService):
             return df
 
         return results
-    
+
 
 class PortfolioMetricsSFHousingEventCounts(ParclLabsService):
     """
@@ -299,7 +299,7 @@ class PortfolioMetricsSFHousingEventCounts(ParclLabsService):
             return df
 
         return results
-    
+
 
 class PortfolioMetricsSFHousingEventCounts(ParclLabsService):
     """
@@ -376,7 +376,6 @@ class PortfolioMetricsSFHousingEventCounts(ParclLabsService):
             return df
 
         return results
-    
 
 
 class PortfolioMetricsSFNewListingsForRentRollingCounts(ParclLabsService):
