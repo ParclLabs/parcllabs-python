@@ -4,16 +4,16 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-requests = ">=2.25,<3"
-pandas = ">=1.2,<2"
+requests = ">=2.25"
+pandas = ">=1.2"
 alive-progress = "*"
 numpy = "*"
 
 [dev-packages]
-black = ">=22.0,<23"
+black = ">=22"
 parcllabs = {path = ".", editable = true}
-pytest = ">=6.0,<7"
-requests-mock = ">=1.8,<2"
+pytest = ">=8"
+requests-mock = ">=1"
 
 [requires]
-python_version = ">=3.9, <3.13"
+python_version = ">=3.9"
