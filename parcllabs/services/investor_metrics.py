@@ -273,7 +273,7 @@ class InvestorMetricsHousingStockOwnership(ParclLabsService):
             return self._as_pd_dataframe(results)
 
         return results
-    
+
 
 class InvestorMetricsHousingEventPrices(ParclLabsService):
     """
@@ -285,14 +285,32 @@ class InvestorMetricsHousingEventPrices(ParclLabsService):
         for k, l in data.items():
             for v in l:
                 date = v.get("date")
-                price_median_acquisitions = v.get('price').get("median").get("acquisitions")
-                price_median_dispositions = v.get('price').get("median").get("dispositions")
-                price_median_new_listings_for_sale = v.get('price').get("median").get("new_listings_for_sale")
-                price_median_rental_listings = v.get('price').get("median").get("rental_listings")
-                price_per_square_foot_median_acquisitions = v.get('price_per_square_foot').get("median").get("acquisitions")
-                price_per_square_foot_median_dispositions = v.get('price_per_square_foot').get("median").get("dispositions")
-                price_per_square_foot_median_new_listings_for_sale = v.get('price_per_square_foot').get("median").get("new_listings_for_sale")
-                price_per_square_foot_median_rental_listings = v.get('price_per_square_foot').get("median").get("rental_listings")
+                price_median_acquisitions = (
+                    v.get("price").get("median").get("acquisitions")
+                )
+                price_median_dispositions = (
+                    v.get("price").get("median").get("dispositions")
+                )
+                price_median_new_listings_for_sale = (
+                    v.get("price").get("median").get("new_listings_for_sale")
+                )
+                price_median_rental_listings = (
+                    v.get("price").get("median").get("rental_listings")
+                )
+                price_per_square_foot_median_acquisitions = (
+                    v.get("price_per_square_foot").get("median").get("acquisitions")
+                )
+                price_per_square_foot_median_dispositions = (
+                    v.get("price_per_square_foot").get("median").get("dispositions")
+                )
+                price_per_square_foot_median_new_listings_for_sale = (
+                    v.get("price_per_square_foot")
+                    .get("median")
+                    .get("new_listings_for_sale")
+                )
+                price_per_square_foot_median_rental_listings = (
+                    v.get("price_per_square_foot").get("median").get("rental_listings")
+                )
 
                 tmp = pd.DataFrame(
                     {
@@ -306,7 +324,7 @@ class InvestorMetricsHousingEventPrices(ParclLabsService):
                         "price_per_square_foot_median_new_listings_for_sale": price_per_square_foot_median_new_listings_for_sale,
                         "price_per_square_foot_median_rental_listings": price_per_square_foot_median_rental_listings,
                     },
-                    index=[0]
+                    index=[0],
                 )
                 tmp["parcl_id"] = k
                 out.append(tmp)

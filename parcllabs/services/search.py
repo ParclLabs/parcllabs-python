@@ -213,18 +213,12 @@ class SearchMarkets(ParclLabsService):
                 f"region value error. Valid values are: {VALID_US_REGIONS}. Received: {region}"
             )
 
-        if (
-            state_abbreviation
-            and state_abbreviation not in VALID_US_STATE_ABBREV
-        ):
+        if state_abbreviation and state_abbreviation not in VALID_US_STATE_ABBREV:
             raise ValueError(
                 f"state_abbreviation value error. Valid values are: {VALID_US_STATE_ABBREV}. Received: {state_abbreviation}"
             )
 
-        if (
-            state_fips_code
-            and state_fips_code not in VALID_US_STATE_FIPS_CODES
-        ):
+        if state_fips_code and state_fips_code not in VALID_US_STATE_FIPS_CODES:
             raise ValueError(
                 f"state_fips_code value error. Valid values are: {VALID_US_STATE_FIPS_CODES}. Received: {state_fips_code}"
             )

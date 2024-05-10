@@ -25,7 +25,7 @@ class ParclLabsService(object):
         params: Optional[Mapping[str, Any]] = None,
         is_next: bool = False,
     ) -> Any:
-        
+
         return self.client.get(url=url, params=params, is_next=is_next)
 
     def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> Any:
@@ -48,7 +48,9 @@ class ParclLabsService(object):
         """
         if date_str:
             try:
-                formatted_date = datetime.strptime(date_str, "%Y-%m-%d").strftime("%Y-%m-%d")
+                formatted_date = datetime.strptime(date_str, "%Y-%m-%d").strftime(
+                    "%Y-%m-%d"
+                )
                 return formatted_date
             except ValueError:
                 raise ValueError(
@@ -111,5 +113,7 @@ class ParclLabsService(object):
                         continue
                 bar()
 
-        additional_output = output.get(get_key_on_last_request) if get_key_on_last_request else None
+        additional_output = (
+            output.get(get_key_on_last_request) if get_key_on_last_request else None
+        )
         return results, additional_output
