@@ -222,3 +222,268 @@ class PortfolioMetricsSFNewListingsForSaleRollingCounts(ParclLabsService):
             return df
 
         return results
+    
+
+class PortfolioMetricsSFHousingEventCounts(ParclLabsService):
+    """
+    Gets monthly counts of investor-owned single family property housing events, segmented by portfolio size, for a specified <parcl_id>. Housing events include acquisitions, dispositions, new for sale listings, and new rental listings.
+    """
+
+    def retrieve(
+        self,
+        parcl_id: int,
+        start_date: str = None,
+        end_date: str = None,
+        portfolio_size: str = None,
+        params: Optional[Mapping[str, Any]] = None,
+        as_dataframe: bool = False,
+    ):
+        start_date = self.validate_date(start_date)
+        end_date = self.validate_date(end_date)
+
+        if portfolio_size and portfolio_size not in valid_portfolio_sizes:
+            raise ValueError(
+                f"location_type value error. Valid values are: {valid_portfolio_sizes}. Received: {portfolio_size}"
+            )
+
+        params = {
+            "start_date": start_date,
+            "end_date": end_date,
+            "portfolio_size": portfolio_size,
+            **(params or {}),
+        }
+        results = self._request(
+            url=f"/v1/portfolio_metrics/{parcl_id}/sf_housing_event_counts",
+            params=params,
+        )
+
+        if as_dataframe:
+            fmt = {results.get("parcl_id"): results.get("items")}
+            df = self._as_pd_dataframe(fmt)
+            df["portfolio_size"] = results.get("portfolio_size")
+            return df
+
+        return results
+
+    def retrieve_many(
+        self,
+        parcl_ids: List[int],
+        start_date: str = None,
+        end_date: str = None,
+        portfolio_size: str = None,
+        params: Optional[Mapping[str, Any]] = None,
+        as_dataframe: bool = False,
+    ):
+        start_date = self.validate_date(start_date)
+        end_date = self.validate_date(end_date)
+
+        if portfolio_size and portfolio_size not in valid_portfolio_sizes:
+            raise ValueError(
+                f"location_type value error. Valid values are: {valid_portfolio_sizes}. Received: {portfolio_size}"
+            )
+
+        params = {
+            "start_date": start_date,
+            "end_date": end_date,
+            "portfolio_size": portfolio_size,
+            **(params or {}),
+        }
+
+        results, p_size = self.retrieve_many_items(
+            parcl_ids=parcl_ids, params=params, get_key_on_last_request="portfolio_size"
+        )
+
+        if as_dataframe:
+            df = self._as_pd_dataframe(results)
+            df["portfolio_size"] = p_size
+            return df
+
+        return results
+    
+
+class PortfolioMetricsSFHousingEventCounts(ParclLabsService):
+    """
+    Gets monthly counts of investor-owned single family property housing events, segmented by portfolio size, for a specified <parcl_id>. Housing events include acquisitions, dispositions, new for sale listings, and new rental listings.
+    """
+
+    def retrieve(
+        self,
+        parcl_id: int,
+        start_date: str = None,
+        end_date: str = None,
+        portfolio_size: str = None,
+        params: Optional[Mapping[str, Any]] = None,
+        as_dataframe: bool = False,
+    ):
+        start_date = self.validate_date(start_date)
+        end_date = self.validate_date(end_date)
+
+        if portfolio_size and portfolio_size not in valid_portfolio_sizes:
+            raise ValueError(
+                f"location_type value error. Valid values are: {valid_portfolio_sizes}. Received: {portfolio_size}"
+            )
+
+        params = {
+            "start_date": start_date,
+            "end_date": end_date,
+            "portfolio_size": portfolio_size,
+            **(params or {}),
+        }
+        results = self._request(
+            url=f"/v1/portfolio_metrics/{parcl_id}/sf_housing_event_counts",
+            params=params,
+        )
+
+        if as_dataframe:
+            fmt = {results.get("parcl_id"): results.get("items")}
+            df = self._as_pd_dataframe(fmt)
+            df["portfolio_size"] = results.get("portfolio_size")
+            return df
+
+        return results
+
+    def retrieve_many(
+        self,
+        parcl_ids: List[int],
+        start_date: str = None,
+        end_date: str = None,
+        portfolio_size: str = None,
+        params: Optional[Mapping[str, Any]] = None,
+        as_dataframe: bool = False,
+    ):
+        start_date = self.validate_date(start_date)
+        end_date = self.validate_date(end_date)
+
+        if portfolio_size and portfolio_size not in valid_portfolio_sizes:
+            raise ValueError(
+                f"location_type value error. Valid values are: {valid_portfolio_sizes}. Received: {portfolio_size}"
+            )
+
+        params = {
+            "start_date": start_date,
+            "end_date": end_date,
+            "portfolio_size": portfolio_size,
+            **(params or {}),
+        }
+
+        results, p_size = self.retrieve_many_items(
+            parcl_ids=parcl_ids, params=params, get_key_on_last_request="portfolio_size"
+        )
+
+        if as_dataframe:
+            df = self._as_pd_dataframe(results)
+            df["portfolio_size"] = p_size
+            return df
+
+        return results
+    
+
+
+class PortfolioMetricsSFNewListingsForRentRollingCounts(ParclLabsService):
+    """
+    Get analytics on the number of new listings for sale in markets (parcl_id), segmented by the unit size of the investor's portfolio
+    """
+
+    def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> Any:
+        out = []
+        for k, l in data.items():
+            for v in l:
+                date = v.get("date")
+                roll_7_count = v.get("count").get("rolling_7_day")
+                roll_30_count = v.get("count").get("rolling_30_day")
+                roll_60_count = v.get("count").get("rolling_60_day")
+                roll_90_count = v.get("count").get("rolling_90_day")
+                pct_7_count = v.get("pct_sf_for_rent_market").get("rolling_7_day")
+                pct_30_count = v.get("pct_sf_for_rent_market").get("rolling_30_day")
+                pct_60_count = v.get("pct_sf_for_rent_market").get("rolling_60_day")
+                pct_90_count = v.get("pct_sf_for_rent_market").get("rolling_90_day")
+                counts = [roll_7_count, roll_30_count, roll_60_count, roll_90_count]
+                pcts = [pct_7_count, pct_30_count, pct_60_count, pct_90_count]
+                names = [
+                    "rolling_7_day",
+                    "rolling_30_day",
+                    "rolling_60_day",
+                    "rolling_90_day",
+                ]
+                tmp = pd.DataFrame(
+                    {
+                        "date": date,
+                        "period": names,
+                        "counts": counts,
+                        "pct_sf_for_rent_market": pcts,
+                    }
+                )
+                tmp["parcl_id"] = k
+                out.append(tmp)
+        return pd.concat(out).reset_index(drop=True)
+
+    def retrieve(
+        self,
+        parcl_id: int,
+        start_date: str = None,
+        end_date: str = None,
+        portfolio_size: str = None,
+        params: Optional[Mapping[str, Any]] = None,
+        as_dataframe: bool = False,
+    ):
+        start_date = self.validate_date(start_date)
+        end_date = self.validate_date(end_date)
+
+        if portfolio_size and portfolio_size not in valid_portfolio_sizes:
+            raise ValueError(
+                f"location_type value error. Valid values are: {valid_portfolio_sizes}. Received: {portfolio_size}"
+            )
+
+        params = {
+            "start_date": start_date,
+            "end_date": end_date,
+            "portfolio_size": portfolio_size,
+            **(params or {}),
+        }
+        results = self._request(
+            url=f"/v1/portfolio_metrics/{parcl_id}/sf_new_listings_for_rent_rolling_counts",
+            params=params,
+        )
+
+        if as_dataframe:
+            fmt = {results.get("parcl_id"): results.get("items")}
+            df = self._as_pd_dataframe(fmt)
+            df["portfolio_size"] = results.get("portfolio_size")
+            return df
+
+        return results
+
+    def retrieve_many(
+        self,
+        parcl_ids: List[int],
+        start_date: str = None,
+        end_date: str = None,
+        portfolio_size: str = None,
+        params: Optional[Mapping[str, Any]] = None,
+        as_dataframe: bool = False,
+    ):
+        start_date = self.validate_date(start_date)
+        end_date = self.validate_date(end_date)
+
+        if portfolio_size and portfolio_size not in valid_portfolio_sizes:
+            raise ValueError(
+                f"location_type value error. Valid values are: {valid_portfolio_sizes}. Received: {portfolio_size}"
+            )
+
+        params = {
+            "start_date": start_date,
+            "end_date": end_date,
+            "portfolio_size": portfolio_size,
+            **(params or {}),
+        }
+
+        results, p_size = self.retrieve_many_items(
+            parcl_ids=parcl_ids, params=params, get_key_on_last_request="portfolio_size"
+        )
+
+        if as_dataframe:
+            df = self._as_pd_dataframe(results)
+            df["portfolio_size"] = p_size
+            return df
+
+        return results

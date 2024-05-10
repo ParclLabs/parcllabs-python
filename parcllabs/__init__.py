@@ -16,6 +16,7 @@ from parcllabs.services.investor_metrics import (
     InvesetorMetricsNewListingsForSaleRollingCounts,
     InvestorMetricsPurchaseToSaleRatio,
     InvestorMetricsHousingEventCounts,
+    InvestorMetricsHousingEventPrices
 )
 
 from parcllabs.services.market_metrics import (
@@ -37,5 +38,7 @@ from parcllabs.services.rental_market_metrics import (
 from parcllabs.services.portfolio_metrics import (
     PortfolioMetricsSFHousingStockOwnership,
     PortfolioMetricsSFNewListingsForSaleRollingCounts,
+    PortfolioMetricsSFHousingEventCounts,
+    PortfolioMetricsSFNewListingsForRentRollingCounts
 )
 from parcllabs.services.search import SearchMarkets

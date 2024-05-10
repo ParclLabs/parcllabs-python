@@ -224,6 +224,9 @@ Gets weekly updated rolling counts of investor-owned properties newly listed for
 #### Housing Stock Ownership
 Gets counts of investor-owned properties and their corresponding percentage ownership share of the total housing stock, for a specified `parcl_id`.
 
+#### Housing Event Prices
+Gets monthly median prices for investor housing events, including acquisitions, dispositions, new sale listings, and new rental listings, based on a specified <parcl_id>.
+
 ##### Get all investor metrics
 ```python
 import os
@@ -274,12 +277,33 @@ results_housing_event_counts = client.investor_metrics_housing_event_counts.retr
     end_date=end_date,
     as_dataframe=True
 )
+
+results = client.investor_metrics_housing_event_prices.retrieve_many(
+        parcl_ids=top_market_parcl_ids,
+        start_date=start_date,
+        end_date=end_date,
+        as_dataframe=True
+    )
 ```
 
-#### Portfolio Metrics
-Gets counts of investor-owned single family properties and their corresponding percentage of the total single family housing stock, segmented by portfolio size, for a specified `parcl_id`. The data series for portfolio metrics begins on March 1, 2024 (2024-03-01).
+### Portfolio Metrics
 
-##### Single Family Home Portfolio Metrics
+#### Single Family Housing Event Counts
+
+Gets monthly counts of investor-owned single family property housing events, segmented by portfolio size, for a specified <parcl_id>. Housing events include acquisitions, dispositions, new for sale listings, and new rental listings.
+
+#### Single Family Housing Stock Ownership
+
+Gets counts of investor-owned single family properties and their corresponding percentage of the total single family housing stock, segmented by portfolio size, for a specified <parcl_id>. The data series for portfolio metrics begins on March 1, 2024 (2024-03-01).
+
+#### New Listings for Sale Rolling Counts
+
+Gets counts of investor-owned single family properties and their corresponding percentage of the total single family housing stock, segmented by portfolio size, for a specified <parcl_id>. The data series for portfolio metrics begins on April 15, 2024 (2024-04-15).
+
+#### New Listings for Rent Rolling Counts
+
+Gets weekly updated rolling counts of investor-owned single family properties newly listed for rent, segmented by portfolio size, and their corresponding percentage share of the total single family for rent listings market. These metrics are divided into 7, 30, 60, and 90 day periods ending on a specified date, based on a given <parcl_id>. The data series for portfolio metrics begins on April 22, 2024 (2024-04-22).
+
 ```python
 import os
 
@@ -310,4 +334,16 @@ portfolio_metrics_new_listings = client.portfolio_metrics_new_listings_for_sale_
         as_dataframe=True,
         portfolio_size='PORTFOLIO_1000_PLUS',
     )
+
+results = client.portfolio_metrics_sf_housing_event_counts.retrieve_many(
+    parcl_ids=top_market_parcl_ids,
+    as_dataframe=True,
+    portfolio_size='PORTFOLIO_1000_PLUS'
+)
+
+results = client.portfolio_metrics_sf_new_listings_for_rent_rolling_counts.retrieve_many(
+        parcl_ids=top_market_parcl_ids,
+        as_dataframe=True,
+        portfolio_size='PORTFOLIO_1000_PLUS'
+)
 ```
