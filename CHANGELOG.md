@@ -1,3 +1,6 @@
+### v0.2.0
+- Introduce `market_metrics_all_cash`, `price_feed`, `price_feed_volatiltiy`. See [Parcl Labs Changelog](https://docs.parcllabs.com/changelog/market-all-cash-price-feed-price-feed-volatility-endpoints) for more details.
+
 ### v0.1.21
 - Bugfix on parsing for `new_rental_listings` metrics in `v1/investor_metrics/{parcl_id}/housing_event_prices`
 

@@ -5,6 +5,11 @@ from requests.exceptions import RequestException
 
 from parcllabs import api_base
 
+
+from parcllabs.services.price_feed import (
+    PriceFeedBase,
+)
+
 from parcllabs.services.investor_metrics import (
     InvestorMetricsHousingStockOwnership,
     InvesetorMetricsNewListingsForSaleRollingCounts,
@@ -14,6 +19,7 @@ from parcllabs.services.investor_metrics import (
 )
 
 from parcllabs.services.market_metrics import (
+    MarketMetricsAllCash,
     MarketMetricsHousingEventPrices,
     MarketMetricsHousingStock,
     MarketMetricsHousingEventCounts,
@@ -60,6 +66,14 @@ class ParclLabsClient:
         self.api_url = api_base
         self.limit = limit
 
+        # price feed services
+        self.price_feed = PriceFeedBase(
+            url="/v1/price_feed/{parcl_id}/price_feed", client=self
+        )
+        self.price_feed_volatility = PriceFeedBase(
+            url="/v1/price_feed/{parcl_id}/volatility", client=self
+        )
+
         # top-level services: The client is responsible for creating instances of these services
         self.investor_metrics_housing_stock_ownership = (
             InvestorMetricsHousingStockOwnership(client=self)
@@ -79,6 +93,7 @@ class ParclLabsClient:
         self.market_metrics_housing_event_prices = MarketMetricsHousingEventPrices(
             client=self
         )
+        self.market_metrics_all_cash = MarketMetricsAllCash(client=self)
         self.market_metrics_housing_stock = MarketMetricsHousingStock(client=self)
         self.market_metrics_housing_event_counts = MarketMetricsHousingEventCounts(
             client=self
