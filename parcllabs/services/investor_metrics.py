@@ -294,8 +294,8 @@ class InvestorMetricsHousingEventPrices(ParclLabsService):
                 price_median_new_listings_for_sale = (
                     v.get("price").get("median").get("new_listings_for_sale")
                 )
-                price_median_rental_listings = (
-                    v.get("price").get("median").get("rental_listings")
+                price_median_new_rental_listings = (
+                    v.get("price").get("median").get("new_rental_listings")
                 )
                 price_per_square_foot_median_acquisitions = (
                     v.get("price_per_square_foot").get("median").get("acquisitions")
@@ -308,8 +308,10 @@ class InvestorMetricsHousingEventPrices(ParclLabsService):
                     .get("median")
                     .get("new_listings_for_sale")
                 )
-                price_per_square_foot_median_rental_listings = (
-                    v.get("price_per_square_foot").get("median").get("rental_listings")
+                price_per_square_foot_median_new_rental_listings = (
+                    v.get("price_per_square_foot")
+                    .get("median")
+                    .get("new_rental_listings")
                 )
 
                 tmp = pd.DataFrame(
@@ -318,11 +320,11 @@ class InvestorMetricsHousingEventPrices(ParclLabsService):
                         "price_median_acquisitions": price_median_acquisitions,
                         "price_median_dispositions": price_median_dispositions,
                         "price_median_new_listings_for_sale": price_median_new_listings_for_sale,
-                        "price_median_rental_listings": price_median_rental_listings,
+                        "price_median_new_rental_listings": price_median_new_rental_listings,
                         "price_per_square_foot_median_acquisitions": price_per_square_foot_median_acquisitions,
                         "price_per_square_foot_median_dispositions": price_per_square_foot_median_dispositions,
                         "price_per_square_foot_median_new_listings_for_sale": price_per_square_foot_median_new_listings_for_sale,
-                        "price_per_square_foot_median_rental_listings": price_per_square_foot_median_rental_listings,
+                        "price_per_square_foot_median_new_rental_listings": price_per_square_foot_median_new_rental_listings,
                     },
                     index=[0],
                 )
