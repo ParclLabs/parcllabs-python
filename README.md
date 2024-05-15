@@ -62,8 +62,43 @@ print(results.head())
 
 ## Services
 
-Services are the core of the Parcl Labs API. They provide access to a wide range of data and analytics on the housing market. The services are divided into the following categories: `Rental Market Metrics`, `For Sale Market Metrics`, `Market Metrics`, `Investor Metrics`, and `Portfolio Metrics`.
+Services are the core of the Parcl Labs API. They provide access to a wide range of data and analytics on the housing market. The services are divided into the following categories: `Price Feeds`, `Rental Market Metrics`, `For Sale Market Metrics`, `Market Metrics`, `Investor Metrics`, and `Portfolio Metrics`.
 
+### Price Feeds
+The Parcl Labs Price Feed (PLPF) is a daily-updated, real-time indicator of residential real estate prices, measured by price per square foot, across select US markets.
+
+The Price Feeds category allows you to access our daily-updated PLPF and derivative metrics, such as volatility.
+
+#### Price Feed
+Gets the daily price feed for a specified `parcl_id`.
+
+#### Price Feed Volatility
+Gets the daily price feed volatility for a specified `parcl_id`.
+
+```python
+import os
+
+from parcllabs import ParclLabsClient
+
+api_key = os.getenv('PARCLLABS_API_KEY')
+client = ParclLabsClient(api_key)
+
+# Get available Price Feed markets
+pricefeed_markets = client.search_markets.retrieve(
+        sort_by='PRICEFEED_MARKET',
+        sort_order='DESC',
+        params={'limit': 10},
+        as_dataframe=True
+)
+pricefeed_ids = pricefeed_markets['parcl_id'].tolist()
+
+price_feeds = client.price_feed.retrieve_many(parcl_ids=pricefeed_ids, as_dataframe=True)
+price_feed_volatility = client.price_feed_volatility.retrieve_many(parcl_ids=pricefeed_ids, as_dataframe=True)
+
+# want to save to csv? 
+price_feeds.to_csv('price_feeds.csv', index=False)
+price_feed_volatility.to_csv('price_feed_volatility.csv', index=False)
+```
 
 ### Rental Market Metrics
 
@@ -164,6 +199,9 @@ Gets housing stock for a specified `parcl_id`. Housing stock represents the tota
 #### Housing Event Prices
 Gets monthly statistics on prices for housing events, including sales, new for-sale listings, and new rental listings, based on a specified `parcl_id`.
 
+#### All Cash
+Gets monthly counts of all cash transactions and their percentage share of total sales, based on a specified <parcl_id> .
+
 
 ##### Get all market metrics
 ```python
@@ -203,6 +241,13 @@ results_housing_stock = client.market_metrics_housing_stock.retrieve_many(
 )
 
 results_housing_event_counts = client.market_metrics_housing_event_counts.retrieve_many(
+    parcl_ids=top_market_parcl_ids,
+    start_date=start_date,
+    end_date=end_date,
+    as_dataframe=True
+)
+
+results_all_cash = client.market_metrics_all_cash.retrieve_many(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
     end_date=end_date,
