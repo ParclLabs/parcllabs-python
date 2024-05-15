@@ -1,3 +1,6 @@
+### v0.1.21
+- Bugfix on parsing for `new_rental_listings` metrics in `v1/investor_metrics/{parcl_id}/housing_event_prices`
+
 ### v0.1.16
 - Gracefully handle no data found in retrieve_many methods
 
