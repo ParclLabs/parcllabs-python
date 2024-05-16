@@ -1,3 +1,6 @@
+### v0.2.1
+- Add `auto_paginate` to price_feed, price_feed_volatility given max limit on API is less than all observations
+
 ### v0.2.0
 - Introduce `market_metrics_all_cash`, `price_feed`, `price_feed_volatiltiy`. See [Parcl Labs Changelog](https://docs.parcllabs.com/changelog/market-all-cash-price-feed-price-feed-volatility-endpoints) for more details.
 

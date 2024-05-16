@@ -87,6 +87,7 @@ class ParclLabsService(object):
         parcl_ids: List[int],
         params: Optional[Mapping[str, Any]] = None,
         get_key_on_last_request: str = None,
+        **kwargs,
     ) -> Dict[str, Any]:
         """
         Retrieves data for multiple parcl_ids.
@@ -105,7 +106,7 @@ class ParclLabsService(object):
         with alive_bar(len(parcl_ids)) as bar:
             for parcl_id in parcl_ids:
                 try:
-                    output = self.retrieve(parcl_id=parcl_id, params=params)
+                    output = self.retrieve(parcl_id=parcl_id, params=params, **kwargs)
                     results[parcl_id] = output.get("items")
                 except RequestException as e:
                     # continue if no data is found for the parcl_id
