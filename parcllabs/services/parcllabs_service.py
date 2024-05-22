@@ -25,7 +25,6 @@ class ParclLabsService(object):
         params: Optional[Mapping[str, Any]] = None,
         is_next: bool = False,
     ) -> Any:
-
         return self.client.get(url=url, params=params, is_next=is_next)
 
     def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> Any:

@@ -1,3 +1,6 @@
+### v0.2.2
+- Add explicit throttling error message for search.
+
 ### v0.2.1
 - Add `auto_paginate` to price_feed, price_feed_volatility given max limit on API is less than all observations
 
