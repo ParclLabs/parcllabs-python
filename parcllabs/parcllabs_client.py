@@ -152,7 +152,9 @@ class ParclLabsClient:
             try:
                 error_details = response.json()
                 error_message = error_details.get("detail", "No detail provided by API")
-                error = f"{error_message}. Visit https://dashboard.parcllabs.com for more information or reach out to team@parcllabs.com."
+                error = error_message
+                if response.status_code == 403:
+                    error = f"{error_message}. Visit https://dashboard.parcllabs.com for more information or reach out to team@parcllabs.com."
                 if response.status_code == 429:
                     error = error_details.get("error", "Rate Limit Exceeded")
             except json.JSONDecodeError:
