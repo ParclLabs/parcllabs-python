@@ -1,3 +1,6 @@
+### v0.3.0
+- Introduce `price_feed_rentals`. See [Parcl Labs Changelog](https://docs.parcllabs.com/changelog/price-feed-rental-price-feed) for more details.
+
 ### v0.2.2
 - Add explicit throttling error message for search.
 

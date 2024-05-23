@@ -74,6 +74,10 @@ class ParclLabsClient:
             url="/v1/price_feed/{parcl_id}/volatility", client=self
         )
 
+        self.rental_price_feed = PriceFeedBase(
+            url="/v1/price_feed/{parcl_id}/rental_price_feed", client=self
+        )
+
         # top-level services: The client is responsible for creating instances of these services
         self.investor_metrics_housing_stock_ownership = (
             InvestorMetricsHousingStockOwnership(client=self)
