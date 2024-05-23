@@ -75,6 +75,9 @@ Gets the daily price feed for a specified `parcl_id`.
 #### Price Feed Volatility
 Gets the daily price feed volatility for a specified `parcl_id`.
 
+#### Rental Price Feed
+Gets the daily updated Parcl Labs Rental Price Feed for a given `parcl_id`.
+
 ```python
 import os
 
@@ -93,6 +96,10 @@ pricefeed_markets = client.search_markets.retrieve(
 pricefeed_ids = pricefeed_markets['parcl_id'].tolist()
 
 price_feeds = client.price_feed.retrieve_many(parcl_ids=pricefeed_ids, as_dataframe=True)
+rental_price_feeds = client.rental_price_feed.retrieve_many(
+    parcl_ids=pricefeed_ids, 
+    as_dataframe=True
+)
 price_feed_volatility = client.price_feed_volatility.retrieve_many(parcl_ids=pricefeed_ids, as_dataframe=True)
 
 # want to save to csv? 
