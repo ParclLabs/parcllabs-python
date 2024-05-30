@@ -6,10 +6,14 @@ import pandas as pd
 from parcllabs.services.parcllabs_service import ParclLabsService
 
 
-class ForSaleMarketMetricsNewListingsRollingCounts(ParclLabsService):
+class ForSaleMarketMetricsBaseService(ParclLabsService):
     """
-    Gets weekly updated rolling counts of newly listed for sale properties, segmented into 7, 30, 60, and 90 day periods ending on a specified date, based on a given <parcl_id>.
+    Base class for for sale market metrics services.
     """
+
+    def __init__(self, url: str, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.url = url
 
     def retrieve(
         self,
@@ -30,7 +34,7 @@ class ForSaleMarketMetricsNewListingsRollingCounts(ParclLabsService):
             **(params or {}),
         }
         results = self._request(
-            url=f"/v1/for_sale_market_metrics/{parcl_id}/new_listings_rolling_counts",
+            url=self.url.format(parcl_id=parcl_id),
             params=params,
         )
 

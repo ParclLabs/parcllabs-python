@@ -162,6 +162,9 @@ rentals_new_listings_rolling_counts = client.rental_market_metrics_new_listings_
 #### New Listings Rolling Counts
 Gets weekly updated rolling counts of newly listed for sale properties, segmented into 7, 30, 60, and 90 day periods ending on a specified date, based on a given `parcl_id`.
 
+#### For Sale Inventory
+Gets the weekly updated current count of total inventory listed on market for sale, based on a specified `parcl_id` . The data series for the for sale inventory begins on September 1, 2022 (2022-09-01).
+
 
 ##### Get all for sale market metrics
 ```python
@@ -191,6 +194,13 @@ results_for_sale_new_listings = client.for_sale_market_metrics_new_listings_roll
     start_date=start_date,
     end_date=end_date,
     property_type=property_type,
+    as_dataframe=True
+)
+
+for_sale_inventory = client.for_sale_market_metrics_for_sale_inventory(
+    parcl_ids=top_market_parcl_ids,
+    start_date=start_date,
+    end_date=end_date,
     as_dataframe=True
 )
 ```
