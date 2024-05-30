@@ -1,3 +1,6 @@
+### v0.4.0
+- Introduce `for_sale_inventory`. See [Parcl Labs Changelog](https://docs.parcllabs.com/changelog/for-sale-market-metrics-for-sale-inventory) for more details.
+
 ### v0.3.0
 - Introduce `price_feed_rentals`. See [Parcl Labs Changelog](https://docs.parcllabs.com/changelog/price-feed-rental-price-feed) for more details.
 

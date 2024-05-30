@@ -26,7 +26,7 @@ from parcllabs.services.market_metrics import (
 )
 
 from parcllabs.services.for_sale_market_metrics import (
-    ForSaleMarketMetricsNewListingsRollingCounts,
+    ForSaleMarketMetricsBaseService,
 )
 
 from parcllabs.services.rental_market_metrics import (
@@ -102,9 +102,18 @@ class ParclLabsClient:
         self.market_metrics_housing_event_counts = MarketMetricsHousingEventCounts(
             client=self
         )
-        self.for_sale_market_metrics_new_listings_rolling_counts = (
-            ForSaleMarketMetricsNewListingsRollingCounts(client=self)
+
+        # for sale market metrics
+        self.for_sale_market_metrics_new_listings_rolling_counts = ForSaleMarketMetricsBaseService(
+            url="/v1/for_sale_market_metrics/{parcl_id}/new_listings_rolling_counts",
+            client=self
         )
+
+        self.for_sale_market_metrics_for_sale_inventory = ForSaleMarketMetricsBaseService(
+            url="/v1/for_sale_market_metrics/{parcl_id}/for_sale_inventory",
+            client=self
+        )
+
         self.rental_market_metrics_rental_units_concentration = (
             RentalMarketMetricsRentalUnitsConcentration(client=self)
         )
