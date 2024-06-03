@@ -5,7 +5,7 @@ from requests.exceptions import HTTPError
 import pandas as pd
 
 from parcllabs.services.price_feed import (
-    PriceFeedBase,
+    PriceFeedBaseService,
 )
 
 
@@ -19,7 +19,7 @@ def mock_client():
 
 @pytest.fixture
 def service(mock_client):
-    return PriceFeedBase(
+    return PriceFeedBaseService(
         client=mock_client, url="/v1/price_feed/{parcl_id}/rental_price_feed"
     )
 

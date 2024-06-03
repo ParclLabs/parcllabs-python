@@ -5,176 +5,13 @@ import pandas as pd
 from parcllabs.services.parcllabs_service import ParclLabsService
 
 
-class InvestorMetricsHousingEventCounts(ParclLabsService):
+class InvestorMetricsBaseService(ParclLabsService):
     """
-    Gets counts of investor-owned properties and their corresponding percentage ownership share of the total housing stock, for a specified <parcl_id>.
-    """
-
-    def retrieve(
-        self,
-        parcl_id: int,
-        start_date: str = None,
-        end_date: str = None,
-        params: Optional[Mapping[str, Any]] = None,
-        as_dataframe: bool = False,
-    ):
-        start_date = self.validate_date(start_date)
-        end_date = self.validate_date(end_date)
-        params = {"start_date": start_date, "end_date": end_date, **(params or {})}
-        results = self._request(
-            url=f"/v1/investor_metrics/{parcl_id}/housing_event_counts", params=params
-        )
-
-        if as_dataframe:
-            fmt = {results.get("parcl_id"): results.get("items")}
-            return self._as_pd_dataframe(fmt)
-        return results
-
-    def retrieve_many(
-        self,
-        parcl_ids: List[int],
-        start_date: str = None,
-        end_date: str = None,
-        params: Optional[Mapping[str, Any]] = None,
-        as_dataframe: bool = False,
-    ):
-        start_date = self.validate_date(start_date)
-        end_date = self.validate_date(end_date)
-        params = {"start_date": start_date, "end_date": end_date, **(params or {})}
-        results, _ = self.retrieve_many_items(parcl_ids=parcl_ids, params=params)
-
-        if as_dataframe:
-            return self._as_pd_dataframe(results)
-
-        return results
-
-
-class InvestorMetricsPurchaseToSaleRatio(ParclLabsService):
-    """
-    Gets counts of investor-owned properties and their corresponding percentage ownership share of the total housing stock, for a specified <parcl_id>.
+    Base class for investor metrics services.
     """
 
-    def retrieve(
-        self,
-        parcl_id: int,
-        start_date: str = None,
-        end_date: str = None,
-        params: Optional[Mapping[str, Any]] = None,
-        as_dataframe: bool = False,
-    ):
-        start_date = self.validate_date(start_date)
-        end_date = self.validate_date(end_date)
-        params = {"start_date": start_date, "end_date": end_date, **(params or {})}
-        results = self._request(
-            url=f"/v1/investor_metrics/{parcl_id}/purchase_to_sale_ratio", params=params
-        )
-
-        if as_dataframe:
-            fmt = {results.get("parcl_id"): results.get("items")}
-            return self._as_pd_dataframe(fmt)
-        return results
-
-    def retrieve_many(
-        self,
-        parcl_ids: List[int],
-        start_date: str = None,
-        end_date: str = None,
-        params: Optional[Mapping[str, Any]] = None,
-        as_dataframe: bool = False,
-    ):
-        start_date = self.validate_date(start_date)
-        end_date = self.validate_date(end_date)
-        params = {"start_date": start_date, "end_date": end_date, **(params or {})}
-        results, _ = self.retrieve_many_items(parcl_ids=parcl_ids, params=params)
-
-        if as_dataframe:
-            return self._as_pd_dataframe(results)
-
-        return results
-
-
-class InvestorMetricsHousingStockOwnership(ParclLabsService):
-    """
-    Gets counts of investor-owned properties and their corresponding percentage ownership share of the total housing stock, for a specified <parcl_id>.
-    """
-
-    def retrieve(
-        self,
-        parcl_id: int,
-        start_date: str = None,
-        end_date: str = None,
-        params: Optional[Mapping[str, Any]] = None,
-        as_dataframe: bool = False,
-    ):
-        start_date = self.validate_date(start_date)
-        end_date = self.validate_date(end_date)
-        params = {"start_date": start_date, "end_date": end_date, **(params or {})}
-        results = self._request(
-            url=f"/v1/investor_metrics/{parcl_id}/housing_stock_ownership",
-            params=params,
-        )
-
-        if as_dataframe:
-            fmt = {results.get("parcl_id"): results.get("items")}
-            return self._as_pd_dataframe(fmt)
-        return results
-
-    def retrieve_many(
-        self,
-        parcl_ids: List[int],
-        start_date: str = None,
-        end_date: str = None,
-        params: Optional[Mapping[str, Any]] = None,
-        as_dataframe: bool = False,
-    ):
-        start_date = self.validate_date(start_date)
-        end_date = self.validate_date(end_date)
-        params = {"start_date": start_date, "end_date": end_date, **(params or {})}
-        results, _ = self.retrieve_many_items(parcl_ids=parcl_ids, params=params)
-
-        if as_dataframe:
-            return self._as_pd_dataframe(results)
-
-        return results
-
-
-class InvesetorMetricsNewListingsForSaleRollingCounts(ParclLabsService):
-    """
-    Gets weekly updated rolling counts of investor-owned properties newly listed for sale, and their corresponding percentage share of the total for-sale listings market. These metrics are segmented into 7, 30, 60, and 90-day periods ending on a specified date, based on a given <parcl_id>
-    """
-
-    def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> Any:
-        out = []
-        for k, l in data.items():
-            for v in l:
-                date = v.get("date")
-                roll_7_count = v.get("count").get("rolling_7_day")
-                roll_30_count = v.get("count").get("rolling_30_day")
-                roll_60_count = v.get("count").get("rolling_60_day")
-                roll_90_count = v.get("count").get("rolling_90_day")
-                pct_7_count = v.get("pct_for_sale_market").get("rolling_7_day")
-                pct_30_count = v.get("pct_for_sale_market").get("rolling_30_day")
-                pct_60_count = v.get("pct_for_sale_market").get("rolling_60_day")
-                pct_90_count = v.get("pct_for_sale_market").get("rolling_90_day")
-                counts = [roll_7_count, roll_30_count, roll_60_count, roll_90_count]
-                pcts = [pct_7_count, pct_30_count, pct_60_count, pct_90_count]
-                names = [
-                    "rolling_7_day",
-                    "rolling_30_day",
-                    "rolling_60_day",
-                    "rolling_90_day",
-                ]
-                tmp = pd.DataFrame(
-                    {
-                        "date": date,
-                        "period": names,
-                        "counts": counts,
-                        "pct_for_sale_market": pcts,
-                    }
-                )
-                tmp["parcl_id"] = k
-                out.append(tmp)
-        return pd.concat(out).reset_index(drop=True)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def retrieve(
         self,
@@ -195,13 +32,16 @@ class InvesetorMetricsNewListingsForSaleRollingCounts(ParclLabsService):
             **(params or {}),
         }
         results = self._request(
-            url=f"/v1/investor_metrics/{parcl_id}/new_listings_for_sale_rolling_counts",
+            parcl_id=parcl_id,
             params=params,
         )
 
         if as_dataframe:
             fmt = {results.get("parcl_id"): results.get("items")}
-            return self._as_pd_dataframe(fmt)
+            df = self._as_pd_dataframe(fmt)
+            if property_type:
+                df["property_type"] = results.get("property_type")
+            return df
         return results
 
     def retrieve_many(
@@ -222,159 +62,13 @@ class InvesetorMetricsNewListingsForSaleRollingCounts(ParclLabsService):
             "property_type": property_type,
             **(params or {}),
         }
+
         results, _ = self.retrieve_many_items(parcl_ids=parcl_ids, params=params)
 
         if as_dataframe:
-            return self._as_pd_dataframe(results)
-
-        return results
-
-
-class InvestorMetricsHousingStockOwnership(ParclLabsService):
-    """
-    Gets counts of investor-owned properties and their corresponding percentage ownership share of the total housing stock, for a specified <parcl_id>.
-    """
-
-    def retrieve(
-        self,
-        parcl_id: int,
-        start_date: str = None,
-        end_date: str = None,
-        params: Optional[Mapping[str, Any]] = None,
-        as_dataframe: bool = False,
-    ):
-        start_date = self.validate_date(start_date)
-        end_date = self.validate_date(end_date)
-        params = {"start_date": start_date, "end_date": end_date, **(params or {})}
-        results = self._request(
-            url=f"/v1/investor_metrics/{parcl_id}/housing_stock_ownership",
-            params=params,
-        )
-
-        if as_dataframe:
-            fmt = {results.get("parcl_id"): results.get("items")}
-            return self._as_pd_dataframe(fmt)
-        return results
-
-    def retrieve_many(
-        self,
-        parcl_ids: List[int],
-        start_date: str = None,
-        end_date: str = None,
-        params: Optional[Mapping[str, Any]] = None,
-        as_dataframe: bool = False,
-    ):
-        start_date = self.validate_date(start_date)
-        end_date = self.validate_date(end_date)
-        params = {"start_date": start_date, "end_date": end_date, **(params or {})}
-        results, _ = self.retrieve_many_items(parcl_ids=parcl_ids, params=params)
-
-        if as_dataframe:
-            return self._as_pd_dataframe(results)
-
-        return results
-
-
-class InvestorMetricsHousingEventPrices(ParclLabsService):
-    """
-    Gets weekly updated rolling counts of investor-owned properties newly listed for sale, and their corresponding percentage share of the total for-sale listings market. These metrics are segmented into 7, 30, 60, and 90-day periods ending on a specified date, based on a given <parcl_id>
-    """
-
-    def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> Any:
-        out = []
-        for k, l in data.items():
-            for v in l:
-                date = v.get("date")
-                price_median_acquisitions = (
-                    v.get("price").get("median").get("acquisitions")
-                )
-                price_median_dispositions = (
-                    v.get("price").get("median").get("dispositions")
-                )
-                price_median_new_listings_for_sale = (
-                    v.get("price").get("median").get("new_listings_for_sale")
-                )
-                price_median_new_rental_listings = (
-                    v.get("price").get("median").get("new_rental_listings")
-                )
-                price_per_square_foot_median_acquisitions = (
-                    v.get("price_per_square_foot").get("median").get("acquisitions")
-                )
-                price_per_square_foot_median_dispositions = (
-                    v.get("price_per_square_foot").get("median").get("dispositions")
-                )
-                price_per_square_foot_median_new_listings_for_sale = (
-                    v.get("price_per_square_foot")
-                    .get("median")
-                    .get("new_listings_for_sale")
-                )
-                price_per_square_foot_median_new_rental_listings = (
-                    v.get("price_per_square_foot")
-                    .get("median")
-                    .get("new_rental_listings")
-                )
-
-                tmp = pd.DataFrame(
-                    {
-                        "date": date,
-                        "price_median_acquisitions": price_median_acquisitions,
-                        "price_median_dispositions": price_median_dispositions,
-                        "price_median_new_listings_for_sale": price_median_new_listings_for_sale,
-                        "price_median_new_rental_listings": price_median_new_rental_listings,
-                        "price_per_square_foot_median_acquisitions": price_per_square_foot_median_acquisitions,
-                        "price_per_square_foot_median_dispositions": price_per_square_foot_median_dispositions,
-                        "price_per_square_foot_median_new_listings_for_sale": price_per_square_foot_median_new_listings_for_sale,
-                        "price_per_square_foot_median_new_rental_listings": price_per_square_foot_median_new_rental_listings,
-                    },
-                    index=[0],
-                )
-                tmp["parcl_id"] = k
-                out.append(tmp)
-        return pd.concat(out).reset_index(drop=True)
-
-    def retrieve(
-        self,
-        parcl_id: int,
-        start_date: str = None,
-        end_date: str = None,
-        params: Optional[Mapping[str, Any]] = None,
-        as_dataframe: bool = False,
-    ):
-        start_date = self.validate_date(start_date)
-        end_date = self.validate_date(end_date)
-        params = {
-            "start_date": start_date,
-            "end_date": end_date,
-            **(params or {}),
-        }
-        results = self._request(
-            url=f"/v1/investor_metrics/{parcl_id}/housing_event_prices",
-            params=params,
-        )
-
-        if as_dataframe:
-            fmt = {results.get("parcl_id"): results.get("items")}
-            return self._as_pd_dataframe(fmt)
-        return results
-
-    def retrieve_many(
-        self,
-        parcl_ids: List[int],
-        start_date: str = None,
-        end_date: str = None,
-        params: Optional[Mapping[str, Any]] = None,
-        as_dataframe: bool = False,
-    ):
-        start_date = self.validate_date(start_date)
-        end_date = self.validate_date(end_date)
-        params = {
-            "start_date": start_date,
-            "end_date": end_date,
-            **(params or {}),
-        }
-        results, _ = self.retrieve_many_items(parcl_ids=parcl_ids, params=params)
-
-        if as_dataframe:
-            return self._as_pd_dataframe(results)
+            df = self._as_pd_dataframe(results)
+            if property_type:
+                df["property_type"] = property_type
+            return df
 
         return results

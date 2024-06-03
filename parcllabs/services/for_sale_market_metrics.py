@@ -11,9 +11,8 @@ class ForSaleMarketMetricsBaseService(ParclLabsService):
     Base class for for sale market metrics services.
     """
 
-    def __init__(self, url: str, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.url = url
 
     def retrieve(
         self,
@@ -34,13 +33,16 @@ class ForSaleMarketMetricsBaseService(ParclLabsService):
             **(params or {}),
         }
         results = self._request(
-            url=self.url.format(parcl_id=parcl_id),
+            parcl_id=parcl_id,
             params=params,
         )
 
         if as_dataframe:
             fmt = {results.get("parcl_id"): results.get("items")}
-            return self._as_pd_dataframe(fmt)
+            df = self._as_pd_dataframe(fmt)
+            if property_type:
+                df["property_type"] = results.get("property_type")
+            return df
         return results
 
     def retrieve_many(
@@ -65,6 +67,9 @@ class ForSaleMarketMetricsBaseService(ParclLabsService):
         results, _ = self.retrieve_many_items(parcl_ids=parcl_ids, params=params)
 
         if as_dataframe:
-            return self._as_pd_dataframe(results)
+            df = self._as_pd_dataframe(results)
+            if property_type:
+                df["property_type"] = property_type
+            return df
 
         return results

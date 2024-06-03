@@ -3,14 +3,13 @@ from typing import Any, Mapping, Optional, List
 from parcllabs.services.parcllabs_service import ParclLabsService
 
 
-class PriceFeedBase(ParclLabsService):
+class PriceFeedBaseService(ParclLabsService):
     """
     Base class for price feed services.
     """
 
-    def __init__(self, url: str, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.url = url
 
     def retrieve(
         self,
@@ -30,7 +29,7 @@ class PriceFeedBase(ParclLabsService):
             **(params or {}),
         }
         results = self._request(
-            url=self.url.format(parcl_id=parcl_id),
+            parcl_id=parcl_id,
             params=params,
         )
 

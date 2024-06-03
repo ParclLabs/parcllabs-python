@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import Mock
 from datetime import datetime
+import requests
 import requests_mock
 from parcllabs import ParclLabsClient
 
@@ -17,11 +18,7 @@ def client_mock():
 
 @pytest.fixture
 def service(client_mock):
-    return ParclLabsService(client=client_mock)
-
-
-import pytest
-import requests
+    return ParclLabsService(url="http://example.com/{parcl_id}", client=client_mock)
 
 
 @pytest.fixture

@@ -20,8 +20,8 @@ def mock_client():
 @pytest.fixture
 def service(mock_client):
     return ForSaleMarketMetricsBaseService(
-        url='/v1/for_sale_market_metrics/{parcl_id}/new_listings_rolling_counts',
-        client=mock_client
+        url="/v1/for_sale_market_metrics/{parcl_id}/new_listings_rolling_counts",
+        client=mock_client,
     )
 
 

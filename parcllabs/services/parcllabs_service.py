@@ -6,7 +6,7 @@ from requests.exceptions import RequestException
 import pandas as pd
 from alive_progress import alive_bar
 
-from parcllabs.common import VALID_PROPERTY_TYPES
+from parcllabs.common import VALID_PORTFOLIO_SIZES, VALID_PROPERTY_TYPES
 
 
 class ParclLabsService(object):
@@ -14,24 +14,28 @@ class ParclLabsService(object):
     Base class for working with data from the Parcl Labs API.
     """
 
-    def __init__(self, client: Any) -> None:
+    def __init__(self, url: str, client: Any) -> None:
+        self.url = url
+        if url is None:
+            raise ValueError("Missing required url parameter.")
         self.client = client
         if client is None:
             raise ValueError("Missing required client object.")
 
     def _request(
         self,
-        url: str,
+        parcl_id: int = None,
         params: Optional[Mapping[str, Any]] = None,
         is_next: bool = False,
     ) -> Any:
+        url = self.url.format(parcl_id=parcl_id) if parcl_id else self.url
         return self.client.get(url=url, params=params, is_next=is_next)
 
     def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> Any:
         output = []
 
         for key, value in data.items():
-            data_df = pd.DataFrame(value)
+            data_df = pd.json_normalize(value)
             data_df["parcl_id"] = key
             output.append(data_df)
 
@@ -39,6 +43,9 @@ class ParclLabsService(object):
 
     def _get_valid_property_types(self) -> List[str]:
         return VALID_PROPERTY_TYPES
+
+    def _get_valid_portfolio_sizes(self) -> List[str]:
+        return VALID_PORTFOLIO_SIZES
 
     def validate_date(self, date_str: str) -> str:
         """
@@ -68,6 +75,18 @@ class ParclLabsService(object):
                     f"Property type {property_type} is not valid. Must be one of {', '.join(valid_property_types)}."
                 )
             return property_type
+
+    def validate_portfolio_size(self, portfolio_size: str) -> str:
+        """
+        Validates the portfolio size string and returns it in the expected format.
+        Raises ValueError if the portfolio size is invalid or not in the expected format.
+        """
+        valid_portfolio_sizes = self._get_valid_portfolio_sizes()
+        if portfolio_size and portfolio_size.lower() not in valid_portfolio_sizes:
+            raise ValueError(
+                f"Portfolio size {portfolio_size} is not valid. Must be one of {', '.join(valid_portfolio_sizes)}."
+            )
+        return portfolio_size
 
     @abstractmethod
     def retrieve(self, parcl_id: int, params: Optional[Mapping[str, Any]] = None):

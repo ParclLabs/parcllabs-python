@@ -162,6 +162,9 @@ class SearchMarkets(ParclLabsService):
     Retrieve parcl_id and metadata for geographic markets in the Parcl Labs API.
     """
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> Any:
         return pd.DataFrame(data)
 
@@ -245,7 +248,7 @@ class SearchMarkets(ParclLabsService):
             "geoid": geoid,
             **(params or {}),
         }
-        results = self._request(url="/v1/search/markets", params=params)
+        results = self._request(params=params)
 
         if auto_paginate:
             tmp = results.copy()
