@@ -96,8 +96,6 @@ class ParclLabsService(object):
         parcl_id: int,
         start_date: str = None,
         end_date: str = None,
-        property_type: str = None,
-        portfolio_size: str = None,
         params: Optional[Mapping[str, Any]] = None,
         as_dataframe: bool = False,
     ):
@@ -111,14 +109,10 @@ class ParclLabsService(object):
         """
         start_date = self.validate_date(start_date)
         end_date = self.validate_date(end_date)
-        property_type = self.validate_property_type(property_type)
-        portfolio_size = self.validate_portfolio_size(portfolio_size)
 
         params = {
             "start_date": start_date,
             "end_date": end_date,
-            "property_type": property_type,
-            "portfolio_size": portfolio_size,
             **(params or {}),
         }
         results = self._request(
@@ -129,9 +123,9 @@ class ParclLabsService(object):
         if as_dataframe:
             fmt = {results.get("parcl_id"): results.get("items")}
             df = self._as_pd_dataframe(fmt)
-            if property_type:
+            if "property_type" in params:
                 df["property_type"] = results.get("property_type")
-            if portfolio_size:
+            if "portfolio_size" in params:
                 df["portfolio_size"] = results.get("portfolio_size")
             return df
 
@@ -177,29 +171,18 @@ class ParclLabsService(object):
         parcl_ids: List[int],
         start_date: str = None,
         end_date: str = None,
-        property_type: str = None,
-        portfolio_size: str = None,
         params: Optional[Mapping[str, Any]] = None,
         as_dataframe: bool = False,
+        get_key_on_last_request: List[str] = [],
     ):
         start_date = self.validate_date(start_date)
         end_date = self.validate_date(end_date)
-        property_type = self.validate_property_type(property_type)
-        portfolio_size = self.validate_portfolio_size(portfolio_size)
 
         params = {
             "start_date": start_date,
             "end_date": end_date,
-            "property_type": property_type,
-            "portfolio_size": portfolio_size,
             **(params or {}),
         }
-
-        get_key_on_last_request = []
-        if property_type:
-            get_key_on_last_request.append("property_type")
-        if portfolio_size:
-            get_key_on_last_request.append("portfolio_size")
 
         results, additional_output = self.retrieve_many_items(
             parcl_ids=parcl_ids,
@@ -209,9 +192,9 @@ class ParclLabsService(object):
 
         if as_dataframe:
             df = self._as_pd_dataframe(results)
-            if property_type:
+            if "property_type" in additional_output:
                 df["property_type"] = additional_output.get("property_type")
-            if portfolio_size:
+            if "portfolio_size" in additional_output:
                 df["portfolio_size"] = additional_output.get("portfolio_size")
             return df
 

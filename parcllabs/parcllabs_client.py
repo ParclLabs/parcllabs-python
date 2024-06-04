@@ -4,6 +4,8 @@ from typing import Dict
 from requests.exceptions import RequestException
 from parcllabs import api_base
 from parcllabs.services.parcllabs_service import ParclLabsService
+from parcllabs.services.portfolio_size_service import PortfolioSizeService
+from parcllabs.services.property_type_service import PropertyTypeService
 from parcllabs.services.search import SearchMarkets
 
 
@@ -45,7 +47,7 @@ class ParclLabsClient:
         self.investor_metrics_housing_stock_ownership = ParclLabsService(
             url="/v1/investor_metrics/{parcl_id}/housing_stock_ownership", client=self
         )
-        self.investor_metrics_new_listings_for_sale_rolling_counts = ParclLabsService(
+        self.investor_metrics_new_listings_for_sale_rolling_counts = PropertyTypeService(
             url="/v1/investor_metrics/{parcl_id}/new_listings_for_sale_rolling_counts",
             client=self,
         )
@@ -60,38 +62,38 @@ class ParclLabsClient:
         )
 
         # market metrics services
-        self.market_metrics_housing_event_prices = ParclLabsService(
+        self.market_metrics_housing_event_prices = PropertyTypeService(
             url="/v1/market_metrics/{parcl_id}/housing_event_prices", client=self
         )
-        self.market_metrics_all_cash = ParclLabsService(
+        self.market_metrics_all_cash = PropertyTypeService(
             url="/v1/market_metrics/{parcl_id}/all_cash", client=self
         )
         self.market_metrics_housing_stock = ParclLabsService(
             url="/v1/market_metrics/{parcl_id}/housing_stock", client=self
         )
-        self.market_metrics_housing_event_counts = ParclLabsService(
+        self.market_metrics_housing_event_counts = PropertyTypeService(
             url="/v1/market_metrics/{parcl_id}/housing_event_counts", client=self
         )
 
         # for sale market metrics
-        self.for_sale_market_metrics_new_listings_rolling_counts = ParclLabsService(
+        self.for_sale_market_metrics_new_listings_rolling_counts = PropertyTypeService(
             url="/v1/for_sale_market_metrics/{parcl_id}/new_listings_rolling_counts",
             client=self,
         )
-        self.for_sale_market_metrics_for_sale_inventory = ParclLabsService(
+        self.for_sale_market_metrics_for_sale_inventory = PropertyTypeService(
             url="/v1/for_sale_market_metrics/{parcl_id}/for_sale_inventory",
             client=self,
         )
 
         # rental market metrics services
-        self.rental_market_metrics_rental_units_concentration = ParclLabsService(
+        self.rental_market_metrics_rental_units_concentration = PropertyTypeService(
             url="/v1/rental_market_metrics/{parcl_id}/rental_units_concentration",
             client=self,
         )
-        self.rental_market_metrics_gross_yield = ParclLabsService(
+        self.rental_market_metrics_gross_yield = PropertyTypeService(
             url="/v1/rental_market_metrics/{parcl_id}/gross_yield", client=self
         )
-        self.rental_market_metrics_new_listings_for_rent_rolling_counts = ParclLabsService(
+        self.rental_market_metrics_new_listings_for_rent_rolling_counts = PropertyTypeService(
             url="/v1/rental_market_metrics/{parcl_id}/new_listings_for_rent_rolling_counts",
             client=self,
         )
@@ -101,15 +103,15 @@ class ParclLabsClient:
             url="/v1/portfolio_metrics/{parcl_id}/sf_housing_stock_ownership",
             client=self,
         )
-        self.portfolio_metrics_new_listings_for_sale_rolling_counts = ParclLabsService(
+        self.portfolio_metrics_new_listings_for_sale_rolling_counts = PortfolioSizeService(
             url="/v1/portfolio_metrics/{parcl_id}/sf_new_listings_for_sale_rolling_counts",
             client=self,
         )
-        self.portfolio_metrics_sf_new_listings_for_rent_rolling_counts = ParclLabsService(
+        self.portfolio_metrics_sf_new_listings_for_rent_rolling_counts = PortfolioSizeService(
             url="/v1/portfolio_metrics/{parcl_id}/sf_new_listings_for_rent_rolling_counts",
             client=self,
         )
-        self.portfolio_metrics_sf_housing_event_counts = ParclLabsService(
+        self.portfolio_metrics_sf_housing_event_counts = PortfolioSizeService(
             url="/v1/portfolio_metrics/{parcl_id}/sf_housing_event_counts",
             client=self,
         )
