@@ -1,3 +1,6 @@
+### v0.4.1
+- Backend Parcl Labs Services refactor
+
 ### v0.4.0
 - Introduce `for_sale_inventory`. See [Parcl Labs Changelog](https://docs.parcllabs.com/changelog/for-sale-market-metrics-for-sale-inventory) for more details.
 
@@ -24,7 +27,6 @@
 
 ### v0.1.14
 - Update `portfolio_metrics` endpoint name from `new_listings_for_sale_rolling_counts` to `sf_new_listings_for_sale_rolling_counts` to reflect the new endpoint name.
-
 
 ### v0.1.13
 - bug fix: valid portfolio parameter values.
