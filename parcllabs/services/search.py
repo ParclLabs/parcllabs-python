@@ -1,7 +1,5 @@
-from typing import Any, Mapping, Optional, List
-
 import pandas as pd
-
+from typing import Any, Mapping, Optional, List
 from parcllabs.services.parcllabs_service import ParclLabsService
 
 VALID_LOCATION_TYPES = [

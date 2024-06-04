@@ -3,24 +3,7 @@ import requests
 from typing import Dict
 from requests.exceptions import RequestException
 from parcllabs import api_base
-from parcllabs.services.price_feed import (
-    PriceFeedBaseService,
-)
-from parcllabs.services.investor_metrics import (
-    InvestorMetricsBaseService,
-)
-from parcllabs.services.market_metrics import (
-    MarketMetricsBaseService,
-)
-from parcllabs.services.for_sale_market_metrics import (
-    ForSaleMarketMetricsBaseService,
-)
-from parcllabs.services.rental_market_metrics import (
-    RentalMarketMetricsBaseService,
-)
-from parcllabs.services.portfolio_metrics import (
-    PortfolioMetricsBaseService,
-)
+from parcllabs.services.parcllabs_service import ParclLabsService
 from parcllabs.services.search import SearchMarkets
 
 
@@ -47,90 +30,86 @@ class ParclLabsClient:
         self.limit = limit
 
         # price feed services
-        self.price_feed = PriceFeedBaseService(
+        self.price_feed = ParclLabsService(
             url="/v1/price_feed/{parcl_id}/price_feed", client=self
         )
-        self.price_feed_volatility = PriceFeedBaseService(
+        self.price_feed_volatility = ParclLabsService(
             url="/v1/price_feed/{parcl_id}/volatility", client=self
         )
 
-        self.rental_price_feed = PriceFeedBaseService(
+        self.rental_price_feed = ParclLabsService(
             url="/v1/price_feed/{parcl_id}/rental_price_feed", client=self
         )
 
         # investor metrics services
-        self.investor_metrics_housing_stock_ownership = InvestorMetricsBaseService(
+        self.investor_metrics_housing_stock_ownership = ParclLabsService(
             url="/v1/investor_metrics/{parcl_id}/housing_stock_ownership", client=self
         )
-        self.investor_metrics_new_listings_for_sale_rolling_counts = InvestorMetricsBaseService(
+        self.investor_metrics_new_listings_for_sale_rolling_counts = ParclLabsService(
             url="/v1/investor_metrics/{parcl_id}/new_listings_for_sale_rolling_counts",
             client=self,
         )
-        self.investor_metrics_purchase_to_sale_ratio = InvestorMetricsBaseService(
+        self.investor_metrics_purchase_to_sale_ratio = ParclLabsService(
             url="/v1/investor_metrics/{parcl_id}/purchase_to_sale_ratio", client=self
         )
-        self.investor_metrics_housing_event_counts = InvestorMetricsBaseService(
+        self.investor_metrics_housing_event_counts = ParclLabsService(
             url="/v1/investor_metrics/{parcl_id}/housing_event_counts", client=self
         )
-        self.investor_metrics_housing_event_prices = InvestorMetricsBaseService(
+        self.investor_metrics_housing_event_prices = ParclLabsService(
             url="/v1/investor_metrics/{parcl_id}/housing_event_prices", client=self
         )
 
         # market metrics services
-        self.market_metrics_housing_event_prices = MarketMetricsBaseService(
+        self.market_metrics_housing_event_prices = ParclLabsService(
             url="/v1/market_metrics/{parcl_id}/housing_event_prices", client=self
         )
-        self.market_metrics_all_cash = MarketMetricsBaseService(
+        self.market_metrics_all_cash = ParclLabsService(
             url="/v1/market_metrics/{parcl_id}/all_cash", client=self
         )
-        self.market_metrics_housing_stock = MarketMetricsBaseService(
+        self.market_metrics_housing_stock = ParclLabsService(
             url="/v1/market_metrics/{parcl_id}/housing_stock", client=self
         )
-        self.market_metrics_housing_event_counts = MarketMetricsBaseService(
+        self.market_metrics_housing_event_counts = ParclLabsService(
             url="/v1/market_metrics/{parcl_id}/housing_event_counts", client=self
         )
 
         # for sale market metrics
-        self.for_sale_market_metrics_new_listings_rolling_counts = ForSaleMarketMetricsBaseService(
+        self.for_sale_market_metrics_new_listings_rolling_counts = ParclLabsService(
             url="/v1/for_sale_market_metrics/{parcl_id}/new_listings_rolling_counts",
             client=self,
         )
-        self.for_sale_market_metrics_for_sale_inventory = (
-            ForSaleMarketMetricsBaseService(
-                url="/v1/for_sale_market_metrics/{parcl_id}/for_sale_inventory",
-                client=self,
-            )
+        self.for_sale_market_metrics_for_sale_inventory = ParclLabsService(
+            url="/v1/for_sale_market_metrics/{parcl_id}/for_sale_inventory",
+            client=self,
         )
 
         # rental market metrics services
-        self.rental_market_metrics_rental_units_concentration = (
-            RentalMarketMetricsBaseService(
-                url="/v1/rental_market_metrics/{parcl_id}/rental_units_concentration",
-                client=self,
-            )
+        self.rental_market_metrics_rental_units_concentration = ParclLabsService(
+            url="/v1/rental_market_metrics/{parcl_id}/rental_units_concentration",
+            client=self,
         )
-        self.rental_market_metrics_gross_yield = RentalMarketMetricsBaseService(
+        self.rental_market_metrics_gross_yield = ParclLabsService(
             url="/v1/rental_market_metrics/{parcl_id}/gross_yield", client=self
         )
-        self.rental_market_metrics_new_listings_for_rent_rolling_counts = RentalMarketMetricsBaseService(
+        self.rental_market_metrics_new_listings_for_rent_rolling_counts = ParclLabsService(
             url="/v1/rental_market_metrics/{parcl_id}/new_listings_for_rent_rolling_counts",
             client=self,
         )
 
         # portfolio metrics services
-        self.portfolio_metrics_sf_housing_stock_ownership = PortfolioMetricsBaseService(
+        self.portfolio_metrics_sf_housing_stock_ownership = ParclLabsService(
             url="/v1/portfolio_metrics/{parcl_id}/sf_housing_stock_ownership",
             client=self,
         )
-        self.portfolio_metrics_new_listings_for_sale_rolling_counts = PortfolioMetricsBaseService(
+        self.portfolio_metrics_new_listings_for_sale_rolling_counts = ParclLabsService(
             url="/v1/portfolio_metrics/{parcl_id}/sf_new_listings_for_sale_rolling_counts",
             client=self,
         )
-        self.portfolio_metrics_sf_new_listings_for_rent_rolling_counts = PortfolioMetricsBaseService(
+        self.portfolio_metrics_sf_new_listings_for_rent_rolling_counts = ParclLabsService(
             url="/v1/portfolio_metrics/{parcl_id}/sf_new_listings_for_rent_rolling_counts",
             client=self,
         )
-        self.portfolio_metrics_sf_housing_event_counts = PortfolioMetricsBaseService(
+        self.portfolio_metrics_sf_housing_event_counts = ParclLabsService(
             url="/v1/portfolio_metrics/{parcl_id}/sf_housing_event_counts",
             client=self,
         )

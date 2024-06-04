@@ -1,11 +1,8 @@
-from abc import abstractmethod
+import pandas as pd
 from datetime import datetime
 from typing import Any, Mapping, Optional, List, Dict
 from requests.exceptions import RequestException
-
-import pandas as pd
 from alive_progress import alive_bar
-
 from parcllabs.common import VALID_PORTFOLIO_SIZES, VALID_PROPERTY_TYPES
 
 
@@ -35,8 +32,13 @@ class ParclLabsService(object):
         output = []
 
         for key, value in data.items():
-            data_df = pd.json_normalize(value)
+            data_df = pd.json_normalize(value)  # for nested json
             data_df["parcl_id"] = key
+
+            updated_cols_names = [
+                c.replace(".", "_") for c in data_df.columns.tolist()
+            ]  # for nested json
+            data_df.columns = updated_cols_names
             output.append(data_df)
 
         return pd.concat(output).reset_index(drop=True)
@@ -82,14 +84,23 @@ class ParclLabsService(object):
         Raises ValueError if the portfolio size is invalid or not in the expected format.
         """
         valid_portfolio_sizes = self._get_valid_portfolio_sizes()
-        if portfolio_size and portfolio_size.lower() not in valid_portfolio_sizes:
-            raise ValueError(
-                f"Portfolio size {portfolio_size} is not valid. Must be one of {', '.join(valid_portfolio_sizes)}."
-            )
-        return portfolio_size
+        if portfolio_size:
+            if portfolio_size.upper() not in valid_portfolio_sizes:
+                raise ValueError(
+                    f"Portfolio size {portfolio_size} is not valid. Must be one of {', '.join(valid_portfolio_sizes)}."
+                )
+            return portfolio_size.upper()
 
-    @abstractmethod
-    def retrieve(self, parcl_id: int, params: Optional[Mapping[str, Any]] = None):
+    def retrieve(
+        self,
+        parcl_id: int,
+        start_date: str = None,
+        end_date: str = None,
+        property_type: str = None,
+        portfolio_size: str = None,
+        params: Optional[Mapping[str, Any]] = None,
+        as_dataframe: bool = False,
+    ):
         """
         Retrieves data for a single parcl_id.
 
@@ -98,13 +109,39 @@ class ParclLabsService(object):
             params (dict, optional): Additional parameters to include in the request.
 
         """
-        pass
+        start_date = self.validate_date(start_date)
+        end_date = self.validate_date(end_date)
+        property_type = self.validate_property_type(property_type)
+        portfolio_size = self.validate_portfolio_size(portfolio_size)
+
+        params = {
+            "start_date": start_date,
+            "end_date": end_date,
+            "property_type": property_type,
+            "portfolio_size": portfolio_size,
+            **(params or {}),
+        }
+        results = self._request(
+            parcl_id=parcl_id,
+            params=params,
+        )
+
+        if as_dataframe:
+            fmt = {results.get("parcl_id"): results.get("items")}
+            df = self._as_pd_dataframe(fmt)
+            if property_type:
+                df["property_type"] = results.get("property_type")
+            if portfolio_size:
+                df["portfolio_size"] = results.get("portfolio_size")
+            return df
+
+        return results
 
     def retrieve_many_items(
         self,
         parcl_ids: List[int],
         params: Optional[Mapping[str, Any]] = None,
-        get_key_on_last_request: str = None,
+        get_key_on_last_request: List[str] = [],
         **kwargs,
     ) -> Dict[str, Any]:
         """
@@ -132,7 +169,50 @@ class ParclLabsService(object):
                         continue
                 bar()
 
-        additional_output = (
-            output.get(get_key_on_last_request) if get_key_on_last_request else None
-        )
+        additional_output = {key: output.get(key) for key in get_key_on_last_request}
         return results, additional_output
+
+    def retrieve_many(
+        self,
+        parcl_ids: List[int],
+        start_date: str = None,
+        end_date: str = None,
+        property_type: str = None,
+        portfolio_size: str = None,
+        params: Optional[Mapping[str, Any]] = None,
+        as_dataframe: bool = False,
+    ):
+        start_date = self.validate_date(start_date)
+        end_date = self.validate_date(end_date)
+        property_type = self.validate_property_type(property_type)
+        portfolio_size = self.validate_portfolio_size(portfolio_size)
+
+        params = {
+            "start_date": start_date,
+            "end_date": end_date,
+            "property_type": property_type,
+            "portfolio_size": portfolio_size,
+            **(params or {}),
+        }
+
+        get_key_on_last_request = []
+        if property_type:
+            get_key_on_last_request.append("property_type")
+        if portfolio_size:
+            get_key_on_last_request.append("portfolio_size")
+
+        results, additional_output = self.retrieve_many_items(
+            parcl_ids=parcl_ids,
+            params=params,
+            get_key_on_last_request=get_key_on_last_request,
+        )
+
+        if as_dataframe:
+            df = self._as_pd_dataframe(results)
+            if property_type:
+                df["property_type"] = additional_output.get("property_type")
+            if portfolio_size:
+                df["portfolio_size"] = additional_output.get("portfolio_size")
+            return df
+
+        return results
