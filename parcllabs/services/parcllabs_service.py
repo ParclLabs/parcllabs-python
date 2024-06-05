@@ -22,10 +22,16 @@ class ParclLabsService(object):
     def _request(
         self,
         parcl_id: int = None,
+        url: str = None,
         params: Optional[Mapping[str, Any]] = None,
         is_next: bool = False,
     ) -> Any:
-        url = self.url.format(parcl_id=parcl_id) if parcl_id else self.url
+        if url:
+            url = url
+        elif parcl_id:
+            url = self.url.format(parcl_id=parcl_id)
+        else:
+            url = self.url
         return self.client.get(url=url, params=params, is_next=is_next)
 
     def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> Any:
@@ -98,6 +104,7 @@ class ParclLabsService(object):
         end_date: str = None,
         params: Optional[Mapping[str, Any]] = None,
         as_dataframe: bool = False,
+        auto_paginate: bool = False,
     ):
         """
         Retrieves data for a single parcl_id.
@@ -105,7 +112,8 @@ class ParclLabsService(object):
         Args:
             parcl_id (int): The parcl_id to retrieve data for.
             params (dict, optional): Additional parameters to include in the request.
-
+            as_dataframe (bool, optional): Return the results as a pandas DataFrame.
+            auto_paginate (bool, optional): Automatically paginate through the results.
         """
         start_date = self.validate_date(start_date)
         end_date = self.validate_date(end_date)
@@ -119,6 +127,14 @@ class ParclLabsService(object):
             parcl_id=parcl_id,
             params=params,
         )
+
+        if auto_paginate:
+            tmp = results.copy()
+            while results["links"].get("next"):
+                results = self._request(url=results["links"]["next"], is_next=True)
+                tmp["items"].extend(results["items"])
+            tmp["links"] = results["links"]
+            results = tmp
 
         if as_dataframe:
             fmt = {results.get("parcl_id"): results.get("items")}
