@@ -1,11 +1,9 @@
+import pandas as pd
 import pytest
 from unittest.mock import Mock
 from requests.exceptions import HTTPError
-
-import pandas as pd
-
-from parcllabs.services.for_sale_market_metrics import (
-    ForSaleMarketMetricsBaseService,
+from parcllabs.services.property_type_service import (
+    PropertyTypeService,
 )
 
 
@@ -19,9 +17,9 @@ def mock_client():
 
 @pytest.fixture
 def service(mock_client):
-    return ForSaleMarketMetricsBaseService(
-        url='/v1/for_sale_market_metrics/{parcl_id}/new_listings_rolling_counts',
-        client=mock_client
+    return PropertyTypeService(
+        url="/v1/for_sale_market_metrics/{parcl_id}/new_listings_rolling_counts",
+        client=mock_client,
     )
 
 

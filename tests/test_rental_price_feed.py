@@ -1,11 +1,8 @@
+import pandas as pd
 import pytest
 from unittest.mock import Mock
-from requests.exceptions import HTTPError
-
-import pandas as pd
-
-from parcllabs.services.price_feed import (
-    PriceFeedBase,
+from parcllabs.services.parcllabs_service import (
+    ParclLabsService,
 )
 
 
@@ -19,7 +16,7 @@ def mock_client():
 
 @pytest.fixture
 def service(mock_client):
-    return PriceFeedBase(
+    return ParclLabsService(
         client=mock_client, url="/v1/price_feed/{parcl_id}/rental_price_feed"
     )
 
