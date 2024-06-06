@@ -1,3 +1,6 @@
+### v0.4.2
+- Add `auto_paginate` support for all endpoints (retrieve & retrieve_many)
+
 ### v0.4.1
 - Backend Parcl Labs Services refactor
 
