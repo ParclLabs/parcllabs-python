@@ -38,6 +38,7 @@ class PropertyTypeService(ParclLabsService):
         property_type: str = None,
         params: Optional[Mapping[str, Any]] = {},
         as_dataframe: bool = False,
+        auto_paginate: bool = False,
     ):
         property_type = self.validate_property_type(property_type)
 
@@ -50,5 +51,6 @@ class PropertyTypeService(ParclLabsService):
             end_date=end_date,
             params=params,
             as_dataframe=as_dataframe,
+            auto_paginate=auto_paginate,
             get_key_on_last_request=["property_type"],
         )

@@ -38,6 +38,7 @@ class PortfolioSizeService(ParclLabsService):
         portfolio_size: str = None,
         params: Optional[Mapping[str, Any]] = {},
         as_dataframe: bool = False,
+        auto_paginate: bool = False,
     ):
         portfolio_size = self.validate_portfolio_size(portfolio_size)
 
@@ -50,5 +51,6 @@ class PortfolioSizeService(ParclLabsService):
             end_date=end_date,
             params=params,
             as_dataframe=as_dataframe,
+            auto_paginate=auto_paginate,
             get_key_on_last_request=["portfolio_size"],
         )

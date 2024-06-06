@@ -151,6 +151,7 @@ class ParclLabsService(object):
         self,
         parcl_ids: List[int],
         params: Optional[Mapping[str, Any]] = None,
+        auto_paginate: bool = False,
         get_key_on_last_request: List[str] = [],
         **kwargs,
     ) -> Dict[str, Any]:
@@ -171,7 +172,12 @@ class ParclLabsService(object):
         with alive_bar(len(parcl_ids)) as bar:
             for parcl_id in parcl_ids:
                 try:
-                    output = self.retrieve(parcl_id=parcl_id, params=params, **kwargs)
+                    output = self.retrieve(
+                        parcl_id=parcl_id,
+                        params=params,
+                        auto_paginate=auto_paginate,
+                        **kwargs,
+                    )
                     results[parcl_id] = output.get("items")
                 except RequestException as e:
                     # continue if no data is found for the parcl_id
@@ -189,6 +195,7 @@ class ParclLabsService(object):
         end_date: str = None,
         params: Optional[Mapping[str, Any]] = None,
         as_dataframe: bool = False,
+        auto_paginate: bool = False,
         get_key_on_last_request: List[str] = [],
     ):
         start_date = self.validate_date(start_date)
@@ -203,6 +210,7 @@ class ParclLabsService(object):
         results, additional_output = self.retrieve_many_items(
             parcl_ids=parcl_ids,
             params=params,
+            auto_paginate=auto_paginate,
             get_key_on_last_request=get_key_on_last_request,
         )
 
