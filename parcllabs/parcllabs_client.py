@@ -74,6 +74,10 @@ class ParclLabsClient:
         self.market_metrics_housing_event_counts = PropertyTypeService(
             url="/v1/market_metrics/{parcl_id}/housing_event_counts", client=self
         )
+        self.market_metrics_housing_event_property_attributes = PropertyTypeService(
+            url="/v1/market_metrics/{parcl_id}/housing_event_property_attributes",
+            client=self,
+        )
 
         # for sale market metrics
         self.for_sale_market_metrics_new_listings_rolling_counts = PropertyTypeService(
@@ -82,6 +86,10 @@ class ParclLabsClient:
         )
         self.for_sale_market_metrics_for_sale_inventory = PropertyTypeService(
             url="/v1/for_sale_market_metrics/{parcl_id}/for_sale_inventory",
+            client=self,
+        )
+        self.for_sale_market_metrics_for_sale_inventory_price_changes = PropertyTypeService(
+            url="/v1/for_sale_market_metrics/{parcl_id}/for_sale_inventory_price_changes",
             client=self,
         )
 

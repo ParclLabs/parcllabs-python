@@ -165,6 +165,8 @@ Gets weekly updated rolling counts of newly listed for sale properties, segmente
 #### For Sale Inventory
 Gets the weekly updated current count of total inventory listed on market for sale, based on a specified `parcl_id` . The data series for the for sale inventory begins on September 1, 2022 (2022-09-01).
 
+#### For Sale Inventory Price Changes
+Gets weekly updated metrics on the price behavior of current for sale inventory, based on a specified `parcl_id`. Available metrics include the count of price changes, count of price drops, median days between price changes, median price change, and the percentage of inventory with price changes. The data series for the for sale inventory metrics begins on September 1, 2022 (2022-09-01).
 
 ##### Get all for sale market metrics
 ```python
@@ -203,6 +205,13 @@ for_sale_inventory = client.for_sale_market_metrics_for_sale_inventory(
     end_date=end_date,
     as_dataframe=True
 )
+
+for_sale_inventory_price_changes = client.for_sale_market_metrics_for_sale_inventory_price_changes.retrieve_many(
+        parcl_ids=top_market_parcl_ids,
+        start_date=start_date,
+        end_date=end_date,
+        as_dataframe=True,
+    )
 ```
 
 ### Market Metrics
@@ -215,6 +224,9 @@ Gets housing stock for a specified `parcl_id`. Housing stock represents the tota
 
 #### Housing Event Prices
 Gets monthly statistics on prices for housing events, including sales, new for-sale listings, and new rental listings, based on a specified `parcl_id`.
+
+#### Housing Event Property Attributes
+Gets monthly statistics on the physical attributes of properties involved in housing events, including sales, new for sale listings, and new rental listings, based on a specified `parcl_id`.
 
 #### All Cash
 Gets monthly counts of all cash transactions and their percentage share of total sales, based on a specified <parcl_id> .
@@ -262,6 +274,13 @@ results_housing_event_counts = client.market_metrics_housing_event_counts.retrie
     start_date=start_date,
     end_date=end_date,
     as_dataframe=True
+)
+
+housing_event_property_attributes = client.market_metrics_housing_event_property_attributes.retrieve_many(
+        parcl_ids=top_market_parcl_ids,
+        start_date=start_date,
+        end_date=end_date,
+        as_dataframe=True,
 )
 
 results_all_cash = client.market_metrics_all_cash.retrieve_many(

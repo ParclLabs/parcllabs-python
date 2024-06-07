@@ -1,3 +1,6 @@
+### v0.5.0
+- Introduce `for_sale_inventory_price_changes` and `housing_event_property_attributes`. See [Parcl Labs Changelog](https://docs.parcllabs.com/changelog/for-sale-market-metrics-inventory-prices-market-metrics-housing-event-property-attributes) for more details. 
+
 ### v0.4.2
 - Add `auto_paginate` support for all endpoints (retrieve & retrieve_many)
 
