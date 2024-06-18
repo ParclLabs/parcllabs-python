@@ -4,15 +4,11 @@ import asyncio
 import json
 import requests
 from requests.exceptions import RequestException
-from datetime import datetime
 from typing import Any, Mapping, Optional, List, Dict
 from alive_progress import alive_bar
-from parcllabs.common import (
-    VALID_PORTFOLIO_SIZES,
-    VALID_PROPERTY_TYPES,
-    DELETE_FROM_OUTPUT,
-    DEFAULT_LIMIT,
-)
+from parcllabs.common import DELETE_FROM_OUTPUT, DEFAULT_LIMIT
+from parcllabs.services.validators import Validators
+
 
 
 class ParclLabsService(object):
@@ -124,8 +120,8 @@ class ParclLabsService(object):
         params: Optional[Mapping[str, Any]] = None,
         auto_paginate: bool = False,
     ):
-        start_date = self.validate_date(start_date)
-        end_date = self.validate_date(end_date)
+        start_date = Validators.validate_date(start_date)
+        end_date = Validators.validate_date(end_date)
 
         params = {
             "start_date": start_date,
@@ -142,45 +138,7 @@ class ParclLabsService(object):
         output = self._as_pd_dataframe(data_container)
         return output
 
-    def validate_date(self, date_str: str) -> str:
-        """
-        Validates the date string and returns it in the 'YYYY-MM-DD' format.
-        Raises ValueError if the date is invalid or not in the expected format.
-        """
-        if date_str:
-            try:
-                formatted_date = datetime.strptime(date_str, "%Y-%m-%d").strftime(
-                    "%Y-%m-%d"
-                )
-                return formatted_date
-            except ValueError:
-                raise ValueError(
-                    f"Date {date_str} is not in the correct format YYYY-MM-DD."
-                )
-
-    @staticmethod
-    def _validate_from_list(value: str, valid_list: List[str], value_type: str) -> str:
-        if value:
-            value = value.strip().upper()
-            if value.lower() not in [v.lower() for v in valid_list]:
-                raise ValueError(
-                    f"{value_type} {value} is not valid. Must be one of {', '.join(valid_list)}."
-                )
-        return value
-
-    def validate_property_type(self, property_type: str) -> str:
-        return self._validate_from_list(
-            property_type, self._get_valid_property_types(), "Property type"
-        )
-
-    def validate_portfolio_size(self, portfolio_size: str) -> str:
-        """
-        Validates the portfolio size string and returns it in the expected format.
-        Raises ValueError if the portfolio size is invalid or not in the expected format.
-        """
-        return self._validate_from_list(
-            portfolio_size, self._get_valid_portfolio_sizes(), "Portfolio size"
-        )
+    
 
     def sanitize_output(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -266,9 +224,3 @@ class ParclLabsService(object):
             data_container.append(df)
 
         return pd.concat(data_container).reset_index(drop=True)
-
-    def _get_valid_property_types(self) -> List[str]:
-        return VALID_PROPERTY_TYPES
-
-    def _get_valid_portfolio_sizes(self) -> List[str]:
-        return VALID_PORTFOLIO_SIZES

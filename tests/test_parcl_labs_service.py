@@ -16,15 +16,6 @@ def parcl_labs_service():
         url="https://api.example.com/{parcl_id}", client=client, limit=10
     )
 
-
-def test_validate_date(parcl_labs_service):
-    valid_date = "2023-01-01"
-    assert parcl_labs_service.validate_date(valid_date) == valid_date
-
-    with pytest.raises(ValueError):
-        parcl_labs_service.validate_date("2023-13-01")
-
-
 def test_get_headers(parcl_labs_service):
     headers = parcl_labs_service._get_headers()
     assert headers == {

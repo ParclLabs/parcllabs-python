@@ -1,6 +1,7 @@
 from typing import Any, Mapping, Optional, List
 from parcllabs.common import DEFAULT_LIMIT
 from parcllabs.services.parcllabs_service import ParclLabsService
+from parcllabs.services.validators import Validators
 
 
 class PortfolioSizeService(ParclLabsService):
@@ -17,7 +18,7 @@ class PortfolioSizeService(ParclLabsService):
         params: Optional[Mapping[str, Any]] = {},
         auto_paginate: bool = False,
     ):
-        portfolio_size = self.validate_portfolio_size(portfolio_size)
+        portfolio_size = Validators.validate_portfolio_size(portfolio_size)
 
         if portfolio_size:
             params["portfolio_size"] = portfolio_size

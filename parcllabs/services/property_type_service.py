@@ -1,7 +1,7 @@
 from typing import Any, Mapping, Optional
 from parcllabs.common import DEFAULT_LIMIT
 from parcllabs.services.parcllabs_service import ParclLabsService
-
+from parcllabs.services.validators import Validators
 
 class PropertyTypeService(ParclLabsService):
     def __init__(self, client, url: str, limit: int = DEFAULT_LIMIT):
@@ -17,7 +17,7 @@ class PropertyTypeService(ParclLabsService):
         params: Optional[Mapping[str, Any]] = {},
         auto_paginate: bool = False,
     ):
-        property_type = self.validate_property_type(property_type)
+        property_type = Validators.validate_property_type(property_type)
 
         if property_type:
             params["property_type"] = property_type
