@@ -38,16 +38,13 @@ class ParclLabsService(object):
         session,
         parcl_id: int,
         params: Optional[Mapping[str, Any]],
-        is_next: bool = False,
+        auto_paginate: bool = False
     ):
         if params:
             if not params.get("limit"):
                 params["limit"] = self.limit
         try:
-            if is_next:
-                full_url = self.api_url + params["next"]
-            else:
-                full_url = self.api_url + self.url.format(parcl_id=parcl_id)
+            full_url = self.api_url + self.url.format(parcl_id=parcl_id)
             headers = self._get_headers()
             async with session.get(
                 full_url,
@@ -57,7 +54,20 @@ class ParclLabsService(object):
                 if response.status == 404:
                     return None
                 response.raise_for_status()
-                return await response.json()
+                result = await response.json()
+                
+                # If auto_paginate is True, recursively fetch all pages
+                if auto_paginate and 'links' in result and result['links'].get('next') is not None:
+                    all_items = result['items']
+                    while result['links'].get('next') is not None:
+                        next_url = result['links']['next']
+                        async with session.get(next_url, headers=headers) as next_response:
+                            next_response.raise_for_status()
+                            result = await next_response.json()
+                            all_items.extend(result['items'])
+                    result['items'] = all_items  # Replace the items with the accumulated items
+
+                return result
         except aiohttp.ClientResponseError as e:
             try:
                 error_details = await response.json()
@@ -87,9 +97,9 @@ class ParclLabsService(object):
             "Content-Type": "application/json",
         }
 
-    async def _fetch_all(self, parcl_ids, params):
+    async def _fetch_all(self, parcl_ids, params, auto_paginate=False):
         async with aiohttp.ClientSession() as session:
-            tasks = [self._fetch(session, parcl_id, params) for parcl_id in parcl_ids]
+            tasks = [self._fetch(session, parcl_id, params, auto_paginate=auto_paginate) for parcl_id in parcl_ids]
             return await asyncio.gather(*tasks)
 
     async def _retrieve(self, parcl_ids: List[int], params, auto_paginate: bool):
@@ -97,21 +107,10 @@ class ParclLabsService(object):
         with alive_bar(len(parcl_ids)) as bar:
             for i in range(0, len(parcl_ids), 10):
                 batch_ids = parcl_ids[i : i + 10]
-                batch_results = await self._fetch_all(batch_ids, params)
+                batch_results = await self._fetch_all(batch_ids, params, auto_paginate=auto_paginate)
                 for result in batch_results:
                     if result is None:
                         continue
-                    if auto_paginate:
-                        tmp = result.copy()
-                        while result["links"].get("next"):
-                            next_url = result["links"]["next"]
-                            async with aiohttp.ClientSession() as session:
-                                async with session.get(next_url) as next_response:
-                                    next_response.raise_for_status()
-                                    result = await next_response.json()
-                                    tmp["items"].extend(result["items"])
-                        tmp["links"] = result["links"]
-                        result = tmp
                     results.append(result)
                     bar()
         return results
@@ -137,7 +136,7 @@ class ParclLabsService(object):
 
         loop = asyncio.get_event_loop()
         data_container = loop.run_until_complete(
-            self._retrieve(parcl_ids, params, auto_paginate)
+            self._retrieve(parcl_ids, params, auto_paginate=auto_paginate)
         )
 
         output = self._as_pd_dataframe(data_container)
