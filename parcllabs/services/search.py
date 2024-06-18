@@ -114,4 +114,6 @@ class SearchMarkets(ParclLabsService):
             tmp["links"] = results["links"]
             results = tmp
 
-        return self._as_pd_dataframe(results.get("items"))
+        data = self._as_pd_dataframe(results.get("items"))
+        self.markets = data
+        return data

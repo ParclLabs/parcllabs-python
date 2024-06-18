@@ -31,6 +31,7 @@ class ParclLabsService(object):
         self.limit = limit
         self.api_url = client.api_url
         self.api_key = client.api_key
+        self.markets = {}
 
     async def _fetch(
         self,
@@ -158,31 +159,29 @@ class ParclLabsService(object):
                     f"Date {date_str} is not in the correct format YYYY-MM-DD."
                 )
 
-    def validate_property_type(self, property_type: str) -> str:
-        """
-        Validates the property type string and returns it in the 'single_family' or 'multi_family' format.
-        Raises ValueError if the property type is invalid or not in the expected format.
-        """
-        valid_property_types = self._get_valid_property_types()
-        if property_type:
-            if property_type.lower() not in valid_property_types:
+    @staticmethod
+    def _validate_from_list(value: str, valid_list: List[str], value_type: str) -> str:
+        if value:
+            value = value.strip().upper()
+            if value.lower() not in [v.lower() for v in valid_list]:
                 raise ValueError(
-                    f"Property type {property_type} is not valid. Must be one of {', '.join(valid_property_types)}."
+                    f"{value_type} {value} is not valid. Must be one of {', '.join(valid_list)}."
                 )
-            return property_type
+        return value
+
+    def validate_property_type(self, property_type: str) -> str:
+        return self._validate_from_list(
+            property_type, self._get_valid_property_types(), "Property type"
+        )
 
     def validate_portfolio_size(self, portfolio_size: str) -> str:
         """
         Validates the portfolio size string and returns it in the expected format.
         Raises ValueError if the portfolio size is invalid or not in the expected format.
         """
-        valid_portfolio_sizes = self._get_valid_portfolio_sizes()
-        if portfolio_size:
-            if portfolio_size.upper() not in valid_portfolio_sizes:
-                raise ValueError(
-                    f"Portfolio size {portfolio_size} is not valid. Must be one of {', '.join(valid_portfolio_sizes)}."
-                )
-            return portfolio_size.upper()
+        return self._validate_from_list(
+            portfolio_size, self._get_valid_portfolio_sizes(), "Portfolio size"
+        )
 
     def sanitize_output(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
