@@ -1,7 +1,11 @@
 import pandas as pd
+import aiohttp
+import asyncio
+import json
+import requests
+from requests.exceptions import RequestException
 from datetime import datetime
 from typing import Any, Mapping, Optional, List, Dict
-from requests.exceptions import RequestException
 from alive_progress import alive_bar
 from parcllabs.common import (
     VALID_PORTFOLIO_SIZES,
@@ -25,41 +29,118 @@ class ParclLabsService(object):
             raise ValueError("Missing required client object.")
 
         self.limit = limit
+        self.api_url = client.api_url
+        self.api_key = client.api_key
 
-    def _request(
+    async def _fetch(
         self,
-        parcl_id: int = None,
-        url: str = None,
-        params: Optional[Mapping[str, Any]] = None,
+        session,
+        parcl_id: int,
+        params: Optional[Mapping[str, Any]],
         is_next: bool = False,
-    ) -> Any:
-        if url:
-            url = url
-        elif parcl_id:
-            url = self.url.format(parcl_id=parcl_id)
-        else:
-            url = self.url
-        return self.client.get(url=url, params=params, is_next=is_next)
+    ):
+        if params:
+            if not params.get("limit"):
+                params["limit"] = self.limit
+        try:
+            if is_next:
+                full_url = self.api_url + params["next"]
+            else:
+                full_url = self.api_url + self.url.format(parcl_id=parcl_id)
+            headers = self._get_headers()
+            async with session.get(
+                full_url,
+                headers=headers,
+                params={k: v for k, v in params.items() if v is not None},
+            ) as response:
+                if response.status == 404:
+                    return None
+                response.raise_for_status()
+                return await response.json()
+        except aiohttp.ClientResponseError as e:
+            try:
+                error_details = await response.json()
+                error_message = error_details.get("detail", "No detail provided by API")
+                error = error_message
+                if response.status == 403:
+                    error = f"{error_message}. Visit https://dashboard.parcllabs.com for more information or reach out to team@parcllabs.com."
+                if response.status == 429:
+                    error = error_details.get("error", "Rate Limit Exceeded")
+            except json.JSONDecodeError:
+                error_message = "Failed to decode JSON error response"
+            type_of_error = ""
+            if 400 <= response.status < 500:
+                type_of_error = "Client"
+            elif 500 <= response.status < 600:
+                type_of_error = "Server"
+            msg = f"{response.status} {type_of_error} Error: {error}"
+            raise aiohttp.ClientResponseError(msg, status=e.status)
+        except aiohttp.ClientError as err:
+            raise aiohttp.ClientError(f"Request failed: {str(err)}")
+        except Exception as e:
+            raise aiohttp.ClientError(f"An unexpected error occurred: {str(e)}")
 
-    def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> Any:
-        data_container = []
-        for results in data:
-            results = self.sanitize_output(results)
-            meta_fields = [k for k in results.keys() if k != "items"]
-            df = pd.json_normalize(results, record_path="items", meta=meta_fields)
-            updated_cols_names = [
-                c.replace(".", "_") for c in df.columns.tolist()
-            ]  # for nested json
-            df.columns = updated_cols_names
-            data_container.append(df)
+    def _get_headers(self) -> Dict[str, str]:
+        return {
+            "Authorization": f"{self.api_key}",
+            "Content-Type": "application/json",
+        }
 
-        return pd.concat(data_container).reset_index(drop=True)
+    async def _fetch_all(self, parcl_ids, params):
+        async with aiohttp.ClientSession() as session:
+            tasks = [self._fetch(session, parcl_id, params) for parcl_id in parcl_ids]
+            return await asyncio.gather(*tasks)
 
-    def _get_valid_property_types(self) -> List[str]:
-        return VALID_PROPERTY_TYPES
+    async def _retrieve(self, parcl_ids: List[int], params, auto_paginate: bool):
+        results = []
+        with alive_bar(len(parcl_ids)) as bar:
+            for i in range(0, len(parcl_ids), 10):
+                batch_ids = parcl_ids[i : i + 10]
+                batch_results = await self._fetch_all(batch_ids, params)
+                for result in batch_results:
+                    if result is None:
+                        continue
+                    if auto_paginate:
+                        tmp = result.copy()
+                        while result["links"].get("next"):
+                            next_url = result["links"]["next"]
+                            async with aiohttp.ClientSession() as session:
+                                async with session.get(next_url) as next_response:
+                                    next_response.raise_for_status()
+                                    result = await next_response.json()
+                                    tmp["items"].extend(result["items"])
+                        tmp["links"] = result["links"]
+                        result = tmp
+                    results.append(result)
+                    bar()
+        return results
 
-    def _get_valid_portfolio_sizes(self) -> List[str]:
-        return VALID_PORTFOLIO_SIZES
+    def retrieve(
+        self,
+        parcl_ids: List[int],
+        start_date: str = None,
+        end_date: str = None,
+        limit: Optional[int] = None,
+        params: Optional[Mapping[str, Any]] = None,
+        auto_paginate: bool = False,
+    ):
+        start_date = self.validate_date(start_date)
+        end_date = self.validate_date(end_date)
+
+        params = {
+            "start_date": start_date,
+            "end_date": end_date,
+            "limit": limit if limit is not None else self.limit,
+            **(params or {}),
+        }
+
+        loop = asyncio.get_event_loop()
+        data_container = loop.run_until_complete(
+            self._retrieve(parcl_ids, params, auto_paginate)
+        )
+
+        output = self._as_pd_dataframe(data_container)
+        return output
 
     def validate_date(self, date_str: str) -> str:
         """
@@ -112,60 +193,84 @@ class ParclLabsService(object):
                 del data[key]
         return data
 
-    def retrieve(
+    def _sync_request(
         self,
-        parcl_ids: List[int],
-        start_date: str = None,
-        end_date: str = None,
-        limit: Optional[int] = None,
+        parcl_id: int = None,
+        url: str = None,
         params: Optional[Mapping[str, Any]] = None,
-        auto_paginate: bool = False,
-    ):
+        is_next: bool = False,
+    ) -> Any:
+        if url:
+            url = url
+        elif parcl_id:
+            url = self.url.format(parcl_id=parcl_id)
+        else:
+            url = self.url
+        return self.get(url=url, params=params, is_next=is_next)
+
+    def get(self, url: str, params: dict = None, is_next: bool = False):
         """
-        Retrieves data for a single parcl_id.
+        Send a GET request to the specified URL with the given parameters.
 
         Args:
-            parcl_id (int): The parcl_id to retrieve data for.
-            params (dict, optional): Additional parameters to include in the request.
-            auto_paginate (bool, optional): Automatically paginate through the results.
+            url (str): The URL endpoint to request.
+            params (dict, optional): The parameters to send in the query string.
+
+        Returns:
+            dict: The JSON response as a dictionary.
         """
-        start_date = self.validate_date(start_date)
-        end_date = self.validate_date(end_date)
 
-        params = {
-            "start_date": start_date,
-            "end_date": end_date,
-            "limit": limit if limit is not None else self.limit,
-            **(params or {}),
-        }
+        if params:
+            if not params.get("limit"):
+                params["limit"] = self.limit
+        try:
+            if is_next:
+                full_url = url
+            else:
+                full_url = self.api_url + url
+            headers = self._get_headers()
+            response = requests.get(full_url, headers=headers, params=params)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError:
+            try:
+                error_details = response.json()
+                error_message = error_details.get("detail", "No detail provided by API")
+                error = error_message
+                if response.status_code == 403:
+                    error = f"{error_message}. Visit https://dashboard.parcllabs.com for more information or reach out to team@parcllabs.com."
+                if response.status_code == 429:
+                    error = error_details.get("error", "Rate Limit Exceeded")
+            except json.JSONDecodeError:
+                error_message = "Failed to decode JSON error response"
+            type_of_error = ""
+            if 400 <= response.status_code < 500:
+                type_of_error = "Client"
+            elif 500 <= response.status_code < 600:
+                type_of_error = "Server"
+            msg = f"{response.status_code} {type_of_error} Error: {error}"
+            raise RequestException(msg)
+        except requests.exceptions.RequestException as err:
+            raise RequestException(f"Request failed: {str(err)}")
+        except Exception as e:
+            raise RequestException(f"An unexpected error occurred: {str(e)}")
 
+    def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> Any:
         data_container = []
+        for results in data:
+            results = self.sanitize_output(results)
+            meta_fields = [k for k in results.keys() if k != "items"]
+            df = pd.json_normalize(results, record_path="items", meta=meta_fields)
+            updated_cols_names = [
+                c.replace(".", "_") for c in df.columns.tolist()
+            ]  # for nested json
+            df.columns = updated_cols_names
+            data_container.append(df)
 
-        with alive_bar(len(parcl_ids)) as bar:
-            for parcl_id in parcl_ids:
-                try:
-                    results = self._request(
-                        parcl_id=parcl_id,
-                        params=params,
-                    )
+        return pd.concat(data_container).reset_index(drop=True)
 
-                    if auto_paginate:
-                        tmp = results.copy()
-                        while results["links"].get("next"):
-                            results = self._request(
-                                url=results["links"]["next"], is_next=True
-                            )
-                            tmp["items"].extend(results["items"])
-                        tmp["links"] = results["links"]
-                        results = tmp
-                    data_container.append(results)
+    def _get_valid_property_types(self) -> List[str]:
+        return VALID_PROPERTY_TYPES
 
-                except RequestException as e:
-                    # continue if no data is found for the parcl_id
-                    if "404" in str(e):
-                        continue
-
-                bar()
-
-        output = self._as_pd_dataframe(data_container)
-        return output
+    def _get_valid_portfolio_sizes(self) -> List[str]:
+        return VALID_PORTFOLIO_SIZES

@@ -104,12 +104,12 @@ class SearchMarkets(ParclLabsService):
             "limit": limit if limit is not None else self.limit,
             **(params or {}),
         }
-        results = self._request(params=params)
+        results = self._sync_request(params=params)
 
         if auto_paginate:
             tmp = results.copy()
             while results["links"].get("next"):
-                results = self._request(url=results["links"]["next"], is_next=True)
+                results = self._sync_request(url=results["links"]["next"], is_next=True)
                 tmp["items"].extend(results["items"])
             tmp["links"] = results["links"]
             results = tmp

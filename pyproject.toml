@@ -31,6 +31,7 @@ dependencies = [
     "numpy",
     "pandas",
     "requests",
+    "aiohttp",
 ]
 
 [project.optional-dependencies]
