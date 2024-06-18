@@ -3,6 +3,7 @@ from parcllabs.common import DEFAULT_LIMIT
 from parcllabs.services.parcllabs_service import ParclLabsService
 from parcllabs.services.validators import Validators
 
+
 class PropertyTypeService(ParclLabsService):
     def __init__(self, client, url: str, limit: int = DEFAULT_LIMIT):
         super().__init__(client=client, url=url, limit=limit)

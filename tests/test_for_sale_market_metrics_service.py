@@ -13,13 +13,13 @@ mock_response = {"parcl_id": 1, "items": [{"metric": 10}, {"metric": 20}], "link
 @pytest.fixture
 def client():
     client = ParclLabsClient(api_key="test_api_key")
-    client.for_sale_market_metrics_new_listings_rolling_counts._fetch = AsyncMock(
+    client.for_sale_market_metrics.new_listings_rolling_counts._fetch = AsyncMock(
         return_value=mock_response
     )
-    client.for_sale_market_metrics_for_sale_inventory._fetch = AsyncMock(
+    client.for_sale_market_metrics.for_sale_inventory._fetch = AsyncMock(
         return_value=mock_response
     )
-    client.for_sale_market_metrics_for_sale_inventory_price_changes._fetch = AsyncMock(
+    client.for_sale_market_metrics.for_sale_inventory_price_changes._fetch = AsyncMock(
         return_value=mock_response
     )
     return client
@@ -27,7 +27,7 @@ def client():
 
 @pytest.mark.asyncio
 async def test_for_sale_market_metrics_new_listings_rolling_counts_retrieve(client):
-    result = client.for_sale_market_metrics_new_listings_rolling_counts.retrieve(
+    result = client.for_sale_market_metrics.new_listings_rolling_counts.retrieve(
         parcl_ids=[1]
     )
     assert not result.empty
@@ -40,7 +40,7 @@ async def test_for_sale_market_metrics_new_listings_rolling_counts_retrieve(clie
 
 @pytest.mark.asyncio
 async def test_for_sale_market_metrics_for_sale_inventory_retrieve(client):
-    result = client.for_sale_market_metrics_for_sale_inventory.retrieve(parcl_ids=[1])
+    result = client.for_sale_market_metrics.for_sale_inventory.retrieve(parcl_ids=[1])
     assert not result.empty
     assert "parcl_id" in result.columns
     assert "metric" in result.columns
@@ -53,7 +53,7 @@ async def test_for_sale_market_metrics_for_sale_inventory_retrieve(client):
 async def test_for_sale_market_metrics_for_sale_inventory_price_changes_retrieve(
     client,
 ):
-    result = client.for_sale_market_metrics_for_sale_inventory_price_changes.retrieve(
+    result = client.for_sale_market_metrics.for_sale_inventory_price_changes.retrieve(
         parcl_ids=[1]
     )
     assert not result.empty

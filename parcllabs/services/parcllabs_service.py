@@ -10,7 +10,6 @@ from parcllabs.common import DELETE_FROM_OUTPUT, DEFAULT_LIMIT
 from parcllabs.services.validators import Validators
 
 
-
 class ParclLabsService(object):
     """
     Base class for working with data from the Parcl Labs API.
@@ -34,7 +33,7 @@ class ParclLabsService(object):
         session,
         parcl_id: int,
         params: Optional[Mapping[str, Any]],
-        auto_paginate: bool = False
+        auto_paginate: bool = False,
     ):
         if params:
             if not params.get("limit"):
@@ -51,17 +50,25 @@ class ParclLabsService(object):
                     return None
                 response.raise_for_status()
                 result = await response.json()
-                
+
                 # If auto_paginate is True, recursively fetch all pages
-                if auto_paginate and 'links' in result and result['links'].get('next') is not None:
-                    all_items = result['items']
-                    while result['links'].get('next') is not None:
-                        next_url = result['links']['next']
-                        async with session.get(next_url, headers=headers) as next_response:
+                if (
+                    auto_paginate
+                    and "links" in result
+                    and result["links"].get("next") is not None
+                ):
+                    all_items = result["items"]
+                    while result["links"].get("next") is not None:
+                        next_url = result["links"]["next"]
+                        async with session.get(
+                            next_url, headers=headers
+                        ) as next_response:
                             next_response.raise_for_status()
                             result = await next_response.json()
-                            all_items.extend(result['items'])
-                    result['items'] = all_items  # Replace the items with the accumulated items
+                            all_items.extend(result["items"])
+                    result["items"] = (
+                        all_items  # Replace the items with the accumulated items
+                    )
 
                 return result
         except aiohttp.ClientResponseError as e:
@@ -95,7 +102,10 @@ class ParclLabsService(object):
 
     async def _fetch_all(self, parcl_ids, params, auto_paginate=False):
         async with aiohttp.ClientSession() as session:
-            tasks = [self._fetch(session, parcl_id, params, auto_paginate=auto_paginate) for parcl_id in parcl_ids]
+            tasks = [
+                self._fetch(session, parcl_id, params, auto_paginate=auto_paginate)
+                for parcl_id in parcl_ids
+            ]
             return await asyncio.gather(*tasks)
 
     async def _retrieve(self, parcl_ids: List[int], params, auto_paginate: bool):
@@ -103,7 +113,9 @@ class ParclLabsService(object):
         with alive_bar(len(parcl_ids)) as bar:
             for i in range(0, len(parcl_ids), 10):
                 batch_ids = parcl_ids[i : i + 10]
-                batch_results = await self._fetch_all(batch_ids, params, auto_paginate=auto_paginate)
+                batch_results = await self._fetch_all(
+                    batch_ids, params, auto_paginate=auto_paginate
+                )
                 for result in batch_results:
                     if result is None:
                         continue
@@ -137,8 +149,6 @@ class ParclLabsService(object):
 
         output = self._as_pd_dataframe(data_container)
         return output
-
-    
 
     def sanitize_output(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """

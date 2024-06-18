@@ -13,16 +13,16 @@ mock_response = {"parcl_id": 1, "items": [{"metric": 10}, {"metric": 20}], "link
 @pytest.fixture
 def client():
     client = ParclLabsClient(api_key="test_api_key")
-    client.portfolio_metrics_sf_housing_stock_ownership._fetch = AsyncMock(
+    client.portfolio_metrics.sf_housing_stock_ownership._fetch = AsyncMock(
         return_value=mock_response
     )
-    client.portfolio_metrics_new_listings_for_sale_rolling_counts._fetch = AsyncMock(
+    client.portfolio_metrics.sf_new_listings_for_sale_rolling_counts._fetch = AsyncMock(
         return_value=mock_response
     )
-    client.portfolio_metrics_sf_new_listings_for_rent_rolling_counts._fetch = AsyncMock(
+    client.portfolio_metrics.sf_new_listings_for_rent_rolling_counts._fetch = AsyncMock(
         return_value=mock_response
     )
-    client.portfolio_metrics_sf_housing_event_counts._fetch = AsyncMock(
+    client.portfolio_metrics.sf_housing_event_counts._fetch = AsyncMock(
         return_value=mock_response
     )
     return client
@@ -30,7 +30,7 @@ def client():
 
 @pytest.mark.asyncio
 async def test_portfolio_metrics_sf_housing_stock_ownership_retrieve(client):
-    result = client.portfolio_metrics_sf_housing_stock_ownership.retrieve(parcl_ids=[1])
+    result = client.portfolio_metrics.sf_housing_stock_ownership.retrieve(parcl_ids=[1])
     assert not result.empty
     assert "parcl_id" in result.columns
     assert "metric" in result.columns
@@ -41,7 +41,7 @@ async def test_portfolio_metrics_sf_housing_stock_ownership_retrieve(client):
 
 @pytest.mark.asyncio
 async def test_portfolio_metrics_new_listings_for_sale_rolling_counts_retrieve(client):
-    result = client.portfolio_metrics_new_listings_for_sale_rolling_counts.retrieve(
+    result = client.portfolio_metrics.sf_new_listings_for_sale_rolling_counts.retrieve(
         parcl_ids=[1]
     )
     assert not result.empty
@@ -56,7 +56,7 @@ async def test_portfolio_metrics_new_listings_for_sale_rolling_counts_retrieve(c
 async def test_portfolio_metrics_sf_new_listings_for_rent_rolling_counts_retrieve(
     client,
 ):
-    result = client.portfolio_metrics_sf_new_listings_for_rent_rolling_counts.retrieve(
+    result = client.portfolio_metrics.sf_new_listings_for_rent_rolling_counts.retrieve(
         parcl_ids=[1]
     )
     assert not result.empty
@@ -69,7 +69,7 @@ async def test_portfolio_metrics_sf_new_listings_for_rent_rolling_counts_retriev
 
 @pytest.mark.asyncio
 async def test_portfolio_metrics_sf_housing_event_counts_retrieve(client):
-    result = client.portfolio_metrics_sf_housing_event_counts.retrieve(parcl_ids=[1])
+    result = client.portfolio_metrics.sf_housing_event_counts.retrieve(parcl_ids=[1])
     assert not result.empty
     assert "parcl_id" in result.columns
     assert "metric" in result.columns

@@ -5,6 +5,7 @@ from parcllabs.common import (
     VALID_PROPERTY_TYPES,
 )
 
+
 class Validators:
     @staticmethod
     def validate_date(date_str: str) -> str:

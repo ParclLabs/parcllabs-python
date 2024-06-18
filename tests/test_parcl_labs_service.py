@@ -16,6 +16,7 @@ def parcl_labs_service():
         url="https://api.example.com/{parcl_id}", client=client, limit=10
     )
 
+
 def test_get_headers(parcl_labs_service):
     headers = parcl_labs_service._get_headers()
     assert headers == {
