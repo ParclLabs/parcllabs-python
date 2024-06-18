@@ -33,99 +33,130 @@ class ParclLabsClient:
 
         # price feed services
         self.price_feed = ParclLabsService(
-            url="/v1/price_feed/{parcl_id}/price_feed", client=self
+            url="/v1/price_feed/{parcl_id}/price_feed", client=self, limit=self.limit
         )
         self.price_feed_volatility = ParclLabsService(
-            url="/v1/price_feed/{parcl_id}/volatility", client=self
+            url="/v1/price_feed/{parcl_id}/volatility", client=self, limit=self.limit
         )
 
         self.rental_price_feed = ParclLabsService(
-            url="/v1/price_feed/{parcl_id}/rental_price_feed", client=self
+            url="/v1/price_feed/{parcl_id}/rental_price_feed",
+            client=self,
+            limit=self.limit,
         )
 
         # investor metrics services
         self.investor_metrics_housing_stock_ownership = ParclLabsService(
-            url="/v1/investor_metrics/{parcl_id}/housing_stock_ownership", client=self
+            url="/v1/investor_metrics/{parcl_id}/housing_stock_ownership",
+            client=self,
+            limit=self.limit,
         )
         self.investor_metrics_new_listings_for_sale_rolling_counts = PropertyTypeService(
             url="/v1/investor_metrics/{parcl_id}/new_listings_for_sale_rolling_counts",
             client=self,
+            limit=self.limit,
         )
         self.investor_metrics_purchase_to_sale_ratio = ParclLabsService(
-            url="/v1/investor_metrics/{parcl_id}/purchase_to_sale_ratio", client=self
+            url="/v1/investor_metrics/{parcl_id}/purchase_to_sale_ratio",
+            client=self,
+            limit=self.limit,
         )
         self.investor_metrics_housing_event_counts = ParclLabsService(
-            url="/v1/investor_metrics/{parcl_id}/housing_event_counts", client=self
+            url="/v1/investor_metrics/{parcl_id}/housing_event_counts",
+            client=self,
+            limit=self.limit,
         )
         self.investor_metrics_housing_event_prices = ParclLabsService(
-            url="/v1/investor_metrics/{parcl_id}/housing_event_prices", client=self
+            url="/v1/investor_metrics/{parcl_id}/housing_event_prices",
+            client=self,
+            limit=self.limit,
         )
 
         # market metrics services
         self.market_metrics_housing_event_prices = PropertyTypeService(
-            url="/v1/market_metrics/{parcl_id}/housing_event_prices", client=self
+            url="/v1/market_metrics/{parcl_id}/housing_event_prices",
+            client=self,
+            limit=self.limit,
         )
         self.market_metrics_all_cash = PropertyTypeService(
-            url="/v1/market_metrics/{parcl_id}/all_cash", client=self
+            url="/v1/market_metrics/{parcl_id}/all_cash", client=self, limit=self.limit
         )
         self.market_metrics_housing_stock = ParclLabsService(
-            url="/v1/market_metrics/{parcl_id}/housing_stock", client=self
+            url="/v1/market_metrics/{parcl_id}/housing_stock",
+            client=self,
+            limit=self.limit,
         )
         self.market_metrics_housing_event_counts = PropertyTypeService(
-            url="/v1/market_metrics/{parcl_id}/housing_event_counts", client=self
+            url="/v1/market_metrics/{parcl_id}/housing_event_counts",
+            client=self,
+            limit=self.limit,
         )
         self.market_metrics_housing_event_property_attributes = PropertyTypeService(
             url="/v1/market_metrics/{parcl_id}/housing_event_property_attributes",
             client=self,
+            limit=self.limit,
         )
 
         # for sale market metrics
         self.for_sale_market_metrics_new_listings_rolling_counts = PropertyTypeService(
             url="/v1/for_sale_market_metrics/{parcl_id}/new_listings_rolling_counts",
             client=self,
+            limit=self.limit,
         )
         self.for_sale_market_metrics_for_sale_inventory = PropertyTypeService(
             url="/v1/for_sale_market_metrics/{parcl_id}/for_sale_inventory",
             client=self,
+            limit=self.limit,
         )
         self.for_sale_market_metrics_for_sale_inventory_price_changes = PropertyTypeService(
             url="/v1/for_sale_market_metrics/{parcl_id}/for_sale_inventory_price_changes",
             client=self,
+            limit=self.limit,
         )
 
         # rental market metrics services
         self.rental_market_metrics_rental_units_concentration = PropertyTypeService(
             url="/v1/rental_market_metrics/{parcl_id}/rental_units_concentration",
             client=self,
+            limit=self.limit,
         )
         self.rental_market_metrics_gross_yield = PropertyTypeService(
-            url="/v1/rental_market_metrics/{parcl_id}/gross_yield", client=self
+            url="/v1/rental_market_metrics/{parcl_id}/gross_yield",
+            client=self,
+            limit=self.limit,
         )
         self.rental_market_metrics_new_listings_for_rent_rolling_counts = PropertyTypeService(
             url="/v1/rental_market_metrics/{parcl_id}/new_listings_for_rent_rolling_counts",
             client=self,
+            limit=self.limit,
         )
 
         # portfolio metrics services
         self.portfolio_metrics_sf_housing_stock_ownership = ParclLabsService(
             url="/v1/portfolio_metrics/{parcl_id}/sf_housing_stock_ownership",
             client=self,
+            limit=self.limit,
         )
         self.portfolio_metrics_new_listings_for_sale_rolling_counts = PortfolioSizeService(
             url="/v1/portfolio_metrics/{parcl_id}/sf_new_listings_for_sale_rolling_counts",
             client=self,
+            limit=self.limit,
         )
         self.portfolio_metrics_sf_new_listings_for_rent_rolling_counts = PortfolioSizeService(
             url="/v1/portfolio_metrics/{parcl_id}/sf_new_listings_for_rent_rolling_counts",
             client=self,
+            limit=self.limit,
         )
         self.portfolio_metrics_sf_housing_event_counts = PortfolioSizeService(
             url="/v1/portfolio_metrics/{parcl_id}/sf_housing_event_counts",
             client=self,
+            limit=self.limit,
         )
 
         # search services
-        self.search_markets = SearchMarkets(url="/v1/search/markets", client=self)
+        self.search_markets = SearchMarkets(
+            url="/v1/search/markets", client=self, limit=self.limit
+        )
 
     def get(self, url: str, params: dict = None, is_next: bool = False):
         """
