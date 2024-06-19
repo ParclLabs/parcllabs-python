@@ -3,6 +3,7 @@ import aiohttp
 import asyncio
 import json
 import requests
+import platform
 from requests.exceptions import RequestException
 from typing import Any, Mapping, Optional, List, Dict
 from alive_progress import alive_bar
@@ -102,7 +103,9 @@ class ParclLabsService(object):
         return {
             "Authorization": f"{self.api_key}",
             "Content-Type": "application/json",
-            "X-Parcl-Labs-Python-Client-Version": f"{VERSION}"
+            "X-Parcl-Labs-Python-Client-Version": f"{VERSION}",
+            "X-Parcl-Labs-Python-Client-Platform": f"{platform.system()}",
+            "X-Parcl-Labs-Python-Client-Platform-Version": f"{platform.python_version()}"
         }
 
     async def _fetch_all(self, parcl_ids, params, auto_paginate=False):
