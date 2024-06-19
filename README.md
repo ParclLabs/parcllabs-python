@@ -37,19 +37,18 @@ Search is your entry point into finding one or many of over 70,000 markets in th
 
 #### Search Markets
 ```python
-
-# all cities in EAST_NORTH_CENTRAL census region
-results = client.search.markets.retrieve(
-    location_type='CITY',
-    region='EAST_NORTH_CENTRAL'
+# get top 2 metros by population
+markets = client.search.markets.retrieve(
+        location_type='CBSA',
+        sort_by='TOTAL_POPULATION',
+        sort_order='DESC',
+        limit=2
 )
-print(results.head())
-#       parcl_id country    geoid state_fips_code                         name state_abbreviation              region location_type  total_population  median_income  parcl_exchange_market  pricefeed_market  case_shiller_10_market  case_shiller_20_market
-# 0      5387853     USA  1714000              17                 Chicago City                 IL  EAST_NORTH_CENTRAL          CITY           2721914        71673.0                      1                 1                       0                       0
-# 1      5332060     USA  3918000              39                Columbus City                 OH  EAST_NORTH_CENTRAL          CITY            902449        62994.0                      0                 1                       0                       0
-# 2      5288667     USA  1836003              18  Indianapolis City (Balance)                 IN  EAST_NORTH_CENTRAL          CITY            882006        59110.0                      0                 0                       0                       0
-# 3      5278514     USA  2622000              26                 Detroit City                 MI  EAST_NORTH_CENTRAL          CITY            636787        37761.0                      0                 1                       0                       0
-# 4      5333209     USA  5553000              55               Milwaukee City                 WI  EAST_NORTH_CENTRAL          CITY            573299        49733.0                      0                 1                       0                       0
+# top 2 metros based on population. We will use these markets to query other services in the remainder of this readme
+top_market_parcl_ids = markets['parcl_id'].tolist()
+# parcl_id country  geoid state_fips_code                                   name state_abbreviation region location_type  total_population  median_income  parcl_exchange_market  pricefeed_market  case_shiller_10_market  case_shiller_20_market
+#  2900187     USA  35620            None  New York-Newark-Jersey City, Ny-Nj-Pa               None   None          CBSA          19908595          93610                      0                 1                       1                       1
+#  2900078     USA  31080            None     Los Angeles-Long Beach-Anaheim, Ca               None   None          CBSA          13111917          89105                      0                 1                       1                       1
 ```
 
 ## Services
@@ -71,17 +70,16 @@ Gets the daily price feed volatility for a specified `parcl_id`.
 Gets the daily updated Parcl Labs Rental Price Feed for a given `parcl_id`.
 
 ```python
-# Get 2 price feed markets
+# get 2 price feeds trading on the Parcl Exchange
 pricefeed_markets = client.search.markets.retrieve(
-        sort_by='PRICEFEED_MARKET',
+        sort_by='PARCL_EXCHANGE_MARKET', # use PRICEFEED_MARKET for all price feed markets
         sort_order='DESC',
         limit=2
 )
-
+# top 2 metros based on population. We will use these markets to query other services in the remainder of this readme
+pricefeed_ids = pricefeed_markets['parcl_id'].tolist()
 start_date = '2024-06-01'
 end_date = '2024-06-05'
-# extract the market id's
-pricefeed_ids = pricefeed_markets['parcl_id'].tolist()
 
 price_feeds = client.price_feed.price_feed.retrieve(
     parcl_ids=pricefeed_ids,
@@ -115,16 +113,6 @@ Gets the number of rental units, total units, and percent rental unit concentrat
 
 ##### Get all rental market metrics
 ```python
-# get top 2 metros by population
-markets = client.search.markets.retrieve(
-        location_type='CBSA',
-        sort_by='TOTAL_POPULATION',
-        sort_order='DESC',
-        limit=2
-)
-# top 2 metros based on population
-top_market_parcl_ids = markets['parcl_id'].tolist()
-
 start_date = '2024-04-01'
 end_date = '2024-04-01'
 
@@ -158,16 +146,6 @@ Gets weekly updated metrics on the price behavior of current for sale inventory,
 
 ##### Get all for sale market metrics
 ```python
-# get top 2 metros by population
-markets = client.search.markets.retrieve(
-        location_type='CBSA',
-        sort_by='TOTAL_POPULATION',
-        sort_order='DESC',
-        limit=2
-)
-# top 2 metros based on population
-top_market_parcl_ids = markets['parcl_id'].tolist()
-
 start_date = '2024-04-01'
 end_date = '2024-04-01'
 property_type = 'single_family'
@@ -212,16 +190,6 @@ Gets monthly counts of all cash transactions and their percentage share of total
 
 ##### Get all market metrics
 ```python
-# get top 2 metros by population
-markets = client.search.markets.retrieve(
-        location_type='CBSA',
-        sort_by='TOTAL_POPULATION',
-        sort_order='DESC',
-        limit=2
-)
-# top 2 metros based on population
-top_market_parcl_ids = markets['parcl_id'].tolist()
-
 start_date = '2024-01-01'
 end_date = '2024-04-01'
 
@@ -275,16 +243,6 @@ Gets monthly median prices for investor housing events, including acquisitions, 
 
 ##### Get all investor metrics
 ```python
-# get top 2 metros by population
-markets = client.search.markets.retrieve(
-        location_type='CBSA',
-        sort_by='TOTAL_POPULATION',
-        sort_order='DESC',
-        limit=2
-)
-# top 2 metros based on population
-top_market_parcl_ids = markets['parcl_id'].tolist()
-
 start_date = '2024-01-01'
 end_date = '2024-04-01'
 
@@ -338,16 +296,6 @@ Gets counts of investor-owned single family properties and their corresponding p
 Gets weekly updated rolling counts of investor-owned single family properties newly listed for rent, segmented by portfolio size, and their corresponding percentage share of the total single family for rent listings market. These metrics are divided into 7, 30, 60, and 90 day periods ending on a specified date, based on a given <parcl_id>. The data series for portfolio metrics begins on April 22, 2024 (2024-04-22).
 
 ```python
-# get top 2 metros by population
-markets = client.search.markets.retrieve(
-        location_type='CBSA',
-        sort_by='TOTAL_POPULATION',
-        sort_order='DESC',
-        limit=2
-)
-# top 2 metros based on population
-top_market_parcl_ids = markets['parcl_id'].tolist()
-
 results_housing_stock_ownership = client.portfolio_metrics.sf_housing_stock_ownership.retrieve(
     parcl_ids=top_market_parcl_ids,
 )
