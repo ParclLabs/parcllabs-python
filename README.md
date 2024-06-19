@@ -368,3 +368,12 @@ results = client.portfolio_metrics.sf_new_listings_for_rent_rolling_counts.retri
         portfolio_size='PORTFOLIO_1000_PLUS'
 )
 ```
+
+#### Utility Functions
+Want to keep track of the estimated number of credits you are using in a given session? 
+
+```python
+# get the number of credits used in a given session
+credits_used = client.estimated_session_credit_usage
+print(f"Estimated session credit usage: {credits_used}")
+```

@@ -1,3 +1,8 @@
+### v0.6.0
+- Asynchronous support for all endpoints (retrieve)
+- Refactor `retrieve_many` into one `retrieve` method to support 1 to n parcl_ids
+- Add utility method `client.estimated_session_credit_usage` to estimate session credit usage
+
 ### v0.5.0
 - Introduce `for_sale_inventory_price_changes` and `housing_event_property_attributes`. See [Parcl Labs Changelog](https://docs.parcllabs.com/changelog/for-sale-market-metrics-inventory-prices-market-metrics-housing-event-property-attributes) for more details. 
 
