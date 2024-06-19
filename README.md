@@ -1,5 +1,6 @@
 ![Logo](img/labs.jpg)
-# parcllabs-python
+![GitHub Tag](https://img.shields.io/github/v/tag/ParclLabs/parcllabs-python)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/parcllabs)
 
 ## Sign Up for an API Key
 
