@@ -1,22 +1,17 @@
-import json
-import requests
-from typing import Dict
-from requests.exceptions import RequestException
 from parcllabs import api_base
 from parcllabs.services.parcllabs_service import ParclLabsService
 from parcllabs.services.portfolio_size_service import PortfolioSizeService
 from parcllabs.services.property_type_service import PropertyTypeService
 from parcllabs.services.search import SearchMarkets
 
-
-class Endpoint:
-    def __init__(self, client, url, limit):
-        self.client = client
-        self.url = url
-        self.limit = limit
-
-
 class ServiceGroup:
+    """
+    Class to organize services into groups for easier access.
+
+    Args:
+        client (ParclLabsClient): The ParclLabsClient object.
+        limit (int): The number of items to return per request.
+    """
     def __init__(self, client, limit):
         self._client = client
         self._limit = limit
@@ -33,6 +28,13 @@ class ServiceGroup:
 
 
 class ParclLabsClient:
+    """
+    Client for the Parcl Labs API.
+
+    Args:
+        api_key (str): The API key for the Parcl Labs API.
+        limit (int): The number of items to return per request.
+    """
     def __init__(self, api_key: str, limit: int = 12):
         if not api_key:
             raise ValueError(

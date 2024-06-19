@@ -23,7 +23,6 @@ def client():
 async def test_price_feed_retrieve(client):
     # Call the retrieve method without await
     result = client.price_feed.price_feed.retrieve(parcl_ids=[1])
-    print(result)
     assert not result.empty
     assert "parcl_id" in result.columns
     assert "price" in result.columns

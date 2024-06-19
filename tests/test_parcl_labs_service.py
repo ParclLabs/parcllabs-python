@@ -1,5 +1,6 @@
 import pytest
-import requests
+import platform
+import parcllabs
 from unittest.mock import Mock, patch
 from parcllabs.services.parcllabs_service import ParclLabsService
 
@@ -20,9 +21,12 @@ def parcl_labs_service():
 def test_get_headers(parcl_labs_service):
     headers = parcl_labs_service._get_headers()
     assert headers == {
-        "Authorization": "test_api_key",
-        "Content-Type": "application/json",
-    }
+            "Authorization": "test_api_key",
+            "Content-Type": "application/json",
+            "X-Parcl-Labs-Python-Client-Version": f"{parcllabs.__version__}",
+            "X-Parcl-Labs-Python-Client-Platform": f"{platform.system()}",
+            "X-Parcl-Labs-Python-Client-Platform-Version": f"{platform.python_version()}"
+        }
 
 
 @patch("parcllabs.services.parcllabs_service.requests.get")

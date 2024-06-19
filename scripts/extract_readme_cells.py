@@ -22,7 +22,6 @@ def main():
 
     code_blocks = extract_code_blocks(readme_content)
     save_code_blocks_to_file(code_blocks, output_file)
-    print(f"Extracted code blocks saved to {output_file}")
 
 
 if __name__ == "__main__":

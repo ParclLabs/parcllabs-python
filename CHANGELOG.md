@@ -1,4 +1,4 @@
-### v0.6.0
+### v1.0.0
 **Note**: This release includes breaking changes.
 - Asynchronous support for all endpoints (retrieve)
 - Refactor `retrieve_many` into one `retrieve` method to support 1 to n parcl_ids
