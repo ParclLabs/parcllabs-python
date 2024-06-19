@@ -8,12 +8,16 @@ requests = ">=2.25"
 pandas = ">=1.2"
 alive-progress = "*"
 numpy = "*"
+aiohttp = "*"
 
 [dev-packages]
 black = ">=22"
 parcllabs = {path = ".", editable = true}
 pytest = ">=8"
 requests-mock = ">=1"
+asynctest = ">=0.13"
+pytest-asyncio = ">=0.15"
+nest-asyncio = ">=1.5"
 
 [requires]
 python_version = ">=3.9"

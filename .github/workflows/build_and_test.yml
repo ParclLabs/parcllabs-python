@@ -27,12 +27,19 @@ jobs:
           python -m pip install pipenv twine build
           pipenv install --dev --python python
 
-      - name: Run Lint
+      - name: Run Lint 🧹
         run: |
           set -e
           pipenv run make lint
 
-      - name: Run tests
+      - name: Run tests 🧪
         run: |
           set -e
           pipenv run make test
+
+      - name: Run Test Readme 📚
+        env:
+          PARCL_LABS_API_KEY: ${{ secrets.PARCL_LABS_API_KEY }}
+        run: |
+          set -e
+          pipenv run make test-readme

@@ -1,8 +1,5 @@
 import pytest
 from unittest.mock import Mock
-from datetime import datetime
-import requests
-import requests_mock
 from parcllabs import ParclLabsClient
 
 from parcllabs.services.parcllabs_service import (

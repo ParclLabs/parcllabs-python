@@ -1,158 +1,15 @@
 import pandas as pd
 from typing import Any, Mapping, Optional, List
+from parcllabs.common import (
+    DEFAULT_LIMIT,
+    VALID_LOCATION_TYPES,
+    VALID_US_REGIONS,
+    VALID_US_STATE_ABBREV,
+    VALID_US_STATE_FIPS_CODES,
+    VALID_SORT_BY,
+    VALID_SORT_ORDER,
+)
 from parcllabs.services.parcllabs_service import ParclLabsService
-
-VALID_LOCATION_TYPES = [
-    "COUNTY",
-    "CITY",
-    "ZIP5",
-    "CDP",
-    "VILLAGE",
-    "TOWN",
-    "CBSA",
-    "ALL",
-]
-
-VALID_US_REGIONS = [
-    "EAST_NORTH_CENTRAL",
-    "EAST_SOUTH_CENTRAL",
-    "MIDDLE_ATLANTIC",
-    "MOUNTAIN",
-    "NEW_ENGLAND",
-    "PACIFIC",
-    "SOUTH_ATLANTIC",
-    "WEST_NORTH_CENTRAL",
-    "WEST_SOUTH_CENTRAL",
-    "ALL",
-]
-
-VALID_US_STATE_ABBREV = [
-    "AK",
-    "AL",
-    "AR",
-    "AZ",
-    "CA",
-    "CO",
-    "CT",
-    "DC",
-    "DE",
-    "FL",
-    "GA",
-    "HI",
-    "IA",
-    "ID",
-    "IL",
-    "IN",
-    "KS",
-    "KY",
-    "LA",
-    "MA",
-    "MD",
-    "ME",
-    "MI",
-    "MN",
-    "MO",
-    "MS",
-    "MT",
-    "NC",
-    "ND",
-    "NE",
-    "NH",
-    "NJ",
-    "NM",
-    "NV",
-    "NY",
-    "OH",
-    "OK",
-    "OR",
-    "PA",
-    "PR",
-    "RI",
-    "SC",
-    "SD",
-    "TN",
-    "TX",
-    "UT",
-    "VA",
-    "VI",
-    "VT",
-    "WA",
-    "WI",
-    "WV",
-    "WY",
-    "ALL",
-]
-
-VALID_US_STATE_FIPS_CODES = [
-    "01",
-    "02",
-    "04",
-    "05",
-    "06",
-    "08",
-    "09",
-    "10",
-    "11",
-    "12",
-    "13",
-    "15",
-    "16",
-    "17",
-    "18",
-    "19",
-    "20",
-    "21",
-    "22",
-    "23",
-    "24",
-    "25",
-    "26",
-    "27",
-    "28",
-    "29",
-    "30",
-    "31",
-    "32",
-    "33",
-    "34",
-    "35",
-    "36",
-    "37",
-    "38",
-    "39",
-    "40",
-    "41",
-    "42",
-    "44",
-    "45",
-    "46",
-    "47",
-    "48",
-    "49",
-    "50",
-    "51",
-    "53",
-    "54",
-    "55",
-    "56",
-    "60",
-    "66",
-    "69",
-    "72",
-    "78",
-    "ALL",
-]
-
-VALID_SORT_BY = [
-    "TOTAL_POPULATION",
-    "MEDIAN_INCOME",
-    "CASE_SHILLER_20_MARKET",
-    "CASE_SHILLER_10_MARKET",
-    "PRICEFEED_MARKET",
-    "PARCL_EXCHANGE_MARKET",
-]
-
-VALID_SORT_ORDER = ["ASC", "DESC"]
 
 
 class SearchMarkets(ParclLabsService):
@@ -160,8 +17,8 @@ class SearchMarkets(ParclLabsService):
     Retrieve parcl_id and metadata for geographic markets in the Parcl Labs API.
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, limit: int = DEFAULT_LIMIT, *args, **kwargs):
+        super().__init__(limit=limit, *args, **kwargs)
 
     def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> Any:
         return pd.DataFrame(data)
@@ -177,8 +34,8 @@ class SearchMarkets(ParclLabsService):
         geoid: str = None,
         sort_by: str = None,
         sort_order: str = None,
+        limit: Optional[int] = None,
         params: Optional[Mapping[str, Any]] = None,
-        as_dataframe: bool = False,
         auto_paginate: bool = False,
     ):
         """
@@ -195,8 +52,8 @@ class SearchMarkets(ParclLabsService):
             geoid (str, optional): The geoid to filter results by.
             sort_by (str, optional): The field to sort results by.
             sort_order (str, optional): The sort order to apply to the results.
+            limit (int, optional): The number of items to return per page.
             params (dict, optional): Additional parameters to include in the request.
-            as_dataframe (bool, optional): Return the results as a pandas DataFrame.
             auto_paginate (bool, optional): Automatically paginate through the results.
 
         Returns:
@@ -244,19 +101,19 @@ class SearchMarkets(ParclLabsService):
             "sort_by": sort_by,
             "sort_order": sort_order,
             "geoid": geoid,
+            "limit": limit if limit is not None else self.limit,
             **(params or {}),
         }
-        results = self._request(params=params)
+        results = self._sync_request(params=params)
 
         if auto_paginate:
             tmp = results.copy()
             while results["links"].get("next"):
-                results = self._request(url=results["links"]["next"], is_next=True)
+                results = self._sync_request(url=results["links"]["next"], is_next=True)
                 tmp["items"].extend(results["items"])
             tmp["links"] = results["links"]
             results = tmp
 
-        if as_dataframe:
-            return self._as_pd_dataframe(results.get("items"))
-
-        return results
+        data = self._as_pd_dataframe(results.get("items"))
+        self.markets = data
+        return data
