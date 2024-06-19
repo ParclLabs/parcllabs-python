@@ -4,12 +4,15 @@ import asyncio
 import json
 import requests
 import platform
+import nest_asyncio
 from requests.exceptions import RequestException
 from typing import Any, Mapping, Optional, List, Dict
 from alive_progress import alive_bar
 from parcllabs.common import DELETE_FROM_OUTPUT, DEFAULT_LIMIT
 from parcllabs.services.validators import Validators
 from parcllabs.__version__ import VERSION
+
+nest_asyncio.apply()
 
 
 class ParclLabsService(object):
@@ -105,7 +108,7 @@ class ParclLabsService(object):
             "Content-Type": "application/json",
             "X-Parcl-Labs-Python-Client-Version": f"{VERSION}",
             "X-Parcl-Labs-Python-Client-Platform": f"{platform.system()}",
-            "X-Parcl-Labs-Python-Client-Platform-Version": f"{platform.python_version()}"
+            "X-Parcl-Labs-Python-Client-Platform-Version": f"{platform.python_version()}",
         }
 
     async def _fetch_all(self, parcl_ids, params, auto_paginate=False):
