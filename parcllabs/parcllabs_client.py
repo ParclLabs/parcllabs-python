@@ -4,6 +4,7 @@ from parcllabs.services.portfolio_size_service import PortfolioSizeService
 from parcllabs.services.property_type_service import PropertyTypeService
 from parcllabs.services.search import SearchMarkets
 
+
 class ServiceGroup:
     """
     Class to organize services into groups for easier access.
@@ -12,6 +13,7 @@ class ServiceGroup:
         client (ParclLabsClient): The ParclLabsClient object.
         limit (int): The number of items to return per request.
     """
+
     def __init__(self, client, limit):
         self._client = client
         self._limit = limit
@@ -35,6 +37,7 @@ class ParclLabsClient:
         api_key (str): The API key for the Parcl Labs API.
         limit (int): The number of items to return per request.
     """
+
     def __init__(self, api_key: str, limit: int = 12):
         if not api_key:
             raise ValueError(

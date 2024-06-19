@@ -1,3 +1,6 @@
+### v1.0.1
+- Bugfix on nested loops within jupyter notebook environments
+
 ### v1.0.0
 **Note**: This release includes breaking changes.
 - Asynchronous support for all endpoints (retrieve)

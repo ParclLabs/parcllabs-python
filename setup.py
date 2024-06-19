@@ -24,7 +24,14 @@ setup(
     keywords="parcllabs api real estate analytics",
     packages=find_packages(exclude=["tests", "tests.*"]),
     url="https://github.com/ParclLabs/parcllabs-python",
-    install_requires=["requests", "pandas", "alive-progress", "numpy", "aiohttp"],
+    install_requires=[
+        "requests",
+        "pandas",
+        "alive-progress",
+        "numpy",
+        "aiohttp",
+        "nest_asyncio",
+    ],
     extras_require={"test": ["pytest", "responses"]},
     classifiers=[
         "Development Status :: 3 - Alpha",
