@@ -1,4 +1,5 @@
 ### v0.6.0
+**Note**: This release includes breaking changes.
 - Asynchronous support for all endpoints (retrieve)
 - Refactor `retrieve_many` into one `retrieve` method to support 1 to n parcl_ids
 - Add utility method `client.estimated_session_credit_usage` to estimate session credit usage
