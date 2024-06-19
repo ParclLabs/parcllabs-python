@@ -17,6 +17,7 @@ pytest = ">=8"
 requests-mock = ">=1"
 asynctest = ">=0.13"
 pytest-asyncio = ">=0.15"
+next-asyncio = ">=0.1"
 
 [requires]
 python_version = ">=3.9"
