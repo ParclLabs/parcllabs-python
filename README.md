@@ -131,6 +131,9 @@ Gets the percent gross yield for a specified `parcl_id`. At the market level, id
 ##### Rental Units Concentration
 Gets the number of rental units, total units, and percent rental unit concentration for a specified `parcl_id`.
 
+##### New Listings for Rent Rolling Counts
+Gets weekly updated rolling counts of newly listed for rent properties, segmented into 7, 30, 60, and 90 day periods ending on a specified date, based on a given `parcl_id`.
+
 ###### Get all rental market metrics
 ```python
 start_date = '2024-04-01'
@@ -205,7 +208,7 @@ Gets monthly statistics on prices for housing events, including sales, new for-s
 Gets monthly statistics on the physical attributes of properties involved in housing events, including sales, new for sale listings, and new rental listings, based on a specified `parcl_id`.
 
 ##### All Cash
-Gets monthly counts of all cash transactions and their percentage share of total sales, based on a specified <parcl_id> .
+Gets monthly counts of all cash transactions and their percentage share of total sales, based on a specified `parcl_id`.
 
 
 ###### Get all market metrics
