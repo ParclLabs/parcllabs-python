@@ -31,6 +31,7 @@ class ServiceGroup:
     def services(self):
         return list(self._services.keys())
 
+
 class ParclLabsClient:
     def __init__(self, api_key: str, limit: int = 12):
         if not api_key:
@@ -41,6 +42,7 @@ class ParclLabsClient:
         self.api_key = api_key
         self.api_url = api_base
         self.limit = limit
+        self.estimated_session_credit_usage = 0
 
         self.price_feed = ServiceGroup(self, limit)
         self.price_feed.add_service(

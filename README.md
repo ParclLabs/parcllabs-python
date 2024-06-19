@@ -28,7 +28,7 @@ import os
 from parcllabs import ParclLabsClient
 
 
-api_key = os.getenv('PARCLLABS_API_KEY')
+api_key = os.getenv('PARCL_LABS_API_KEY')
 client = ParclLabsClient(api_key)
 ```
 
@@ -37,19 +37,11 @@ Search is your entry point into finding one or many of over 70,000 markets in th
 
 #### Search Markets
 ```python
-import os
-
-from parcllabs import ParclLabsClient
-
-
-api_key = os.getenv('PARCLLABS_API_KEY')
-client = ParclLabsClient(api_key)
 
 # all cities in EAST_NORTH_CENTRAL census region
-results = client.search_markets.retrieve(
+results = client.search.markets.retrieve(
     location_type='CITY',
-    region='EAST_NORTH_CENTRAL',
-    as_dataframe=True
+    region='EAST_NORTH_CENTRAL'
 )
 print(results.head())
 #       parcl_id country    geoid state_fips_code                         name state_abbreviation              region location_type  total_population  median_income  parcl_exchange_market  pricefeed_market  case_shiller_10_market  case_shiller_20_market
@@ -79,32 +71,38 @@ Gets the daily price feed volatility for a specified `parcl_id`.
 Gets the daily updated Parcl Labs Rental Price Feed for a given `parcl_id`.
 
 ```python
-import os
-
-from parcllabs import ParclLabsClient
-
-api_key = os.getenv('PARCLLABS_API_KEY')
-client = ParclLabsClient(api_key)
-
-# Get available Price Feed markets
-pricefeed_markets = client.search_markets.retrieve(
+# Get 2 price feed markets
+pricefeed_markets = client.search.markets.retrieve(
         sort_by='PRICEFEED_MARKET',
         sort_order='DESC',
-        params={'limit': 10},
-        as_dataframe=True
+        limit=2
 )
+
+start_date = '2024-06-01'
+end_date = '2024-06-05'
+# extract the market id's
 pricefeed_ids = pricefeed_markets['parcl_id'].tolist()
 
-price_feeds = client.price_feed.retrieve_many(parcl_ids=pricefeed_ids, as_dataframe=True)
-rental_price_feeds = client.rental_price_feed.retrieve_many(
-    parcl_ids=pricefeed_ids, 
-    as_dataframe=True
+price_feeds = client.price_feed.price_feed.retrieve(
+    parcl_ids=pricefeed_ids,
+    start_date=start_date,
+    end_date=end_date
 )
-price_feed_volatility = client.price_feed_volatility.retrieve_many(parcl_ids=pricefeed_ids, as_dataframe=True)
+rental_price_feeds = client.price_feed.rental_price_feed.retrieve(
+    parcl_ids=pricefeed_ids,
+    start_date=start_date,
+    end_date=end_date
+)
+price_feed_volatility = client.price_feed.volatility.retrieve(
+    parcl_ids=pricefeed_ids,
+    start_date=start_date,
+    end_date=end_date
+)
 
-# want to save to csv? 
-price_feeds.to_csv('price_feeds.csv', index=False)
-price_feed_volatility.to_csv('price_feed_volatility.csv', index=False)
+# want to save to csv? Use .to_csv method as follow:
+# price_feeds.to_csv('price_feeds.csv', index=False)
+# rental_price_feeds.to_csv('rental_price_feeds.csv', index=False)
+# price_feed_volatility.to_csv('price_feed_volatility.csv', index=False)
 ```
 
 ### Rental Market Metrics
@@ -117,43 +115,33 @@ Gets the number of rental units, total units, and percent rental unit concentrat
 
 ##### Get all rental market metrics
 ```python
-import os
-
-from parcllabs import ParclLabsClient
-
-api_key = os.getenv('PARCLLABS_API_KEY')
-client = ParclLabsClient(api_key)
-
-# get all metros and sort by total population
-markets = client.search_markets.retrieve(
+# get top 2 metros by population
+markets = client.search.markets.retrieve(
         location_type='CBSA',
         sort_by='TOTAL_POPULATION',
         sort_order='DESC',
-        as_dataframe=True
-    )
-# top 10 metros based on population
-top_market_parcl_ids = markets['parcl_id'].tolist()[0:10]
+        limit=2
+)
+# top 2 metros based on population
+top_market_parcl_ids = markets['parcl_id'].tolist()
 
-start_date = '2020-01-01'
+start_date = '2024-04-01'
 end_date = '2024-04-01'
 
-results_rental_units_concentration = client.rental_market_metrics_rental_units_concentration.retrieve_many(
+results_rental_units_concentration = client.rental_market_metrics.rental_units_concentration.retrieve(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
-    end_date=end_date,
-    as_dataframe=True
+    end_date=end_date
 )
 
-results_gross_yield = client.rental_market_metrics_gross_yield.retrieve_many(
+results_gross_yield = client.rental_market_metrics.gross_yield.retrieve(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
-    end_date=end_date,
-    as_dataframe=True
+    end_date=end_date
 )
 
-rentals_new_listings_rolling_counts = client.rental_market_metrics_new_listings_for_rent_rolling_counts.retrieve_many(
-        parcl_ids=[2900187, 5374167],
-        as_dataframe=True
+rentals_new_listings_rolling_counts = client.rental_market_metrics.new_listings_for_rent_rolling_counts.retrieve(
+        parcl_ids=top_market_parcl_ids
     )
 ```
 
@@ -170,47 +158,37 @@ Gets weekly updated metrics on the price behavior of current for sale inventory,
 
 ##### Get all for sale market metrics
 ```python
-import os
-
-from parcllabs import ParclLabsClient
-
-api_key = os.getenv('PARCLLABS_API_KEY')
-client = ParclLabsClient(api_key)
-
-# get all metros and sort by total population
-markets = client.search_markets.retrieve(
+# get top 2 metros by population
+markets = client.search.markets.retrieve(
         location_type='CBSA',
         sort_by='TOTAL_POPULATION',
         sort_order='DESC',
-        as_dataframe=True
-    )
-# top 10 metros based on population
-top_market_parcl_ids = markets['parcl_id'].tolist()[0:10]
+        limit=2
+)
+# top 2 metros based on population
+top_market_parcl_ids = markets['parcl_id'].tolist()
 
-start_date = '2020-01-01'
+start_date = '2024-04-01'
 end_date = '2024-04-01'
 property_type = 'single_family'
 
-results_for_sale_new_listings = client.for_sale_market_metrics_new_listings_rolling_counts.retrieve_many(
+results_for_sale_new_listings = client.for_sale_market_metrics.new_listings_rolling_counts.retrieve(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
     end_date=end_date,
-    property_type=property_type,
-    as_dataframe=True
+    property_type=property_type
 )
 
-for_sale_inventory = client.for_sale_market_metrics_for_sale_inventory(
+for_sale_inventory = client.for_sale_market_metrics.for_sale_inventory.retrieve(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
-    end_date=end_date,
-    as_dataframe=True
+    end_date=end_date
 )
 
-for_sale_inventory_price_changes = client.for_sale_market_metrics_for_sale_inventory_price_changes.retrieve_many(
+for_sale_inventory_price_changes = client.for_sale_market_metrics.for_sale_inventory_price_changes.retrieve(
         parcl_ids=top_market_parcl_ids,
         start_date=start_date,
         end_date=end_date,
-        as_dataframe=True,
     )
 ```
 
@@ -234,60 +212,47 @@ Gets monthly counts of all cash transactions and their percentage share of total
 
 ##### Get all market metrics
 ```python
-import os
-
-from parcllabs import ParclLabsClient
-
-
-api_key = os.getenv('PARCLLABS_API_KEY')
-client = ParclLabsClient(api_key)
-
-# get all metros and sort by total population
-markets = client.search_markets.retrieve(
+# get top 2 metros by population
+markets = client.search.markets.retrieve(
         location_type='CBSA',
         sort_by='TOTAL_POPULATION',
         sort_order='DESC',
-        as_dataframe=True
-    )
-# top 10 metros based on population
-top_market_parcl_ids = markets['parcl_id'].tolist()[0:10]
+        limit=2
+)
+# top 2 metros based on population
+top_market_parcl_ids = markets['parcl_id'].tolist()
 
-start_date = '2020-01-01'
+start_date = '2024-01-01'
 end_date = '2024-04-01'
 
-results_housing_event_prices = client.market_metrics_housing_event_prices.retrieve_many(
+results_housing_event_prices = client.market_metrics.housing_event_prices.retrieve(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
-    end_date=end_date,
-    as_dataframe=True
+    end_date=end_date
 )
 
-results_housing_stock = client.market_metrics_housing_stock.retrieve_many(
+results_housing_stock = client.market_metrics.housing_stock.retrieve(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
-    end_date=end_date,
-    as_dataframe=True
+    end_date=end_date
 )
 
-results_housing_event_counts = client.market_metrics_housing_event_counts.retrieve_many(
+results_housing_event_counts = client.market_metrics.housing_event_counts.retrieve(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
-    end_date=end_date,
-    as_dataframe=True
+    end_date=end_date
 )
 
-housing_event_property_attributes = client.market_metrics_housing_event_property_attributes.retrieve_many(
+housing_event_property_attributes = client.market_metrics.housing_event_property_attributes.retrieve(
         parcl_ids=top_market_parcl_ids,
         start_date=start_date,
-        end_date=end_date,
-        as_dataframe=True,
+        end_date=end_date
 )
 
-results_all_cash = client.market_metrics_all_cash.retrieve_many(
+results_all_cash = client.market_metrics.all_cash.retrieve(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
-    end_date=end_date,
-    as_dataframe=True
+    end_date=end_date
 )
 ```
 
@@ -310,61 +275,48 @@ Gets monthly median prices for investor housing events, including acquisitions, 
 
 ##### Get all investor metrics
 ```python
-import os
-
-from parcllabs import ParclLabsClient
-
-
-api_key = os.getenv('PARCLLABS_API_KEY')
-client = ParclLabsClient(api_key)
-
-# get all metros and sort by total population
-markets = client.search_markets.retrieve(
+# get top 2 metros by population
+markets = client.search.markets.retrieve(
         location_type='CBSA',
         sort_by='TOTAL_POPULATION',
         sort_order='DESC',
-        as_dataframe=True
-    )
-# top 10 metros based on population
-top_market_parcl_ids = markets['parcl_id'].tolist()[0:10]
+        limit=2
+)
+# top 2 metros based on population
+top_market_parcl_ids = markets['parcl_id'].tolist()
 
-start_date = '2020-01-01'
+start_date = '2024-01-01'
 end_date = '2024-04-01'
 
-results_housing_stock_ownership = client.investor_metrics_housing_stock_ownership.retrieve_many(
+results_housing_stock_ownership = client.investor_metrics.housing_stock_ownership.retrieve(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
-    end_date=end_date,
-    as_dataframe=True
+    end_date=end_date
 )
 
-results_new_listings_for_sale_rolling_counts = client.investor_metrics_new_listings_for_sale_rolling_counts.retrieve_many(
+results_new_listings_for_sale_rolling_counts = client.investor_metrics.new_listings_for_sale_rolling_counts.retrieve(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
-    end_date=end_date,
-    as_dataframe=True
+    end_date=end_date
 )
 
-results_purchase_to_sale_ratio = client.investor_metrics_purchase_to_sale_ratio.retrieve_many(
+results_purchase_to_sale_ratio = client.investor_metrics.purchase_to_sale_ratio.retrieve(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
-    end_date=end_date,
-    as_dataframe=True
+    end_date=end_date
 )
 
-results_housing_event_counts = client.investor_metrics_housing_event_counts.retrieve_many(
+results_housing_event_counts = client.investor_metrics.housing_event_counts.retrieve(
     parcl_ids=top_market_parcl_ids,
     start_date=start_date,
-    end_date=end_date,
-    as_dataframe=True
+    end_date=end_date
 )
 
-results = client.investor_metrics_housing_event_prices.retrieve_many(
+results = client.investor_metrics.housing_event_prices.retrieve(
         parcl_ids=top_market_parcl_ids,
         start_date=start_date,
         end_date=end_date,
-        as_dataframe=True
-    )
+)
 ```
 
 ### Portfolio Metrics
@@ -386,45 +338,33 @@ Gets counts of investor-owned single family properties and their corresponding p
 Gets weekly updated rolling counts of investor-owned single family properties newly listed for rent, segmented by portfolio size, and their corresponding percentage share of the total single family for rent listings market. These metrics are divided into 7, 30, 60, and 90 day periods ending on a specified date, based on a given <parcl_id>. The data series for portfolio metrics begins on April 22, 2024 (2024-04-22).
 
 ```python
-import os
-
-from parcllabs import ParclLabsClient
-
-
-api_key = os.getenv('PARCLLABS_API_KEY')
-client = ParclLabsClient(api_key)
-
-# get all metros and sort by total population
-markets = client.search_markets.retrieve(
+# get top 2 metros by population
+markets = client.search.markets.retrieve(
         location_type='CBSA',
         sort_by='TOTAL_POPULATION',
         sort_order='DESC',
-        as_dataframe=True
-    )
-# top 10 metros based on population
-top_market_parcl_ids = markets['parcl_id'].tolist()[0:10]
+        limit=2
+)
+# top 2 metros based on population
+top_market_parcl_ids = markets['parcl_id'].tolist()
 
-results_housing_stock_ownership = client.portfolio_metrics_sf_housing_stock_ownership.retrieve_many(
+results_housing_stock_ownership = client.portfolio_metrics.sf_housing_stock_ownership.retrieve(
     parcl_ids=top_market_parcl_ids,
-    as_dataframe=True
 )
 
 # get new listings for specific portfolio sizes
-portfolio_metrics_new_listings = client.portfolio_metrics_new_listings_for_sale_rolling_counts.retrieve_many(
+portfolio_metrics_new_listings = client.portfolio_metrics.sf_new_listings_for_sale_rolling_counts.retrieve(
         parcl_ids=top_market_parcl_ids,
-        as_dataframe=True,
         portfolio_size='PORTFOLIO_1000_PLUS',
-    )
+)
 
-results = client.portfolio_metrics_sf_housing_event_counts.retrieve_many(
+results = client.portfolio_metrics.sf_housing_event_counts.retrieve(
     parcl_ids=top_market_parcl_ids,
-    as_dataframe=True,
     portfolio_size='PORTFOLIO_1000_PLUS'
 )
 
-results = client.portfolio_metrics_sf_new_listings_for_rent_rolling_counts.retrieve_many(
+results = client.portfolio_metrics.sf_new_listings_for_rent_rolling_counts.retrieve(
         parcl_ids=top_market_parcl_ids,
-        as_dataframe=True,
         portfolio_size='PORTFOLIO_1000_PLUS'
 )
 ```

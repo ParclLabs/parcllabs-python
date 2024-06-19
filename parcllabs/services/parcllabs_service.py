@@ -24,6 +24,7 @@ class ParclLabsService(object):
             raise ValueError("Missing required client object.")
 
         self.limit = limit
+        self.client = client
         self.api_url = client.api_url
         self.api_key = client.api_key
         self.markets = {}
@@ -69,7 +70,9 @@ class ParclLabsService(object):
                     result["items"] = (
                         all_items  # Replace the items with the accumulated items
                     )
-
+                self.client.estimated_session_credit_usage += len(
+                    result.get("items", [])
+                )
                 return result
         except aiohttp.ClientResponseError as e:
             try:
