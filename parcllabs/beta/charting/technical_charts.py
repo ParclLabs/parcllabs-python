@@ -2,7 +2,8 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from parcllabs.beta.charting.utils import create_labs_logo_dict
-
+from parcllabs.beta.charting.styling import generate_annotation
+from parcllabs.beta.charting.styling import STYLING_CONFIG
 
 # config logo
 labs_logo_dict = create_labs_logo_dict(
@@ -15,29 +16,35 @@ labs_logo_dict = create_labs_logo_dict(
     sizey=0.15,
 )
 
+def sort_chart_data(df):
+    if 'date' in df.columns:
+        df = df.sort_values(by='date')
+    return df
+
 
 # technical chart definition
 def build_technical_chart(
-    data_main: pd.DataFrame,
-    data_secondary: pd.DataFrame,
+    line_chart_df: pd.DataFrame,
+    bar_chart_df: pd.DataFrame,
     save_path: str = None,
     value_name_main: str = None,
     value_name_secondary: str = None,
-    ticker_msg: str = None,
-    volume_msg: str = None,
-    pricefeed_msg: str = None,
-    last_pf_date: str = None,
-    msg: str = None,
+    header_left_primary_text: str = None,
+    header_left_secondary_text: str = None,
+    header_right_primary_text: str = None,
+    line_chart_left_primary_text: str = None,
+    bar_chart_left_primary_text: str = None,
     height=700,
     width=1200,
-    moving_average_window: int = 6
+    moving_average_window: int = 6,
+    styling_config: dict = STYLING_CONFIG
 ):
-
-    data_main['date'] = pd.to_datetime(data_main['date'])
-    data_secondary['date'] = pd.to_datetime(data_secondary['date'])
+    
+    bar_chart_df = sort_chart_data(bar_chart_df)
+    line_chart_df = sort_chart_data(line_chart_df)
 
     # Get the date range for the x-axis
-    date_range = [min(data_main['date'].min(), data_secondary['date'].min()), max(data_main['date'].max(), data_secondary['date'].max())]
+    date_range = [min(line_chart_df['date'].min(), bar_chart_df['date'].min()), max(line_chart_df['date'].max(), bar_chart_df['date'].max())]
 
     # Create subplots: 2 rows, 1 column
     fig = make_subplots(
@@ -48,12 +55,12 @@ def build_technical_chart(
     )
 
     # Add traces for positive and negative segments based on daily_return
-    for i in range(1, len(data_main)):
-        color = 'green' if data_main['daily_return'].iloc[i] >= 0 else 'red'
+    for i in range(1, len(line_chart_df)):
+        color = 'green' if line_chart_df['daily_return'].iloc[i] >= 0 else 'red'
         fig.add_trace(
             go.Scatter(
-                x=[data_main['date'].iloc[i-1], data_main['date'].iloc[i]],
-                y=[data_main[value_name_main].iloc[i-1], data_main[value_name_main].iloc[i]],
+                x=[line_chart_df['date'].iloc[i-1], line_chart_df['date'].iloc[i]],
+                y=[line_chart_df[value_name_main].iloc[i-1], line_chart_df[value_name_main].iloc[i]],
                 mode='lines',
                 line=dict(width=3, color=color),
                 showlegend=False,
@@ -65,201 +72,118 @@ def build_technical_chart(
     # Plot the secondary data as a bar chart
     fig.add_trace(
         go.Bar(
-            x=data_secondary['date'],
-            y=data_secondary[value_name_secondary],
+            x=bar_chart_df['date'],
+            y=bar_chart_df[value_name_secondary],
             name='Sales Volume',
-            marker=dict(color=data_secondary['volColor'])  # Use volColor for the bar chart colors
+            marker=dict(color=bar_chart_df['volColor'])  # Use volColor for the bar chart colors
         ),
         row=2, col=1
     )
     # Add the 6-month moving average line
-    data_secondary['ma'] = data_secondary[value_name_secondary].rolling(window=moving_average_window).mean().round(2)
-    ma_last = data_secondary['ma'].iloc[-1]
+    bar_chart_df['ma'] = bar_chart_df[value_name_secondary].rolling(window=moving_average_window).mean().round(2)
+    ma_last = bar_chart_df['ma'].iloc[-1]
     fig.add_trace(
         go.Scatter(
-            x=data_secondary['date'],
-            y=data_secondary['ma'],
+            x=bar_chart_df['date'],
+            y=bar_chart_df['ma'],
             mode='lines',
             name=f'{moving_average_window}-Month Moving Average',
-            line=dict(width=2, color='#FFA500'),  # Orange for the moving average line
+            line=dict(width=2, color='#FFA500'),
             showlegend=False
         ),
         row=2, col=1
     )
 
+    # update date ranges for consistency
+    styling_config['xaxis']['range'] = date_range
+    styling_config['xaxis2']['range'] = date_range
+    styling_config['yaxis']['range'] = [line_chart_df[value_name_main].min()-10, line_chart_df[value_name_main].max() + 10]
+    styling_config['yaxis2']['range'] = [bar_chart_df[value_name_secondary].min()-10, bar_chart_df[value_name_secondary].max() + 10]
     # Update layout
     fig.update_layout(
         height=height,
         width=width,
-        plot_bgcolor='#000000',  # Dark background for better contrast
-        paper_bgcolor='#000000',  # Dark background for the paper
-        font=dict(color='#FFFFFF'),
-        xaxis=dict(
-            title_text='',
-            showgrid=True,  # Disable vertical grid lines
-            gridcolor='rgba(255, 255, 255, 0.2)',  # Vertical grid line color with opacity
-            tickangle=0,
-            tickfont=dict(size=14),
-            linecolor='rgba(255, 255, 255, 0.7)',  # Axis line color with opacity
-            linewidth=1,  # Axis line width
-            tickformat='`%y',
-            range=date_range,
-        ),
-        xaxis2=dict(
-            title_text='',
-            showgrid=True,  # Disable vertical grid lines
-            gridcolor='rgba(255, 255, 255, 0.2)',  # Horizontal grid line color with opacity
-            tickangle=0,
-            tickfont=dict(size=14),
-            linecolor='rgba(255, 255, 255, 0.7)',  # Axis line color with opacity
-            linewidth=1,  # Axis line width
-            tickformat='`%y',
-            range=date_range,
-        ),
-        yaxis=dict(
-            showgrid=True,
-            gridwidth=0.5,  # Horizontal grid line width
-            gridcolor='rgba(255, 255, 255, 0.2)',  # Horizontal grid line color with opacity
-            tickfont=dict(size=14),
-            ticksuffix='',  # Remove dollar sign suffix
-            zeroline=False,
-            linecolor='rgba(255, 255, 255, 0.7)',  # Axis line color with opacity
-            linewidth=1,  # Axis line width
-            side='right',
-            ticks='outside',
-            rangemode='normal',
-            range=[data_main[value_name_main].min(), data_main[value_name_main].max() + 10]
-        ),
-        yaxis2=dict(
-            showgrid=True,
-            gridwidth=0.5,  # Horizontal grid line width
-            gridcolor='rgba(255, 255, 255, 0.2)',  # Horizontal grid line color with opacity
-            tickfont=dict(size=14),
-            ticksuffix='',  # Remove dollar sign suffix
-            zeroline=False,
-            linecolor='rgba(255, 255, 255, 0.7)',  # Axis line color with opacity
-            linewidth=1,  # Axis line width
-            side='right',
-            ticks='outside',
-            rangemode='normal',
-            range=[data_secondary[value_name_secondary].min(), data_secondary[value_name_secondary].max() + 10]
-        ),
-        hovermode='x unified',  # Unified hover mode for better interactivity
-        hoverlabel=dict(
-            bgcolor='#1F1F1F',
-            font_size=14,
-            font_family="Rockwell"
-        ),
-        showlegend=False,  # Show the legend to include the moving average line
+        showlegend=styling_config['showlegend'],  # Show the legend to include the moving average line
+        plot_bgcolor=styling_config['plot_bgcolor'],  # Dark background for better contrast
+        paper_bgcolor=styling_config['paper_bgcolor'],  # Dark background for the paper
+        font=styling_config['font'],
+        hovermode=styling_config['hovermode'],  # Unified hover mode for better interactivity
+        xaxis=styling_config['xaxis'],
+        xaxis2=styling_config['xaxis2'],
+        yaxis=styling_config['yaxis'],
+        yaxis2=styling_config['yaxis2'],
+        hoverlabel=styling_config['hoverlabel'],
+        margin=styling_config['margin']
     )
 
-    # Add stats annotation
     fig.add_annotation(
-        dict(
-            text=msg,
+        generate_annotation(
+            text=line_chart_left_primary_text,
+            x=0.002,
+            y=1,
+            xanchor='left',
+            yanchor='top',
+        )
+    )
+
+    fig.add_annotation(
+       generate_annotation(
+            text=header_left_primary_text,
+            x=0,
+            y=1.07,
+            xanchor='left',
+            yanchor='top',
+        )
+    )
+
+    fig.add_annotation(
+        generate_annotation(
+            text=header_left_secondary_text,
+            x=0,
+            y=1.04,
+            xanchor='left',
+            yanchor='top',
+        )
+    )
+    
+    fig.add_annotation(
+        generate_annotation(
+            text=header_right_primary_text,
             x=1,
             y=1.04,
-            xref='paper',
-            yref='paper',
             xanchor='right',
             yanchor='top',
-            showarrow=False,
-            font=dict(size=14, color='#FFFFFF')
-        )
-    )
-
-    # Add placeholder text in the top left of each chart
-    fig.add_annotation(
-        dict(
-            text=pricefeed_msg,
-            x=0.003,
-            y=0.99,
-            xref='paper',
-            yref='paper',
-            xanchor='left',
-            showarrow=False,
-            font=dict(size=14, color='#FFFFFF')
         )
     )
 
     fig.add_annotation(
-        dict(
-            text=volume_msg,
+        generate_annotation(
+            text=bar_chart_left_primary_text,
             x=0.003,
             y=0.15,
-            xref='paper',
-            yref='paper',
             xanchor='left',
-            showarrow=False,
-            font=dict(size=14, color='#FFFFFF')
+            yanchor=None,
         )
     )
 
     fig.add_annotation(
-        dict(
+        generate_annotation(
             text=f'--- MA({moving_average_window}) {ma_last:,.2f}',
             x=0.003,
             y=0.12,
-            xref='paper',
-            yref='paper',
             xanchor='left',
-            showarrow=False,
-            font=dict(size=14, color='#FFFFFF')
-        )
-    )
-
-    fig.add_annotation(
-        dict(
-            text=last_pf_date,
-            x=0,
-            y=1.04,
-            xref='paper',
-            yref='paper',
-            xanchor='left',
-            yanchor='top',
-            showarrow=False,
-            font=dict(size=14, color='#FFFFFF')
-        )
-    )
-
-    # Add ticker message
-    fig.add_annotation(
-        dict(
-            text=ticker_msg,
-            x=0,
-            y=1.07,
-            xref='paper',
-            yref='paper',
-            xanchor='left',
-            yanchor='top',
-            showarrow=False,
-            font=dict(size=14, color='#FFFFFF')
+            yanchor=None,
         )
     )
 
     # Add borders and hover effect for both charts
     fig.update_xaxes(
-        showline=True,
-        linewidth=2,
-        linecolor='#FFFFFF',
-        mirror=True
-    )
-    fig.update_yaxes(
-        showline=True,
-        linewidth=2,
-        linecolor='#FFFFFF',
-        mirror=True,
-        ticks="outside"
+        **styling_config['update_xaxes']
     )
 
-    fig.update_layout(
-    margin=dict(
-        l=10,  # Left margin
-        r=10,  # Right margin
-        b=10,  # Bottom margin
-        t=50   # Top margin
+    fig.update_yaxes(
+        **styling_config['update_yaxes']
     )
-)
 
     # Add Parcl Labs logo
     fig.add_layout_image(
