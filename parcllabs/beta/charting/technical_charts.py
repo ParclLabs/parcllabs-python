@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from parcllabs.beta.charting.utils import create_labs_logo_dict
+from parcllabs.beta.charting.utils import create_labs_logo_dict, save_figure
 from parcllabs.beta.charting.styling import generate_annotation
 from parcllabs.beta.charting.styling import STYLING_CONFIG
 
@@ -190,8 +190,7 @@ def build_technical_chart(
         labs_logo_dict
     )
 
-    if save_path:
-        fig.write_image(save_path, width=width, height=height)
-    
+    save_figure(fig, save_path=save_path, width=width, height=height)
+
     # Show the plot
     fig.show()

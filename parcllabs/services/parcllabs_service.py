@@ -10,6 +10,7 @@ from typing import Any, Mapping, Optional, List, Dict
 from alive_progress import alive_bar
 from parcllabs.common import DELETE_FROM_OUTPUT, DEFAULT_LIMIT
 from parcllabs.services.validators import Validators
+from parcllabs.services.data_utils import safe_concat_and_format_dtypes
 from parcllabs.__version__ import VERSION
 
 nest_asyncio.apply()
@@ -244,7 +245,5 @@ class ParclLabsService(object):
             df.columns = updated_cols_names
             data_container.append(df)
 
-        output = pd.concat(data_container).reset_index(drop=True)
-        if 'date' in output.columns:
-            output['date'] = pd.to_datetime(output['date'])
+        output = safe_concat_and_format_dtypes(data_container)
         return output

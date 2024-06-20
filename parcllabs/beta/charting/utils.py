@@ -28,3 +28,7 @@ def create_labs_logo_dict(
         xanchor=xanchor,
         yanchor=yanchor
     )
+
+def save_figure(fig, save_path: str, width: int=800, height: int=600):
+    if save_path:
+        fig.write_image(save_path, width=width, height=height)
