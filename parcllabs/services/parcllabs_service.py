@@ -244,4 +244,7 @@ class ParclLabsService(object):
             df.columns = updated_cols_names
             data_container.append(df)
 
-        return pd.concat(data_container).reset_index(drop=True)
+        output = pd.concat(data_container).reset_index(drop=True)
+        if 'date' in output.columns:
+            output['date'] = pd.to_datetime(output['date'])
+        return output

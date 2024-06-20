@@ -4,3 +4,5 @@ alive-progress>=3.1.5
 numpy
 aiohttp
 nest_asyncio
+plotly
+kaleido

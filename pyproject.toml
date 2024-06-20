@@ -32,7 +32,9 @@ dependencies = [
     "pandas",
     "requests",
     "aiohttp",
-    "nest_asyncio"
+    "nest_asyncio",
+    "plotly",
+    "kaleido",
 ]
 
 [project.optional-dependencies]

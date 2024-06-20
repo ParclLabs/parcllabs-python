@@ -10,6 +10,8 @@ alive-progress = "*"
 numpy = "*"
 aiohttp = "*"
 nest_asyncio = "*"
+plotly = "*"
+kaleido = "*"
 
 [dev-packages]
 black = ">=22"
@@ -18,7 +20,8 @@ pytest = ">=8"
 requests-mock = ">=1"
 asynctest = ">=0.13"
 pytest_asyncio = ">=0.15"
-nest_asyncio = ">=1.5"
+ipykernel = "*"
+nbformat = "*"
 
 [requires]
 python_version = ">=3.9"

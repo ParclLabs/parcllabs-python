@@ -1,3 +1,6 @@
+### v1.1.0
+- Add beta features, including charting, technical analysis, and utilities for data analysis. 
+
 ### v1.0.1
 - Bugfix on nested loops within jupyter notebook environments
 
