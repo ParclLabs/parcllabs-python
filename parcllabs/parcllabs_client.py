@@ -114,6 +114,19 @@ class ParclLabsClient:
             PropertyTypeService,
         )
 
+        self.new_construction_metrics = ServiceGroup(self, limit)
+
+        self.new_construction_metrics.add_service(
+            "housing_event_prices",
+            "/v1/new_construction_metrics/{parcl_id}/hosuing_event_prices",
+            PropertyTypeService,
+        )
+        self.new_construction_metrics.add_service(
+            "housing_event_counts",
+            "/v1/new_construction_metrics/{parcl_id}/housing_event_counts",
+            PropertyTypeService,
+        )
+
         self.for_sale_market_metrics = ServiceGroup(self, limit)
         self.for_sale_market_metrics.add_service(
             "new_listings_rolling_counts",

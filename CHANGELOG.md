@@ -1,4 +1,5 @@
 ### v1.1.0
+- Introduce `new_construction_metrics.housing_event_counts` and `new_construction_metrics.housing_event_prices`. See [Parcl Labs Changelog](https://docs.parcllabs.com/changelog/new-construction-endpoints-and-price-change-methodology-update) for more details. 
 - Add beta features, including charting, technical analysis, and utilities for data analysis. 
 
 ### v1.0.1
