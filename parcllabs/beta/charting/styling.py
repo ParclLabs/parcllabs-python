@@ -95,6 +95,74 @@ STYLING_CONFIG = {
     }
 }
 
+default_style_config = {
+    'line_color': '#2ca02c',
+    'line_width': 3,
+    'marker_size': 8,
+    'marker_color': '#2ca02c',
+    'marker_outline_color': '#ffffff',
+    'bar1_color': '#1f77b4',
+    'bar1_opacity': 0.8,
+    'bar2_color': '#ff7f0e',
+    'bar2_opacity': 0.8,
+    'background_color': '#1e1e1e',
+    'font_color': '#ffffff',
+    'title_font': dict(size=24, color='#ffffff', family='Arial Black'),
+    'axis_font': dict(size=12, family='Arial', color='#ffffff'),
+    'title_font_axis': dict(size=14, family='Arial Black', color='#ffffff'),
+    'grid_color': 'rgba(255, 255, 255, 0.2)',
+    'line_color_axis': 'rgba(255, 255, 255, 0.7)',
+    'hover_bg_color': '#2f2f2f',
+    'hover_font_size': 12,
+    'hover_font_family': 'Arial',
+    'hover_font_color': '#ffffff',
+    'legend_font': dict(size=12, color='#ffffff', family='Arial'),
+    'legend_x': 0.01,
+    'legend_y': 0.98,
+    'legend_xanchor': 'left',
+    'legend_yanchor': 'top',
+    'tick_angle': -45,
+    'tick_prefix': '$',
+    'tick_suffix': ' units',
+    'showgrid': True,
+    'gridwidth': 0.5,
+    'linewidth': 1,
+    'barmode': 'stack'  # Use 'group' if you prefer grouping
+}
+
+
+SIZE_CONFIG = {
+    'x': {
+        'height': 675,
+        'width': 1200
+    },
+
+    'instgram_square': {
+        'height': 1080,
+        'width': 1080
+    },
+    
+    'instagram_portrait': {
+        'height': 1080,
+        'width': 1350
+    },
+
+    'instagram_landscape': {
+        'height': 1080,
+        'width': 566
+    },
+
+    'linkedin': {
+        'height': 627,
+        'width': 1200
+    },
+    'blog': {
+        'height': 630,
+        'width': 1200
+    },
+}
+
+
 def generate_annotation(**kwargs):
     """
     Generate an annotation dictionary for plotly.

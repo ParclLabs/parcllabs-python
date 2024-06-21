@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from parcllabs.beta.charting.utils import create_labs_logo_dict, save_figure
+from parcllabs.beta.charting.utils import create_labs_logo_dict, save_figure, sort_chart_data
 from parcllabs.beta.charting.styling import generate_annotation
 from parcllabs.beta.charting.styling import STYLING_CONFIG
 
@@ -15,11 +15,6 @@ labs_logo_dict = create_labs_logo_dict(
     sizex=0.15,
     sizey=0.15,
 )
-
-def sort_chart_data(df):
-    if 'date' in df.columns:
-        df = df.sort_values(by='date')
-    return df
 
 
 # technical chart definition

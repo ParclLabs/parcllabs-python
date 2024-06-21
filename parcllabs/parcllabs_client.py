@@ -118,7 +118,7 @@ class ParclLabsClient:
 
         self.new_construction_metrics.add_service(
             "housing_event_prices",
-            "/v1/new_construction_metrics/{parcl_id}/hosuing_event_prices",
+            "/v1/new_construction_metrics/{parcl_id}/housing_event_prices",
             PropertyTypeService,
         )
         self.new_construction_metrics.add_service(

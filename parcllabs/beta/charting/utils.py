@@ -10,11 +10,11 @@ def create_labs_logo_dict(
         color: str='white',
         xref: str='paper',
         yref: str='paper',
-        x: float=0.5,
-        y: float=1.04,
+        x: float=1,
+        y: float=0,
         sizex: float=0.15,
         sizey: float=0.15,
-        xanchor: str='center',
+        xanchor: str='right',
         yanchor: str='bottom'
 ):
     return dict(
@@ -32,3 +32,8 @@ def create_labs_logo_dict(
 def save_figure(fig, save_path: str, width: int=800, height: int=600):
     if save_path:
         fig.write_image(save_path, width=width, height=height)
+
+def sort_chart_data(df):
+    if 'date' in df.columns:
+        df = df.sort_values(by='date')
+    return df
