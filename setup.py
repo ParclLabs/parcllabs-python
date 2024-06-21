@@ -31,6 +31,8 @@ setup(
         "numpy",
         "aiohttp",
         "nest_asyncio",
+        "plotly",
+        "kaleido",
     ],
     extras_require={"test": ["pytest", "responses"]},
     classifiers=[

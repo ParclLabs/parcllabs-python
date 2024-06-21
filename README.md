@@ -247,6 +247,32 @@ results_all_cash = client.market_metrics.all_cash.retrieve(
 )
 ```
 
+#### New Construction Metrics
+
+##### Housing Event Counts
+Gets monthly counts of new construction housing events, including sales, new for sale listings, and new rental listings, based on a specified `parcl_id`.
+
+##### Housing Event Prices
+Gets monthly median prices for new construction housing events, including sales, new for sale listings, and new rental listings, based on a specified `parcl_id`.
+
+###### Get all new construction metrics
+```python
+start_date = '2024-01-01'
+end_date = '2024-04-01'
+
+results_new_construction_housing_event_prices = client.new_construction_metrics.housing_event_prices.retrieve(
+    parcl_ids=top_market_parcl_ids,
+    start_date=start_date,
+    end_date=end_date
+)
+
+results_new_construction_housing_event_counts = client.new_construction_metrics.housing_event_counts.retrieve(
+    parcl_ids=top_market_parcl_ids,
+    start_date=start_date,
+    end_date=end_date
+)
+```
+
 #### Investor Metrics
 
 ##### Housing Event Counts
