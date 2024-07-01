@@ -24,7 +24,9 @@ def client():
 
 @pytest.mark.asyncio
 async def test_new_construction_metrics_housing_event_prices(client):
-    result = client.new_construction_metrics.housing_event_prices.retrieve(parcl_ids=[1])
+    result = client.new_construction_metrics.housing_event_prices.retrieve(
+        parcl_ids=[1]
+    )
     assert not result.empty
     assert "parcl_id" in result.columns
     assert "metric" in result.columns
@@ -35,7 +37,9 @@ async def test_new_construction_metrics_housing_event_prices(client):
 
 @pytest.mark.asyncio
 async def test_new_construction_metrics_housing_event_counts(client):
-    result = client.new_construction_metrics.housing_event_counts.retrieve(parcl_ids=[1])
+    result = client.new_construction_metrics.housing_event_counts.retrieve(
+        parcl_ids=[1]
+    )
     assert not result.empty
     assert "parcl_id" in result.columns
     assert "metric" in result.columns
