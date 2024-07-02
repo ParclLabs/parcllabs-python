@@ -13,14 +13,13 @@ def main():
     with open(input_readme, "r") as file:
         readme_content = file.read()
 
-    # remove links
-    readme_content = re.sub("!\[.*]\(.*\)\n", "", readme_content)
-
     # remove irrelavant sections
-    for section in readme_content.split("\n### "):
-        if section.startswith("Parcl Labs Data Overview"):
-            full_section = "\n### " + section
-            readme_content = readme_content.replace(full_section, "")
+    readme_content = re.sub(
+        "<!-- readme header split -->(.*?)<!-- readme header end -->",
+        "",
+        readme_content,
+        flags=re.DOTALL,
+    )
 
     with open(output_file, "w") as f:
         f.write(FRONT_MATTER + readme_content)

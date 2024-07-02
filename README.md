@@ -1,14 +1,16 @@
+<!-- readme header split -->
 ![Logo](img/labs.png)
 ![GitHub Tag](https://img.shields.io/github/v/tag/ParclLabs/parcllabs-python)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/parcllabs)
-
+<!-- readme header end -->
 ## **Welcome to the Parcl Labs Python SDK**
 
 **We're on a mission to create the world's best API developer experience and community for housing data.**
 
 Our SDK is designed to supercharge your API experience and accelerate your time to insight. It enables you to efficiently pull the data you need, analyze it, and visualize your findings.
 
-### Parcl Labs Data Overview
+<!-- readme header split -->
+## Parcl Labs Data Overview
 
 The Parcl Labs API provides **instant insights into the U.S. housing market**, delivering data on housing supply, sales, listings, rentals, investor activities, and market trends.
 
@@ -22,7 +24,7 @@ _The most complete picture of US residential real estate_
 | **Markets**        | **🇺🇸 Complete National Coverage, 70k+ Unique Markets at Any Level of Granularity:**<br>✅ Regions<br>✅ States<br>✅ Metros<br>✅ Cities<br>✅ Counties<br>✅ Towns<br>✅ Zips<br>✅ Census Places |
 | **Housing Events** | **🔄 The Full Property Lifecycle:**<br>✅ Sales<br>✅ For Sale Listings<br>✅ Rentals                                                                              |
 
-
+<!-- readme header end -->
 ### Cookbook
 
 We maintain a repository of examples that demonstrate how to use the Parcl Labs API for analysis. You can find the examples in the [Parcl Labs Cookbook](https://github.com/parcllabs/parcllabs-cookbook)
