@@ -8,7 +8,7 @@
 
 Our SDK is designed to supercharge your API experience and accelerate your time to insight. It enables you to efficiently pull the data you need, analyze it, and visualize your findings.
 
-## Parcl Labs Data Overview
+### Parcl Labs Data Overview
 
 The Parcl Labs API provides **instant insights into the U.S. housing market**, delivering data on housing supply, sales, listings, rentals, investor activities, and market trends.
 
