@@ -20,4 +20,4 @@ jobs:
       - name: Deploy OpenAPI docs 🦉
         uses: readmeio/rdme@v8.6.6
         with:
-          rdme: docs README.md --key=${{ secrets.README_API_KEY }} --version ${{ env.app_version }}
+          rdme: docs README.md --key=${{ secrets.README_API_KEY }} --version 1.0
