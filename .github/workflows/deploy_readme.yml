@@ -16,4 +16,4 @@ jobs:
       - name: Deploy OpenAPI docs 🦉
         uses: readmeio/rdme@v8.6.6
         with:
-          rdme: docs README.md --key=${{ secrets.README_API_KEY }} --slug=python-library-1
+          rdme: docs README.md --key=${{ secrets.README_API_KEY }} --id=python-library-1
