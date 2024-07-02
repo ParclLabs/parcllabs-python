@@ -1,0 +1,19 @@
+name: Parcl Labs SDK Readme Deploy
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  readme-deploy:
+    runs-on: ubuntu-latest
+    # if: ${{ (github.event.workflow_run.conclusion == 'success') || (github.event_name == 'workflow_dispatch') }}
+    steps:
+      - name: Check out repo 📚
+        uses: actions/checkout@v3
+
+      - name: Deploy OpenAPI docs 🦉
+        uses: readmeio/rdme@v8.6.6
+        with:
+          rdme: docs README.md --key=${{ secrets.README_API_KEY }} --slug=python-library-1
