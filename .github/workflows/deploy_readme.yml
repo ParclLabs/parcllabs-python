@@ -13,7 +13,14 @@ jobs:
       - name: Check out repo 📚
         uses: actions/checkout@v3
 
+      - name: Create README copy
+        run:
+          python3 scripts/copy_readme.py
+
       - name: Deploy OpenAPI docs 🦉
         uses: readmeio/rdme@v8.6.6
         with:
-          rdme: docs test_readme.md --key=${{ secrets.README_API_KEY }}
+          rdme: docs README_COPY.md --key=${{ secrets.README_API_KEY }}
+      
+      - name: Cleanup 🧹
+        run: rm -f README_COPY.md
