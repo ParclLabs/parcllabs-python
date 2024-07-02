@@ -13,7 +13,11 @@ jobs:
       - name: Check out repo 📚
         uses: actions/checkout@v3
 
+       - name: Get latest app version 🔍
+        run: |
+          echo "app_version=$(grep -o '[0-9].[0-9].[0-9]' parcllabs/__version__.py)" >> $GITHUB_ENV
+
       - name: Deploy OpenAPI docs 🦉
         uses: readmeio/rdme@v8.6.6
         with:
-          rdme: docs README.md --key=${{ secrets.README_API_KEY }} --title=python-library-1
+          rdme: docs README.md --key=${{ secrets.README_API_KEY }} --version ${{ env.app_version }}
