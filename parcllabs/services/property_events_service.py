@@ -39,7 +39,7 @@ class PropertyEventsService(ParclLabsService):
         event_type: str = None,
         start_date: str = None,
         end_date: str = None,
-        params: Optional[Mapping[str, Any]] = None,
+        params: Optional[Mapping[str, Any]] = {},
     ):
         """
         Retrieve property events for given parameters.
