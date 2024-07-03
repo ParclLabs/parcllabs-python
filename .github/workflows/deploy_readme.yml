@@ -15,14 +15,18 @@ jobs:
       - name: Check out repo 📚
         uses: actions/checkout@v3
 
-      - name: Create README copy
+      - name: Get latest readme version 🔍
+        run: |
+          echo "readme_version=$(head -n 1 parcllabs/readme_version)" >> $GITHUB_ENV
+
+      - name: Create README copy 📝
         run:
           python3 scripts/copy_readme.py
 
       - name: Deploy OpenAPI docs 🦉
         uses: readmeio/rdme@v8.6.6
         with:
-          rdme: docs README_COPY.md --key=${{ secrets.README_API_KEY }}
+          rdme: docs README_COPY.md --key=${{ secrets.README_API_KEY }} --version ${{ env.readme_version }}
       
       - name: Cleanup 🧹
         run: rm -f README_COPY.md
