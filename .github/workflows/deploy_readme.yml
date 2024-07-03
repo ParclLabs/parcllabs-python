@@ -19,7 +19,7 @@ jobs:
         run: |
           echo "readme_version=$(head -n 1 parcllabs/readme_version)" >> $GITHUB_ENV
 
-      - name: Create README copy
+      - name: Create README copy 📝
         run:
           python3 scripts/copy_readme.py
 
