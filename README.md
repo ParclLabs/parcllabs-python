@@ -374,6 +374,34 @@ results = client.portfolio_metrics.sf_new_listings_for_rent_rolling_counts.retri
 )
 ```
 
+#### Property
+
+##### Property Search Markets
+Gets a list of unique identifiers (parcl_property_id) for units that correspond to specific markets or parameters defined by the user. The parcl_property_id is key to navigating the Parcl Labs API, serving as the core mechanism for retrieving unit-level information.
+```python
+# get all condos over 3000 sq ft in the 10001 zip code area
+units = client.property.search.retrieve(
+        zip=10001,
+        sq_ft_min=3000,
+        property_type='condo',
+)
+# to use these ids in event history
+parcl_property_id_list = units['parcl_property_id'].tolist()
+```
+
+##### Property Event History
+Gets unit-level properties and their housing event history, including sales, listings, and rentals. The response includes detailed property information and historical event data for each specified property. 
+```python
+units = client.property.events.retrieve(
+        parcl_property_ids=parcl_property_id_list,
+        event_type='SALE',
+        start_date='2024-01-01',
+        end_date='2024-06-30'
+)
+# to use these ids in event history
+parcl_property_id_list = units['parcl_property_id'].tolist()
+```
+
 ##### Utility Functions
 Want to keep track of the estimated number of credits you are using in a given session? 
 
