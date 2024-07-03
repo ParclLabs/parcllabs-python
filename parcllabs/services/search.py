@@ -58,7 +58,7 @@ class SearchMarkets(ParclLabsService):
 
         Returns:
 
-            Any: The JSON response as a dictionary or a pandas DataFrame if as_dataframe is True.
+            Any: The JSON response as a pandas DataFrame.
         """
 
         if location_type and location_type not in VALID_LOCATION_TYPES:

@@ -177,6 +177,7 @@ class ParclLabsService(object):
         url: str = None,
         params: Optional[Mapping[str, Any]] = None,
         is_next: bool = False,
+        method: str = "GET",
     ) -> Any:
         if url:
             url = url
@@ -184,7 +185,32 @@ class ParclLabsService(object):
             url = self.url.format(parcl_id=parcl_id)
         else:
             url = self.url
-        return self.get(url=url, params=params, is_next=is_next)
+        if method == "GET":
+            return self.get(url=url, params=params, is_next=is_next)
+        elif method == "POST":
+            return self.post(url=url, params=params)
+        else:
+            raise ValueError(f"Unsupported HTTP method: {method}")
+
+    def error_handling(self, response: requests.Response) -> None:
+        try:
+            error = ""
+            error_details = response.json()
+            error_message = error_details.get("detail", "No detail provided by API")
+            error = error_message
+            if response.status_code == 403:
+                error = f"{error_message}. Visit https://dashboard.parcllabs.com for more information or reach out to team@parcllabs.com."
+            if response.status_code == 429:
+                error = error_details.get("error", "Rate Limit Exceeded")
+        except json.JSONDecodeError:
+            error_message = "Failed to decode JSON error response"
+        type_of_error = ""
+        if 400 <= response.status_code < 500:
+            type_of_error = "Client"
+        elif 500 <= response.status_code < 600:
+            type_of_error = "Server"
+        msg = f"{response.status_code} {type_of_error} Error: {error}"
+        raise RequestException(msg)
 
     def get(self, url: str, params: dict = None, is_next: bool = False):
         """
@@ -211,23 +237,31 @@ class ParclLabsService(object):
             response.raise_for_status()
             return response.json()
         except requests.exceptions.HTTPError:
-            try:
-                error_details = response.json()
-                error_message = error_details.get("detail", "No detail provided by API")
-                error = error_message
-                if response.status_code == 403:
-                    error = f"{error_message}. Visit https://dashboard.parcllabs.com for more information or reach out to team@parcllabs.com."
-                if response.status_code == 429:
-                    error = error_details.get("error", "Rate Limit Exceeded")
-            except json.JSONDecodeError:
-                error_message = "Failed to decode JSON error response"
-            type_of_error = ""
-            if 400 <= response.status_code < 500:
-                type_of_error = "Client"
-            elif 500 <= response.status_code < 600:
-                type_of_error = "Server"
-            msg = f"{response.status_code} {type_of_error} Error: {error}"
-            raise RequestException(msg)
+            self.error_handling(response)
+        except requests.exceptions.RequestException as err:
+            raise RequestException(f"Request failed: {str(err)}")
+        except Exception as e:
+            raise RequestException(f"An unexpected error occurred: {str(e)}")
+
+    def post(self, url: str, params: dict = None):
+        """
+        Send a GET request to the specified URL with the given parameters.
+
+        Args:
+            url (str): The URL endpoint to request.
+            params (dict, optional): The parameters to send in the query string.
+
+        Returns:
+            dict: The JSON response as a dictionary.
+        """
+        try:
+            full_url = self.api_url + url
+            headers = self._get_headers()
+            response = requests.post(full_url, headers=headers, json=params)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError:
+            self.error_handling(response)
         except requests.exceptions.RequestException as err:
             raise RequestException(f"Request failed: {str(err)}")
         except Exception as e:
