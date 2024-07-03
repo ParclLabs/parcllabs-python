@@ -1,6 +1,7 @@
 from parcllabs import api_base
 from parcllabs.services.parcllabs_service import ParclLabsService
 from parcllabs.services.portfolio_size_service import PortfolioSizeService
+from parcllabs.services.property_events_service import PropertyEventsService
 from parcllabs.services.property_search import PropertySearch
 from parcllabs.services.property_type_service import PropertyTypeService
 from parcllabs.services.search import SearchMarkets
@@ -190,4 +191,7 @@ class ParclLabsClient:
         self.property = ServiceGroup(self, limit)
         self.property.add_service(
             "search", "/property/v1/search_markets", PropertySearch
+        )
+        self.property.add_service(
+            "events", "/property/v1/event_history", PropertyEventsService
         )
