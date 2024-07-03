@@ -17,7 +17,7 @@ jobs:
 
       - name: Get latest readme version 🔍
         run: |
-          echo "readme_version=$(head -n 1 version)" >> $GITHUB_ENV
+          echo "readme_version=$(head -n 1 parcllabs/readme_version)" >> $GITHUB_ENV
 
       - name: Create README copy
         run:
