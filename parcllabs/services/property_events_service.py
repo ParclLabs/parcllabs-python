@@ -1,4 +1,5 @@
 import pandas as pd
+from alive_progress import alive_bar
 from typing import Any, Mapping, Optional, List
 from parcllabs.common import (
     DEFAULT_LIMIT,
@@ -51,20 +52,23 @@ class PropertyEventsService(ParclLabsService):
             else:
                 params["event_type"] = event_type
         parcl_property_ids = [str(i) for i in parcl_property_ids]
-        chunks = [
-            parcl_property_ids[i : i + CHUNK_SIZE]
-            for i in range(0, len(parcl_property_ids), CHUNK_SIZE)
-        ]
         data_container = []
-        for chunk in chunks:
-            params = {
-                "parcl_property_id": chunk,
-                "start_date": start_date,
-                "end_date": end_date,
-                **(params or {}),
-            }
-            results = self._sync_request(params=params, method="POST")
-            data = self._as_pd_dataframe(results)
-            data_container.append(data)
+        with alive_bar(len(parcl_property_ids)) as bar:
+            for i in range(0, len(parcl_property_ids), CHUNK_SIZE):
+                batch_ids = parcl_property_ids[i : i + CHUNK_SIZE]
+                params = {
+                    "parcl_property_id": batch_ids,
+                    "start_date": start_date,
+                    "end_date": end_date,
+                    **(params or {}),
+                }
+                batch_results = self._sync_request(params=params, method="POST")
+                for result in batch_results:
+                    if result is None:
+                        continue
+                    bar()
+                data = self._as_pd_dataframe(batch_results)
+                data_container.append(data)
+
         output = safe_concat_and_format_dtypes(data_container)
         return output
