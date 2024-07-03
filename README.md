@@ -393,14 +393,14 @@ parcl_property_id_list = units['parcl_property_id'].tolist()
 Gets unit-level properties and their housing event history, including sales, listings, and rentals. The response includes detailed property information and historical event data for each specified property. 
 ```python
 sale_events = client.property.events.retrieve(
-        parcl_property_ids=parcl_property_id_list,
+        parcl_property_ids=parcl_property_id_list[0:10],
         event_type='SALE',
         start_date='2020-01-01',
         end_date='2024-06-30'
 )
 
 rental_events = client.property.events.retrieve(
-        parcl_property_ids=parcl_property_id_list,
+        parcl_property_ids=parcl_property_id_list[0:10],
         event_type='RENTAL',
         start_date='2024-01-01',
         end_date='2024-06-30'
