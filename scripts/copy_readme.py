@@ -1,7 +1,7 @@
 import re
 
 
-FRONT_MATTER = "---\ntitle: Python Library\nslug: python-library-1\n---\n\n"
+FRONT_MATTER = "---\ntitle: Python Library\nslug: python-library-1\ncategory: 66858eb048f1fd0031734568\n---\n\n"
 
 
 def main():

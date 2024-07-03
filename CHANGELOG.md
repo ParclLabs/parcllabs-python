@@ -1,3 +1,6 @@
+### v1.1.2
+- Introduce `property.search` and `property.events`. See [Parcl Labs Changelog](https://docs.parcllabs.com/changelog/property-data-api-beta) for more details.
+
 ### v1.1.1
 - Minor code formatting updates to improve readability
 
