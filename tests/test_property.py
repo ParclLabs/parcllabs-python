@@ -1,3 +1,4 @@
+import pandas as pd
 import pytest
 from parcllabs.services.property_search import PropertySearch
 from parcllabs.services.property_events_service import PropertyEventsService
@@ -95,11 +96,11 @@ def test_property_event_history_retrieve(property_events_service):
     assert "event_name" in result.columns
     assert len(result) == 3
     assert result.iloc[0]["parcl_property_id"] == 123456
-    assert result.iloc[0]["event_date"] == "2023-03-04"
+    assert result.iloc[0]["event_date"] == pd.Timestamp("2023-03-04")
     assert result.iloc[0]["event_type"] == "RENTAL"
-    assert result.iloc[1]["event_date"] == "2022-10-21"
+    assert result.iloc[1]["event_date"] == pd.Timestamp("2022-10-21")
     assert result.iloc[1]["event_name"] == "LISTING_REMOVED"
-    assert result.iloc[2]["event_date"] == "2020-09-21"
+    assert result.iloc[2]["event_date"] == pd.Timestamp("2020-09-21")
 
 
 def test_validate_event_type(property_events_service):

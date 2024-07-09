@@ -48,7 +48,6 @@ class PropertySearch(ParclLabsService):
             year_built_max (int, optional): The maximum year built to filter results by.
             property_type (str, optional): The property type to filter results by.
             params (dict, optional): Additional parameters to include in the request.
-            auto_paginate (bool, optional): Automatically paginate through the results.
 
         Returns:
 
