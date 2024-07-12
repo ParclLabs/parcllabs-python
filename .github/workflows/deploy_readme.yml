@@ -22,7 +22,7 @@ jobs:
 
       - name: Create README copy 📝
         run:
-          python3 scripts/copy_readme.py
+          python3 scripts/copy_readme.py --key ${{ secrets.README_API_KEY }} 
 
       - name: Deploy OpenAPI docs 🦉
         uses: readmeio/rdme@v8.6.6
