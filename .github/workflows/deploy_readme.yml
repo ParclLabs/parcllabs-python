@@ -1,11 +1,14 @@
 name: Parcl Labs SDK Readme Deploy
 
 on:
-  workflow_dispatch:
-  workflow_run:
-    workflows: ['Publish Package']
-    types: [completed]
-    branches: [main]
+  pull_request:
+    branches:
+      - main
+  # workflow_dispatch:
+  # workflow_run:
+  #   workflows: ['Publish Package']
+  #   types: [completed]
+  #   branches: [main]
 
 jobs:
   readme-deploy:
@@ -22,7 +25,7 @@ jobs:
 
       - name: Create README copy 📝
         run:
-          python3 scripts/copy_readme.py
+          python3 scripts/copy_readme.py --key ${{ secrets.README_API_KEY }} 
 
       - name: Deploy OpenAPI docs 🦉
         uses: readmeio/rdme@v8.6.6
