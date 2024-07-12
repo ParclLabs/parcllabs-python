@@ -17,7 +17,8 @@ jobs:
 
       - name: Get latest readme version 🔍
         run: |
-          echo "readme_version=$(head -n 1 parcllabs/readme_version)" >> $GITHUB_ENV
+          readme_version=$(python3 scripts/get_readme_version.py --key ${{ secrets.README_API_KEY }})
+          echo "readme_version=${readme_version}" >> $GITHUB_ENV
 
       - name: Create README copy 📝
         run:
