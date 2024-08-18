@@ -1,3 +1,24 @@
+### v1.3.0
+- Revamped `property.search`. See [Parcl Labs Changelog](https://docs.parcllabs.com/changelog/prop-search-refactor) for more details.
+
+More flexible query dynamics for unit search. See examples: 
+
+```python
+tricon_tampa_units = client.property.search.retrieve(
+    parcl_id=2900417,
+    property_type='single_family',
+    current_entity_owner_name='tricon',
+    limit=100
+)
+
+amh_tampa_units = client.property.search.retrieve(
+    parcl_id=2900417,
+    property_type='single_family',
+    current_entity_owner_name='amh',
+    limit=100
+)
+```
+
 ### v1.1.2
 - Introduce `property.search` and `property.events`. See [Parcl Labs Changelog](https://docs.parcllabs.com/changelog/property-data-api-beta) for more details.
 
