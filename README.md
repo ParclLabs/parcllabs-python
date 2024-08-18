@@ -83,6 +83,93 @@ top_market_parcl_ids = markets['parcl_id'].tolist()
 
 Services are the core of the Parcl Labs API. They provide access to a wide range of data and analytics on the housing market. The services are divided into the following categories: `Price Feeds`, `Rental Market Metrics`, `For Sale Market Metrics`, `Market Metrics`, `Investor Metrics`, and `Portfolio Metrics`.
 
+#### Property
+
+##### Property Search Markets
+Gets a list of unique identifiers (parcl_property_id) for units that correspond to specific markets or parameters defined by the user. The parcl_property_id is key to navigating the Parcl Labs API, serving as the core mechanism for retrieving unit-level information.
+
+```python
+# search by operators
+tricon_tampa_units = client.property.search.retrieve(
+    parcl_id=2900417,
+    property_type='single_family',
+    current_entity_owner_name='tricon',
+    limit=100
+)
+
+amh_tampa_units = client.property.search.retrieve(
+    parcl_id=2900417,
+    property_type='single_family',
+    current_entity_owner_name='amh',
+    limit=100
+)
+
+invitation_homes_tampa_units = client.property.search.retrieve(
+    parcl_id=2900417,
+    property_type='single_family',
+    current_entity_owner_name='invitation_homes',
+    limit=100
+)
+
+home_partners_of_america_tampa_units = client.property.search.retrieve(
+    parcl_id=2900417,
+    property_type='single_family',
+    current_entity_owner_name='home_partners_of_america'
+)
+
+# search by buy box - only look at units that have rented
+# and review rental rates
+rental_buy_box = client.property.search.retrieve(
+        parcl_id=2900417,
+        property_type='single_family',
+        bedrooms_min=2,
+        bedrooms_max=5,
+        year_built_min=2010,
+        year_built_max=2023,
+        sq_ft_min=1000,
+        sq_ft_max=2500,
+        event_history_rental_flag=True,
+        limit=100
+)
+
+# search by buy box - this time all properties to 
+# review sales data
+buy_box = client.property.search.retrieve(
+    parcl_id=2900417,
+    property_type='single_family',
+    bedrooms_min=2,
+    bedrooms_max=5,
+    year_built_min=2010,
+    year_built_max=2023,
+    sq_ft_min=1000,
+    sq_ft_max=2500,
+    event_history_sale_flag=True,
+    limit=100
+)
+
+# to extract parcl_property_id's to retrieve expanded history for 
+# any of these queries, use: 
+parcl_property_id_list = rental_buy_box['parcl_property_id'].tolist()
+```
+
+##### Property Event History
+Gets unit-level properties and their housing event history, including sales, listings, and rentals. The response includes detailed property information and historical event data for each specified property. 
+```python
+sale_events = client.property.events.retrieve(
+        parcl_property_ids=parcl_property_id_list[0:10],
+        event_type='SALE',
+        start_date='2020-01-01',
+        end_date='2024-06-30'
+)
+
+rental_events = client.property.events.retrieve(
+        parcl_property_ids=parcl_property_id_list[0:10],
+        event_type='RENTAL',
+        start_date='2020-01-01',
+        end_date='2024-06-30'
+)
+```
+
 #### Price Feeds
 The Parcl Labs Price Feed (PLPF) is a daily-updated, real-time indicator of residential real estate prices, measured by price per square foot, across select US markets.
 
@@ -161,7 +248,7 @@ results_gross_yield = client.rental_market_metrics.gross_yield.retrieve(
 
 rentals_new_listings_rolling_counts = client.rental_market_metrics.new_listings_for_rent_rolling_counts.retrieve(
         parcl_ids=top_market_parcl_ids
-    )
+)
 ```
 
 #### For Sale Market Metrics
@@ -198,7 +285,7 @@ for_sale_inventory_price_changes = client.for_sale_market_metrics.for_sale_inven
         parcl_ids=top_market_parcl_ids,
         start_date=start_date,
         end_date=end_date,
-    )
+)
 ```
 
 #### Market Metrics
@@ -371,39 +458,6 @@ results = client.portfolio_metrics.sf_housing_event_counts.retrieve(
 results = client.portfolio_metrics.sf_new_listings_for_rent_rolling_counts.retrieve(
         parcl_ids=top_market_parcl_ids,
         portfolio_size='PORTFOLIO_1000_PLUS'
-)
-```
-
-#### Property
-
-##### Property Search Markets
-Gets a list of unique identifiers (parcl_property_id) for units that correspond to specific markets or parameters defined by the user. The parcl_property_id is key to navigating the Parcl Labs API, serving as the core mechanism for retrieving unit-level information.
-```python
-# get all condos over 3000 sq ft in the 10001 zip code area
-units = client.property.search.retrieve(
-        zip=10001,
-        sq_ft_min=3000,
-        property_type='condo',
-)
-# to use these ids in event history
-parcl_property_id_list = units['parcl_property_id'].tolist()
-```
-
-##### Property Event History
-Gets unit-level properties and their housing event history, including sales, listings, and rentals. The response includes detailed property information and historical event data for each specified property. 
-```python
-sale_events = client.property.events.retrieve(
-        parcl_property_ids=parcl_property_id_list[0:10],
-        event_type='SALE',
-        start_date='2020-01-01',
-        end_date='2024-06-30'
-)
-
-rental_events = client.property.events.retrieve(
-        parcl_property_ids=parcl_property_id_list[0:10],
-        event_type='RENTAL',
-        start_date='2020-01-01',
-        end_date='2024-06-30'
 )
 ```
 
