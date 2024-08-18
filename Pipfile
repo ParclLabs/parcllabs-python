@@ -23,6 +23,7 @@ pytest_asyncio = ">=0.15"
 ipykernel = "*"
 nbformat = "*"
 tomli = "*"
+exceptiongroup = "*"
 
 [requires]
 python_version = "==3.11.8"
