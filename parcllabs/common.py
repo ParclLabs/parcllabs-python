@@ -1,4 +1,5 @@
 VALID_PROPERTY_TYPES = ["single_family", "condo", "townhouse", "all_properties"]
+VALID_ENTITY_NAMES = ["AMH", "TRICON", "INVITATION_HOMES", "HOME_PARTNERS_OF_AMERICA"]
 VALID_PORTFOLIO_SIZES = [
     "PORTFOLIO_2_TO_9",
     "PORTFOLIO_10_TO_99",

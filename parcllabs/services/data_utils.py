@@ -14,7 +14,7 @@ def safe_concat_and_format_dtypes(data_container):
     # Concatenate the non-empty DataFrames
     output = pd.concat(non_empty_dfs).reset_index(drop=True)
 
-    #cast date columns to datetime
+    # cast date columns to datetime
     if "date" in output.columns:
         output["date"] = pd.to_datetime(output["date"])
     if "event_date" in output.columns:

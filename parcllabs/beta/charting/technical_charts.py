@@ -38,7 +38,6 @@ def build_technical_chart(
     moving_average_window: int = 6,
     styling_config: dict = STYLING_CONFIG,
 ):
-
     bar_chart_df = sort_chart_data(bar_chart_df)
     line_chart_df = sort_chart_data(line_chart_df)
 

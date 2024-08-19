@@ -22,6 +22,9 @@ asynctest = ">=0.13"
 pytest_asyncio = ">=0.15"
 ipykernel = "*"
 nbformat = "*"
+tomli = "*"
+exceptiongroup = "*"
+async-timeout = "*"
 
 [requires]
-python_version = ">=3.9"
+python_version = "==3.11.8"
