@@ -1,17 +1,17 @@
 ### v1.3.0
-- Revamped `property.search`. See [Parcl Labs Changelog](https://docs.parcllabs.com/changelog/prop-search-refactor) for more details.
+- Introduced `property.search_units`. See [Parcl Labs Changelog](https://docs.parcllabs.com/changelog/prop-search-refactor) for more details.
 
 More flexible query dynamics for unit search. See examples: 
 
 ```python
-tricon_tampa_units = client.property.search.retrieve(
+tricon_tampa_units = client.property.search_units.retrieve(
     parcl_id=2900417,
     property_type='single_family',
     current_entity_owner_name='tricon',
     limit=100
 )
 
-amh_tampa_units = client.property.search.retrieve(
+amh_tampa_units = client.property.search_units.retrieve(
     parcl_id=2900417,
     property_type='single_family',
     current_entity_owner_name='amh',

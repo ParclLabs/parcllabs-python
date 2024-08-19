@@ -90,14 +90,14 @@ Gets a list of unique identifiers (parcl_property_id) for units that correspond 
 
 ```python
 # search by operators
-tricon_tampa_units = client.property.search.retrieve(
+tricon_tampa_units = client.property.search_units.retrieve(
     parcl_id=2900417,
     property_type='single_family',
     current_entity_owner_name='tricon',
     limit=100
 )
 
-amh_tampa_units = client.property.search.retrieve(
+amh_tampa_units = client.property.search_units.retrieve(
     parcl_id=2900417,
     property_type='single_family',
     current_entity_owner_name='amh',

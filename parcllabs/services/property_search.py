@@ -1,10 +1,6 @@
 import pandas as pd
 from typing import Any, Mapping, Optional, List
-from parcllabs.common import (
-    DEFAULT_LIMIT,
-    VALID_PROPERTY_TYPES,
-    VALID_ENTITY_NAMES
-)
+from parcllabs.common import DEFAULT_LIMIT, VALID_PROPERTY_TYPES, VALID_ENTITY_NAMES
 from parcllabs.services.parcllabs_service import ParclLabsService
 
 
@@ -137,14 +133,14 @@ class PropertySearchNew(ParclLabsService):
                 raise ValueError(
                     f"property_type value error. Valid values are: {VALID_PROPERTY_TYPES}. Received: {property_type}"
                 )
-        
+
         if current_entity_owner_name:
             current_entity_owner_name = current_entity_owner_name.upper()
             if current_entity_owner_name not in VALID_ENTITY_NAMES:
                 raise ValueError(
                     f"current_entity_owner_name value error. Valid values are: {VALID_ENTITY_NAMES}. Received: {current_entity_owner_name}"
                 )
-        
+
         if event_history_sale_flag is not None:
             event_history_sale_flag = "true" if event_history_sale_flag else "false"
 
@@ -152,16 +148,24 @@ class PropertySearchNew(ParclLabsService):
             event_history_rental_flag = "true" if event_history_rental_flag else "false"
 
         if event_history_listing_flag is not None:
-            event_history_listing_flag = "true" if event_history_listing_flag else "false"
+            event_history_listing_flag = (
+                "true" if event_history_listing_flag else "false"
+            )
 
         if current_new_construction_flag is not None:
-            current_new_construction_flag = "true" if current_new_construction_flag else "false"
+            current_new_construction_flag = (
+                "true" if current_new_construction_flag else "false"
+            )
 
         if current_owner_occupied_flag is not None:
-            current_owner_occupied_flag = "true" if current_owner_occupied_flag else "false"
+            current_owner_occupied_flag = (
+                "true" if current_owner_occupied_flag else "false"
+            )
 
         if current_investor_owned_flag is not None:
-            current_investor_owned_flag = "true" if current_investor_owned_flag else "false"
+            current_investor_owned_flag = (
+                "true" if current_investor_owned_flag else "false"
+            )
 
         params = {
             "parcl_id": parcl_id,
@@ -194,6 +198,6 @@ class PropertySearchNew(ParclLabsService):
             tmp["links"] = results["links"]
             results = tmp
 
-        results = pd.json_normalize(results['items'])
+        results = pd.json_normalize(results["items"])
         # data = self._as_pd_dataframe(results)
         return results
