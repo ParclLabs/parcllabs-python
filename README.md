@@ -90,36 +90,16 @@ Gets a list of unique identifiers (parcl_property_id) for units that correspond 
 
 ```python
 # search by operators
-tricon_tampa_units = client.property.search_units.retrieve(
-    parcl_id=2900417,
-    property_type='single_family',
-    current_entity_owner_name='tricon',
-    limit=100
-)
-
-amh_tampa_units = client.property.search_units.retrieve(
-    parcl_id=2900417,
-    property_type='single_family',
-    current_entity_owner_name='amh',
-    limit=100
-)
-
-invitation_homes_tampa_units = client.property.search.retrieve(
+invitation_homes_tampa_units = client.property.search_units.retrieve(
     parcl_id=2900417,
     property_type='single_family',
     current_entity_owner_name='invitation_homes',
     limit=100
 )
 
-home_partners_of_america_tampa_units = client.property.search.retrieve(
-    parcl_id=2900417,
-    property_type='single_family',
-    current_entity_owner_name='home_partners_of_america'
-)
-
 # search by buy box - only look at units that have rented
 # and review rental rates
-rental_buy_box = client.property.search.retrieve(
+rental_buy_box = client.property.search_units.retrieve(
         parcl_id=2900417,
         property_type='single_family',
         bedrooms_min=2,
@@ -130,21 +110,6 @@ rental_buy_box = client.property.search.retrieve(
         sq_ft_max=2500,
         event_history_rental_flag=True,
         limit=100
-)
-
-# search by buy box - this time all properties to 
-# review sales data
-buy_box = client.property.search.retrieve(
-    parcl_id=2900417,
-    property_type='single_family',
-    bedrooms_min=2,
-    bedrooms_max=5,
-    year_built_min=2010,
-    year_built_max=2023,
-    sq_ft_min=1000,
-    sq_ft_max=2500,
-    event_history_sale_flag=True,
-    limit=100
 )
 
 # to extract parcl_property_id's to retrieve expanded history for 

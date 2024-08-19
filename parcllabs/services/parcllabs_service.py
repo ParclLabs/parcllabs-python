@@ -73,9 +73,9 @@ class ParclLabsService(object):
                             next_response.raise_for_status()
                             result = await next_response.json()
                             all_items.extend(result["items"])
-                    result[
-                        "items"
-                    ] = all_items  # Replace the items with the accumulated items
+                    result["items"] = (
+                        all_items  # Replace the items with the accumulated items
+                    )
                 self.client.estimated_session_credit_usage += len(
                     result.get("items", [])
                 )
