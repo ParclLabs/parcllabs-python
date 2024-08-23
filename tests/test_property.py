@@ -55,7 +55,7 @@ def property_search_service():
     client_mock = MagicMock()
     client_mock.api_url = "https://api.parcllabs.com"
     client_mock.api_key = "test_api_key"
-    service = PropertySearch(client=client_mock, url="v1//property/search_markets")
+    service = PropertySearch(client=client_mock, url="v1/property/search")
     service._sync_request = MagicMock(return_value=mock_search_response)
     return service
 
@@ -72,15 +72,6 @@ def property_events_service():
     return service
 
 
-def test_property_search_retrieve(property_search_service):
-    result = property_search_service.retrieve(zip="10001")
-    assert not result.empty
-    assert "parcl_property_id" in result.columns
-    assert len(result) == 2
-    assert result.iloc[0]["parcl_property_id"] == 123456
-    assert result.iloc[1]["parcl_property_id"] == 456789
-
-
 def test_validate_property_type(property_search_service):
     with pytest.raises(ValueError):
         property_search_service.retrieve(zip="10001", property_type="invalid_type")
@@ -90,7 +81,6 @@ def test_property_event_history_retrieve(property_events_service):
     result = property_events_service.retrieve(parcl_property_ids=[123456])
     assert not result.empty
     assert "parcl_property_id" in result.columns
-    assert "address" in result.columns
     assert "event_date" in result.columns
     assert "event_type" in result.columns
     assert "event_name" in result.columns

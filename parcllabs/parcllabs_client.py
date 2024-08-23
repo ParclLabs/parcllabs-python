@@ -40,14 +40,19 @@ class ParclLabsClient:
         limit (int): The number of items to return per request.
     """
 
-    def __init__(self, api_key: str, limit: int = 12):
+    def __init__(
+            self, 
+            api_key: str, 
+            limit: int = 12,
+            api_url: str = api_base
+):
         if not api_key:
             raise ValueError(
                 "API Key is required. Please visit https://dashboard.parcllabs.com/signup to get an API key."
             )
 
         self.api_key = api_key
-        self.api_url = api_base
+        self.api_url = api_url
         self.limit = limit
         self.estimated_session_credit_usage = 0
 
@@ -189,11 +194,9 @@ class ParclLabsClient:
         self.search.add_service("markets", "/v1/search/markets", SearchMarkets)
 
         self.property = ServiceGroup(self, limit)
+
         self.property.add_service(
-            "search", "/v1/property/search_markets", PropertySearch
-        )
-        self.property.add_service(
-            "search_units", "/v1/property/search", PropertySearchNew
+            "search", "/v1/property/search", PropertySearchNew
         )
         self.property.add_service(
             "events", "/v1/property/event_history", PropertyEventsService

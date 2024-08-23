@@ -1,3 +1,35 @@
+### v1.4.0
+- Introduced `property.search_units`. See [Parcl Labs Changelog](https://docs.parcllabs.com/changelog/prop-search-refactor) for more details.
+
+Refactored `property.search` to point to endpoint `/v1/property/search`. This is a breaking change. `property.search` used to point to an endpoint that is retiring, `/v1/property/search_markets`. 
+
+Fixed a bug in `property.events` where records were dropping.
+
+More flexible query dynamics for unit search. See examples: 
+
+```python
+homes = client.property.search.retrieve(
+    parcl_ids=[pid],
+    property_type='SINGLE_FAMILY',
+    # square_footage_min=1000,
+    # square_footage_max=2500,
+    # bedrooms_min=3,
+    # bedrooms_max=4,
+    # bathrooms_min=2,
+    # bathrooms_max=3,
+    # year_built_min=2010,
+    # year_built_max=2023,
+    current_entity_owner_name='invitation_homes',
+    # current_history_sale_flag=True,
+    # current_history_rental_flag=True,
+    # current_history_listing_flag=True,
+    # current_new_oncstruciton_flag=True,
+    # current_owner_occupied_flag=True,
+    # current_investor_owned_flag=True,
+)
+```
+
+
 ### v1.3.0
 - Introduced `property.search_units`. See [Parcl Labs Changelog](https://docs.parcllabs.com/changelog/prop-search-refactor) for more details.
 

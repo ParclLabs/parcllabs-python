@@ -90,26 +90,46 @@ Gets a list of unique identifiers (parcl_property_id) for units that correspond 
 
 ```python
 # search by operators
-invitation_homes_tampa_units = client.property.search_units.retrieve(
-    parcl_id=2900417,
+invitation_homes_tampa_units = client.property.search.retrieve(
+    parcl_ids=[2900417],
     property_type='single_family',
+    # square_footage_min=1000,
+    # quare_footage_max=2500,
+    # bedrooms_min=2,
+    # bedrooms_max=5,
+    # bathrooms_min=2,
+    # bathrooms_max=3,
+    # year_built_min=2010,
+    # year_built_max=2023,
     current_entity_owner_name='invitation_homes',
-    limit=100
+    # event_history_sale_flag=True,
+    # event_history_rental_flag=True,
+    # event_history_listing_flag=True,
+    # current_new_oncstruciton_flag=True,
+    # current_owner_occupied_flag=True,
+    # current_investor_owned_flag=True,
 )
 
 # search by buy box - only look at units that have rented
 # and review rental rates
-rental_buy_box = client.property.search_units.retrieve(
-        parcl_id=2900417,
-        property_type='single_family',
-        bedrooms_min=2,
-        bedrooms_max=5,
-        year_built_min=2010,
-        year_built_max=2023,
-        sq_ft_min=1000,
-        sq_ft_max=2500,
-        event_history_rental_flag=True,
-        limit=100
+rental_buy_box = client.property.search.retrieve(
+    parcl_ids=[2900417],
+    property_type='single_family',
+    square_footage_min=1000,
+    square_footage_max=2500,
+    bedrooms_min=2,
+    bedrooms_max=5,
+    # bathrooms_min=2,
+    # bathrooms_max=3,
+    year_built_min=2010,
+    year_built_max=2023,
+    # current_entity_owner_name='invitation_homes',
+    # event_history_sale_flag=True,
+    event_history_rental_flag=True,
+    # event_history_listing_flag=True,
+    # current_new_oncstruciton_flag=True,
+    # current_owner_occupied_flag=True,
+    # current_investor_owned_flag=True,
 )
 
 # to extract parcl_property_id's to retrieve expanded history for 
@@ -118,7 +138,8 @@ parcl_property_id_list = rental_buy_box['parcl_property_id'].tolist()
 ```
 
 ##### Property Event History
-Gets unit-level properties and their housing event history, including sales, listings, and rentals. The response includes detailed property information and historical event data for each specified property. 
+Gets unit-level properties and their housing event history, including sales, listings, and rentals. The response includes detailed property information and historical event data for each specified property.
+
 ```python
 sale_events = client.property.events.retrieve(
         parcl_property_ids=parcl_property_id_list[0:10],
@@ -132,6 +153,14 @@ rental_events = client.property.events.retrieve(
         event_type='RENTAL',
         start_date='2020-01-01',
         end_date='2024-06-30'
+)
+
+invitation_homes_rental_history = client.property.events.retrieve(
+        parcl_property_ids=parcl_property_id_list,
+        event_type='RENTAL',
+        # start_date='2020-01-01',
+        # end_date='2024-06-30',
+        entity_owner_name='invitation_homes'
 )
 ```
 
@@ -424,13 +453,4 @@ results = client.portfolio_metrics.sf_new_listings_for_rent_rolling_counts.retri
         parcl_ids=top_market_parcl_ids,
         portfolio_size='PORTFOLIO_1000_PLUS'
 )
-```
-
-##### Utility Functions
-Want to keep track of the estimated number of credits you are using in a given session? 
-
-```python
-# get the number of credits used in a given session
-credits_used = client.estimated_session_credit_usage
-print(f"Estimated session credit usage: {credits_used}")
 ```
