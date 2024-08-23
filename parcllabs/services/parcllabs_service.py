@@ -32,6 +32,7 @@ class ParclLabsService(object):
         self.limit = limit
         self.client = client
         self.api_url = client.api_url
+        self.full_url = self.api_url + self.url
         self.api_key = client.api_key
         self.markets = {}
 
@@ -46,7 +47,7 @@ class ParclLabsService(object):
             if not params.get("limit"):
                 params["limit"] = self.limit
         try:
-            full_url = self.api_url + self.url.format(parcl_id=parcl_id)
+            full_url = self.full_url.format(parcl_id=parcl_id)
             headers = self._get_headers()
             async with session.get(
                 full_url,
@@ -231,7 +232,7 @@ class ParclLabsService(object):
             if is_next:
                 full_url = url
             else:
-                full_url = self.api_url + url
+                full_url = self.full_url
             headers = self._get_headers()
             response = requests.get(full_url, headers=headers, params=params)
             response.raise_for_status()
@@ -255,7 +256,7 @@ class ParclLabsService(object):
             dict: The JSON response as a dictionary.
         """
         try:
-            full_url = self.api_url + url
+            full_url = self.full_url
             headers = self._get_headers()
             response = requests.post(full_url, headers=headers, json=params)
             response.raise_for_status()
