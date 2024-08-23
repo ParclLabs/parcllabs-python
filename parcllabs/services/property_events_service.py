@@ -28,7 +28,6 @@ class PropertyEventsService(ParclLabsService):
     def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> Any:
         data_container = []
         for results in data:
-            # meta_fields = [["property", key] for key in results["property"].keys()]
             df = pd.json_normalize(results, "events", meta=[['property', 'parcl_property_id']])
             updated_cols_names = [
                 c.replace("property.", "") for c in df.columns.tolist()
