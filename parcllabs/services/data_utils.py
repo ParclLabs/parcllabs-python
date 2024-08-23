@@ -1,15 +1,8 @@
 from typing import List
 
 import pandas as pd
-
-
-import pandas as pd
-
-import pandas as pd
 import numpy as np
 
-import pandas as pd
-import numpy as np
 
 def safe_concat_and_format_dtypes(data_container):
     # Filter out empty DataFrames
