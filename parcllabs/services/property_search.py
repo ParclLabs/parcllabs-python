@@ -133,7 +133,7 @@ class PropertySearch(ParclLabsService):
                     tmp = pd.concat([tmp, df_batch], ignore_index=True)
 
                 output_data.append(tmp)
-                bar()  # Update progress
+                bar()
 
         results = pd.concat(output_data).reset_index()
         self.client.estimated_session_credit_usage += results.shape[0]
