@@ -21,10 +21,13 @@ class ServiceGroup:
         self._limit = limit
         self._services = {}
 
-    def add_service(self, name, url, service_class):
+    def add_service(self, name, url, service_class, alias=None):
         service = service_class(url=url, client=self._client, limit=self._limit)
         setattr(self, name, service)
         self._services[name] = service
+        if alias:
+            setattr(self, alias, service)
+            self._services[alias] = service
 
     @property
     def services(self):
@@ -198,6 +201,7 @@ class ParclLabsClient:
         self.property = ServiceGroup(self, limit)
 
         self.property.add_service("search", "/v1/property/search", PropertySearch)
+  
         self.property.add_service(
             "events", "/v1/property/event_history", PropertyEventsService
         )
