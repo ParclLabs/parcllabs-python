@@ -1,6 +1,5 @@
 from collections import deque
 from typing import Any, Mapping, Optional, List
-
 import pandas as pd
 from alive_progress import alive_bar
 from parcllabs.common import (
@@ -15,7 +14,7 @@ from parcllabs.services.data_utils import (
 )
 from parcllabs.services.parcllabs_service import ParclLabsService
 from concurrent.futures import ThreadPoolExecutor, as_completed
-
+from parcllabs.exceptions import NotFoundError  # Assuming this is the exception for a 404 error
 
 class PropertyEventsService(ParclLabsService):
     """
@@ -79,10 +78,17 @@ class PropertyEventsService(ParclLabsService):
         def process_batch(batch_ids):
             local_params = params.copy()
             local_params["parcl_property_id"] = batch_ids
-            batch_results = self._sync_request(params=local_params, method="POST")
-            if batch_results:
-                return clean_results(batch_results)
-            return []
+            try:
+                batch_results = self._sync_request(params=local_params, method="POST")
+                if batch_results:
+                    return clean_results(batch_results)
+            except NotFoundError:
+                # Handle 404 Not Found Error: Skip the batch
+                return []
+            except Exception as e:
+                # Optionally, log other exceptions or re-raise them
+                print(f"Error processing batch {batch_ids}: {str(e)}")
+                return []
 
         with (
             alive_bar(total_properties) as bar,

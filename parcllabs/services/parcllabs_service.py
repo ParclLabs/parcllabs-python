@@ -9,6 +9,7 @@ from requests.exceptions import RequestException
 from typing import Any, Mapping, Optional, List, Dict
 from alive_progress import alive_bar
 from parcllabs.common import DELETE_FROM_OUTPUT, DEFAULT_LIMIT
+from parcllabs.exceptions import NotFoundError
 from parcllabs.services.validators import Validators
 from parcllabs.services.data_utils import safe_concat_and_format_dtypes
 from parcllabs.__version__ import VERSION
@@ -199,17 +200,23 @@ class ParclLabsService(object):
             error_details = response.json()
             error_message = error_details.get("detail", "No detail provided by API")
             error = error_message
+            
             if response.status_code == 403:
                 error = f"{error_message}. Visit https://dashboard.parcllabs.com for more information or reach out to team@parcllabs.com."
-            if response.status_code == 429:
+            elif response.status_code == 429:
                 error = error_details.get("error", "Rate Limit Exceeded")
+            elif response.status_code == 404:
+                raise NotFoundError("No data found matching search criteria. Try a different set of parameters.")
+            
         except json.JSONDecodeError:
             error_message = "Failed to decode JSON error response"
+
         type_of_error = ""
         if 400 <= response.status_code < 500:
             type_of_error = "Client"
         elif 500 <= response.status_code < 600:
             type_of_error = "Server"
+        
         msg = f"{response.status_code} {type_of_error} Error: {error}"
         raise RequestException(msg)
 
@@ -246,7 +253,7 @@ class ParclLabsService(object):
 
     def post(self, url: str, params: dict = None):
         """
-        Send a GET request to the specified URL with the given parameters.
+        Send a POST request to the specified URL with the given parameters.
 
         Args:
             url (str): The URL endpoint to request.

@@ -135,7 +135,7 @@ class PropertySearch(ParclLabsService):
                 output_data.append(tmp)
                 bar()
 
-        results = pd.concat(output_data).reset_index()
+        results = pd.concat(output_data).reset_index(drop=True)
         self.client.estimated_session_credit_usage += results.shape[0]
         return results
 
