@@ -10,7 +10,9 @@ __pycache__/
 *scratch*
 notebooks/
 
+# ignore test files
 *profile*
+sdk_latency.json
 
 # Distribution / packaging
 .Python

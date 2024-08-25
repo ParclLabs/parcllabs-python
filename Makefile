@@ -10,7 +10,7 @@ test:
 	python3 -m pytest -v
 
 sdk-latency:
-	python3 scripts/sdk_latency.py --output_file=profile/sdk_latency.json
+	python3 scripts/sdk_latency.py --output_file=sdk_latency.json
 
 
 test-readme:
