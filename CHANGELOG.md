@@ -3,8 +3,6 @@
 - `property.events` now supports concurrent requests. 
 - Introduce client parameter `num_workers` to control the number of concurrent requests. Default is 10.
 
-```python
-
 ### v1.4.0
 - Introduced `property.search_units`. See [Parcl Labs Changelog](https://docs.parcllabs.com/changelog/prop-search-refactor) for more details.
 
