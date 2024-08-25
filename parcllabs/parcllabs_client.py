@@ -45,7 +45,7 @@ class ParclLabsClient:
         api_key: str,
         limit: int = 12,
         api_url: str = api_base,
-        num_workers: int = 10,
+        num_workers: int = None,
     ):
         if not api_key:
             raise ValueError(

@@ -154,7 +154,7 @@ def process_chunk(chunk):
         return None
 
 
-def process_data(data, batch_size=10000, num_workers=10):
+def process_data(data, batch_size=10000, num_workers=None):
     with ThreadPoolExecutor(max_workers=num_workers) as executor:
         chunks = deque(data.strip().split("\n"))
         futures = [executor.submit(process_chunk, chunk) for chunk in chunks if chunk]

@@ -1,7 +1,7 @@
 ### v1.4.1
 - Performance improvement related to data processing and memory usage for `property.search`.
 - `property.events` now supports concurrent requests. 
-- Introduce client parameter `num_workers` to control the number of concurrent requests. Default is 10.
+- Introduce client parameter `num_workers` to control the number of concurrent requests. Default is None, which translates to `max_workers = min(32, (os.cpu_count() or 1) + 4)`. See [docs](https://github.com/python/cpython/blob/dcc3eaef98cd94d6cb6cb0f44bd1c903d04f33b1/Lib/concurrent/futures/thread.py#L137) for more details. 
 
 ### v1.4.0
 - Introduced `property.search_units`. See [Parcl Labs Changelog](https://docs.parcllabs.com/changelog/prop-search-refactor) for more details.
