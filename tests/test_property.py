@@ -65,6 +65,7 @@ def property_events_service():
     client_mock = MagicMock()
     client_mock.api_url = "https://api.parcllabs.com"
     client_mock.api_key = "test_api_key"
+    client_mock.num_workers = 10
     service = PropertyEventsService(
         client=client_mock, url="/v1/property/event_history"
     )
@@ -74,7 +75,9 @@ def property_events_service():
 
 def test_validate_property_type(property_search_service):
     with pytest.raises(ValueError):
-        property_search_service.retrieve(zip="10001", property_type="invalid_type")
+        property_search_service.retrieve(
+            parcl_ids=[2900187], property_type="invalid_type"
+        )
 
 
 def test_property_event_history_retrieve(property_events_service):
