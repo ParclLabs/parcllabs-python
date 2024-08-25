@@ -28,7 +28,7 @@ def main():
 
     homes = client.property.search.retrieve(
         parcl_ids=[DAVIDSON_COUNTY_PID],
-        property_type="SINGLE_FAMILY",
+        property_type="single_family",
         # square_footage_min=1000,
         # square_footage_max=2500,
         # bedrooms_min=3,
