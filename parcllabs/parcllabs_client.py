@@ -201,7 +201,7 @@ class ParclLabsClient:
         self.property = ServiceGroup(self, limit)
 
         self.property.add_service("search", "/v1/property/search", PropertySearch)
-  
+
         self.property.add_service(
             "events", "/v1/property/event_history", PropertyEventsService
         )

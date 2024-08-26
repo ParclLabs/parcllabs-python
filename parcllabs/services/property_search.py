@@ -125,14 +125,16 @@ class PropertySearch(ParclLabsService):
                 params["parcl_id"] = parcl_id
                 headers = self._get_headers()
                 data = fetch_data(self.full_url, headers=headers, params=params)
-                tmp = pd.DataFrame()
+                df_container = pd.DataFrame()
 
                 for df_batch in process_data(
                     data, batch_size=10000, num_workers=self.client.num_workers
                 ):
-                    tmp = pd.concat([tmp, df_batch], ignore_index=True)
+                    df_container = pd.concat(
+                        [df_container, df_batch], ignore_index=True
+                    )
 
-                output_data.append(tmp)
+                output_data.append(df_container)
                 bar()
 
         results = pd.concat(output_data).reset_index(drop=True)

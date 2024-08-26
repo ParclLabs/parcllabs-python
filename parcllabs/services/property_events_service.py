@@ -14,7 +14,10 @@ from parcllabs.services.data_utils import (
 )
 from parcllabs.services.parcllabs_service import ParclLabsService
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from parcllabs.exceptions import NotFoundError  # Assuming this is the exception for a 404 error
+from parcllabs.exceptions import (
+    NotFoundError,
+)  # Assuming this is the exception for a 404 error
+
 
 class PropertyEventsService(ParclLabsService):
     """
