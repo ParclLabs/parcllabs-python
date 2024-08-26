@@ -13,6 +13,7 @@ VALID_PORTFOLIO_SIZES = [
 DELETE_FROM_OUTPUT = ["total", "limit", "offset", "links"]
 
 DEFAULT_LIMIT = 12
+MAX_POST_LIMIT = 1000
 
 VALID_LOCATION_TYPES = [
     "COUNTY",

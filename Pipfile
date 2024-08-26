@@ -12,6 +12,7 @@ aiohttp = "*"
 nest_asyncio = "*"
 plotly = "*"
 kaleido = "*"
+click = ">=8.1.7"
 
 [dev-packages]
 black = ">=22"

@@ -2,7 +2,7 @@ from parcllabs import api_base
 from parcllabs.services.parcllabs_service import ParclLabsService
 from parcllabs.services.portfolio_size_service import PortfolioSizeService
 from parcllabs.services.property_events_service import PropertyEventsService
-from parcllabs.services.property_search import PropertySearch, PropertySearchNew
+from parcllabs.services.property_search import PropertySearch
 from parcllabs.services.property_type_service import PropertyTypeService
 from parcllabs.services.search import SearchMarkets
 
@@ -21,10 +21,13 @@ class ServiceGroup:
         self._limit = limit
         self._services = {}
 
-    def add_service(self, name, url, service_class):
+    def add_service(self, name, url, service_class, alias=None):
         service = service_class(url=url, client=self._client, limit=self._limit)
         setattr(self, name, service)
         self._services[name] = service
+        if alias:
+            setattr(self, alias, service)
+            self._services[alias] = service
 
     @property
     def services(self):
@@ -41,11 +44,12 @@ class ParclLabsClient:
     """
 
     def __init__(
-            self, 
-            api_key: str, 
-            limit: int = 12,
-            api_url: str = api_base
-):
+        self,
+        api_key: str,
+        limit: int = 12,
+        api_url: str = api_base,
+        num_workers: int = None,
+    ):
         if not api_key:
             raise ValueError(
                 "API Key is required. Please visit https://dashboard.parcllabs.com/signup to get an API key."
@@ -55,6 +59,7 @@ class ParclLabsClient:
         self.api_url = api_url
         self.limit = limit
         self.estimated_session_credit_usage = 0
+        self.num_workers = num_workers
 
         self.price_feed = ServiceGroup(self, limit)
         self.price_feed.add_service(
@@ -195,9 +200,8 @@ class ParclLabsClient:
 
         self.property = ServiceGroup(self, limit)
 
-        self.property.add_service(
-            "search", "/v1/property/search", PropertySearchNew
-        )
+        self.property.add_service("search", "/v1/property/search", PropertySearch)
+
         self.property.add_service(
             "events", "/v1/property/event_history", PropertyEventsService
         )
