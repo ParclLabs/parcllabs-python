@@ -91,8 +91,6 @@ class ParclLabsService:
         try:
             if method.upper() == "GET":
                 params = kwargs.get("params", {})
-                if not params.get("limit"):
-                    params["limit"] = self.limit
                 kwargs["params"] = params
 
             response = requests.request(method, url, headers=self.headers, **kwargs)
@@ -309,12 +307,14 @@ class ParclLabsService:
     def error_handling(self, response: requests.Response) -> None:
         try:
             error_details = response.json()
-            error_message = error_details.get("detail", "No detail provided by API")
-
+            # error_message = error_details.get("detail", "No detail provided by API")
+            error_message = ''
             if response.status_code == 403:
                 error_message += " Visit https://dashboard.parcllabs.com for more information or reach out to team@parcllabs.com."
             elif response.status_code == 422:
-                error_message += error_details.get("msg", "validation error")
+                details = error_details.get("detail")
+                msg = details.get("msg", "validation error")
+                error_message += msg
             elif response.status_code == 429:
                 error_message = error_details.get("error", "Rate Limit Exceeded")
             elif response.status_code == 404:

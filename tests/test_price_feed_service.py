@@ -54,7 +54,7 @@ class TestParclLabsService:
             "GET",
             "https://api.example.com/test",
             headers=service.headers,
-            params={"limit": service.limit},
+            params={},
         )
 
     @patch("requests.request")
@@ -195,8 +195,7 @@ class TestParclLabsService:
         response = Mock()
         response.status_code = 422
         response.json.return_value = {
-            "detail": "Validation Error",
-            "msg": "Invalid input",
+            "detail": {'msg': 'Invalid input'},
         }
         with pytest.raises(RequestException, match="422 Client Error"):
             service.error_handling(response)
