@@ -1,63 +1,29 @@
-import pandas as pd
 import pytest
-from parcllabs.services.property_search import PropertySearch
-from parcllabs.services.property_events_service import PropertyEventsService
-from unittest.mock import MagicMock
+import pandas as pd
+from unittest.mock import MagicMock, patch
+from parcllabs.services.properties.property_events_service import PropertyEventsService
+from parcllabs.exceptions import NotFoundError
 
-# Mock Data for testing
-mock_search_response = {
-    "parcl_property_id": [123456, 456789],
-}
-mock_event_response = [
-    {
-        "property": {
-            "parcl_property_id": 123456,
-            "address": "123 Main St",
-            "unit": "#123",
-            "city": "NEW YORK",
-            "state_abbreviation": "NY",
-            "zip5": "10001",
-            "zip4": "5509",
-            "latitude": 123.123,
-            "longitude": -123.123,
-            "property_type": "CONDO",
-            "bedrooms": 0,
-            "bathrooms": 0.0,
-            "square_footage": 2000,
-            "year_built": 2020,
-        },
-        "events": [
-            {
-                "event_date": "2023-03-04",
-                "event_type": "RENTAL",
-                "event_name": "LISTED_RENT",
-                "price": 6995.0,
-            },
-            {
-                "event_date": "2022-10-21",
-                "event_type": "RENTAL",
-                "event_name": "LISTING_REMOVED",
-                "price": None,
-            },
-            {
-                "event_date": "2020-09-21",
-                "event_type": "RENTAL",
-                "event_name": "LISTED_RENT",
-                "price": 7000.0,
-            },
-        ],
+# Sample data for testing
+sample_response = """
+{
+    "property": {
+        "parcl_property_id": "123456"
     },
-]
-
-
-@pytest.fixture
-def property_search_service():
-    client_mock = MagicMock()
-    client_mock.api_url = "https://api.parcllabs.com"
-    client_mock.api_key = "test_api_key"
-    service = PropertySearch(client=client_mock, url="v1/property/search")
-    service._sync_request = MagicMock(return_value=mock_search_response)
-    return service
+    "events": [
+        {
+            "event_type": "LISTED_FOR_SALE",
+            "date": "2023-01-01",
+            "price": 500000
+        },
+        {
+            "event_type": "SOLD",
+            "date": "2023-02-15",
+            "price": 495000
+        }
+    ]
+}
+"""
 
 
 @pytest.fixture
@@ -65,39 +31,77 @@ def property_events_service():
     client_mock = MagicMock()
     client_mock.api_url = "https://api.parcllabs.com"
     client_mock.api_key = "test_api_key"
-    client_mock.num_workers = 10
-    service = PropertyEventsService(
-        client=client_mock, url="/v1/property/event_history"
-    )
-    service._sync_request = MagicMock(return_value=mock_event_response)
+    client_mock.num_workers = 1
+    service = PropertyEventsService(client=client_mock, url="/v1/property_events")
     return service
 
 
-def test_validate_property_type(property_search_service):
-    with pytest.raises(ValueError):
-        property_search_service.retrieve(
-            parcl_ids=[2900187], property_type="invalid_type"
+@patch(
+    "parcllabs.services.properties.property_events_service.PropertyEventsService._post"
+)
+@patch(
+    "parcllabs.services.properties.property_events_service.PropertyEventsService._process_streaming_data"
+)
+def test_retrieve_success(
+    mock_process_streaming_data, mock_post, property_events_service
+):
+    mock_response = MagicMock()
+    mock_response.text = sample_response
+    mock_post.return_value = mock_response
+    mock_process_streaming_data.return_value = [
+        pd.DataFrame(
+            {
+                "parcl_property_id": ["123456", "123456"],
+                "event_type": ["LISTED_FOR_SALE", "SOLD"],
+                "date": ["2023-01-01", "2023-02-15"],
+                "price": [500000, 495000],
+            }
         )
+    ]
 
-
-def test_property_event_history_retrieve(property_events_service):
     result = property_events_service.retrieve(parcl_property_ids=[123456])
-    assert not result.empty
+
+    assert isinstance(result, pd.DataFrame)
+    assert len(result) == 2
     assert "parcl_property_id" in result.columns
-    assert "event_date" in result.columns
     assert "event_type" in result.columns
-    assert "event_name" in result.columns
-    assert len(result) == 3
-    assert result.iloc[0]["parcl_property_id"] == 123456
-    assert result.iloc[0]["event_date"] == pd.Timestamp("2023-03-04")
-    assert result.iloc[0]["event_type"] == "RENTAL"
-    assert result.iloc[1]["event_date"] == pd.Timestamp("2022-10-21")
-    assert result.iloc[1]["event_name"] == "LISTING_REMOVED"
-    assert result.iloc[2]["event_date"] == pd.Timestamp("2020-09-21")
+    assert "date" in result.columns
+    assert "price" in result.columns
 
 
-def test_validate_event_type(property_events_service):
+def test_retrieve_invalid_event_type(property_events_service):
     with pytest.raises(ValueError):
         property_events_service.retrieve(
-            parcl_property_ids=[123456], event_type="invalid_type"
+            parcl_property_ids=[123456], event_type="INVALID_EVENT"
         )
+
+
+def test_retrieve_invalid_entity_owner_name(property_events_service):
+    with pytest.raises(ValueError):
+        property_events_service.retrieve(
+            parcl_property_ids=[123456], entity_owner_name="INVALID_ENTITY"
+        )
+
+
+@patch(
+    "parcllabs.services.properties.property_events_service.PropertyEventsService._post"
+)
+def test_retrieve_not_found_error(mock_post, property_events_service):
+    mock_post.side_effect = NotFoundError("Not found")
+
+    result = property_events_service.retrieve(parcl_property_ids=[123456])
+
+    assert isinstance(result, pd.DataFrame)
+    assert result.empty
+
+
+@patch(
+    "parcllabs.services.properties.property_events_service.PropertyEventsService._post"
+)
+def test_retrieve_general_exception(mock_post, property_events_service):
+    mock_post.side_effect = Exception("General error")
+
+    result = property_events_service.retrieve(parcl_property_ids=[123456])
+
+    assert isinstance(result, pd.DataFrame)
+    assert result.empty

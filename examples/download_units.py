@@ -3,7 +3,7 @@ import os
 import parcllabs
 from parcllabs import ParclLabsClient
 
-# parcllabs.__version__ >= '1.4.0'
+# parcllabs.__version__ >= '1.6.0'
 
 api_key = os.getenv("PARCL_LABS_API_KEY")
 
@@ -56,8 +56,10 @@ def main():
         # entity_owner_name='AMH',
     )
 
-    # homes.to_csv('homes.csv', index=False)
-    # events.to_csv('events.csv', index=False)
+    print(events.loc[events['price']>0]['parcl_property_id'].nunique())
+
+    homes.to_csv('homes.csv', index=False)
+    events.to_csv('events.csv', index=False)
 
 
 if __name__ == "__main__":

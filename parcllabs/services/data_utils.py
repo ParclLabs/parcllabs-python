@@ -1,5 +1,3 @@
-from typing import List
-
 import pandas as pd
 import numpy as np
 
@@ -13,6 +11,9 @@ def safe_concat_and_format_dtypes(data_container):
         return (
             pd.DataFrame()
         )  # Return an empty DataFrame if no non-empty DataFrames are found
+
+    # Get the column order from the first non-empty DataFrame
+    original_columns = non_empty_dfs[0].columns.tolist()
 
     # Find common columns across all non-empty DataFrames
     common_columns = list(set.intersection(*[set(df.columns) for df in non_empty_dfs]))
@@ -52,34 +53,29 @@ def safe_concat_and_format_dtypes(data_container):
         if col in output.columns:
             output[col] = pd.to_datetime(output[col], errors="coerce")
 
+    # Reorder columns based on the specified rules and original order
+    final_columns = []
+
+    # Rule 1: parcl_id or parcl_property_id should be the first column
+    id_columns = ["parcl_id", "parcl_property_id"]
+    for col in id_columns:
+        if col in output.columns:
+            final_columns.append(col)
+            break
+
+    # Rule 2: date or event_date should be the second column
+    date_columns = ["date", "event_date"]
+    for col in date_columns:
+        if col in output.columns:
+            final_columns.append(col)
+            break
+
+    # Add remaining columns in their original order
+    for col in original_columns:
+        if col in output.columns and col not in final_columns:
+            final_columns.append(col)
+
+    # Reorder the DataFrame
+    output = output[final_columns]
+
     return output
-
-
-def validate_input_str_param(
-    param: str, param_name: str, valid_values: List[str], params_dict: dict = None
-):
-    if param:
-
-        param = param.upper()
-
-        params_dict[param_name] = param
-
-        if param not in valid_values:
-            raise ValueError(
-                f"{param_name} value error. Valid values are: {valid_values}. Received: {param}"
-            )
-
-    return params_dict
-
-
-def validate_input_bool_param(param, param_name: str, params_dict: dict = None):
-    if param is None:
-        return params_dict  # or return None if that’s preferred
-
-    if not isinstance(param, bool):
-        raise ValueError(
-            f"{param_name} value error. Expected boolean. Received: {param}"
-        )
-
-    params_dict[param_name] = "true" if param else "false"
-    return params_dict

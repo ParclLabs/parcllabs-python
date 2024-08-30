@@ -1,19 +1,13 @@
-import json
-import requests
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from collections import deque
 import pandas as pd
 from alive_progress import alive_bar
 from typing import List
-from parcllabs.services.data_utils import (
-    validate_input_str_param,
-    validate_input_bool_param,
-)
-from parcllabs.common import VALID_PROPERTY_TYPES, VALID_ENTITY_NAMES
-from parcllabs.services.parcllabs_service import ParclLabsService
+from parcllabs.services.validators import Validators
+from parcllabs.common import VALID_PROPERTY_TYPES_UNIT_SEARCH, VALID_ENTITY_NAMES
+from parcllabs.services.parcllabs_service import ParclLabsStreamingService
 
 
-class PropertySearch(ParclLabsService):
+class PropertySearch(ParclLabsStreamingService):
     """
     Retrieve parcl_property_id for geographic markets in the Parcl Labs API.
     """
@@ -43,51 +37,51 @@ class PropertySearch(ParclLabsService):
     ):
         params = {}
 
-        params = validate_input_str_param(
+        params = Validators.validate_input_str_param(
             param=property_type,
             param_name="property_type",
-            valid_values=VALID_PROPERTY_TYPES,
+            valid_values=VALID_PROPERTY_TYPES_UNIT_SEARCH,
             params_dict=params,
         )
 
-        params = validate_input_str_param(
+        params = Validators.validate_input_str_param(
             param=current_entity_owner_name,
             param_name="current_entity_owner_name",
             valid_values=VALID_ENTITY_NAMES,
             params_dict=params,
         )
 
-        params = validate_input_bool_param(
+        params = Validators.validate_input_bool_param(
             param=event_history_sale_flag,
             param_name="event_history_sale_flag",
             params_dict=params,
         )
 
-        params = validate_input_bool_param(
+        params = Validators.validate_input_bool_param(
             param=event_history_rental_flag,
             param_name="event_history_rental_flag",
             params_dict=params,
         )
 
-        params = validate_input_bool_param(
+        params = Validators.validate_input_bool_param(
             param=event_history_listing_flag,
             param_name="event_history_listing_flag",
             params_dict=params,
         )
 
-        params = validate_input_bool_param(
+        params = Validators.validate_input_bool_param(
             param=current_new_construction_flag,
             param_name="current_new_construction_flag",
             params_dict=params,
         )
 
-        params = validate_input_bool_param(
+        params = Validators.validate_input_bool_param(
             param=current_owner_occupied_flag,
             param_name="current_owner_occupied_flag",
             params_dict=params,
         )
 
-        params = validate_input_bool_param(
+        params = Validators.validate_input_bool_param(
             param=current_investor_owned_flag,
             param_name="current_investor_owned_flag",
             params_dict=params,
@@ -123,11 +117,11 @@ class PropertySearch(ParclLabsService):
         with alive_bar(total_parcl_ids, title="Processing Parcl IDs") as bar:
             for parcl_id in parcl_ids:
                 params["parcl_id"] = parcl_id
-                headers = self._get_headers()
-                data = fetch_data(self.full_url, headers=headers, params=params)
+                response = self._get(url=self.full_url, params=params)
+                data = response.text
                 df_container = pd.DataFrame()
 
-                for df_batch in process_data(
+                for df_batch in self._process_streaming_data(
                     data, batch_size=10000, num_workers=self.client.num_workers
                 ):
                     df_container = pd.concat(
@@ -140,36 +134,3 @@ class PropertySearch(ParclLabsService):
         results = pd.concat(output_data).reset_index(drop=True)
         self.client.estimated_session_credit_usage += results.shape[0]
         return results
-
-
-def fetch_data(url, headers, params):
-    response = requests.get(url, headers=headers, params=params)
-    response.raise_for_status()
-    return response.text
-
-
-def process_chunk(chunk):
-    try:
-        return json.loads(chunk)
-    except json.JSONDecodeError as e:
-        print(f"Error decoding JSON: {e}")
-        return None
-
-
-def process_data(data, batch_size=10000, num_workers=None):
-    with ThreadPoolExecutor(max_workers=num_workers) as executor:
-        chunks = deque(data.strip().split("\n"))
-        futures = [executor.submit(process_chunk, chunk) for chunk in chunks if chunk]
-
-        buffer = deque()
-        for future in as_completed(futures):
-            result = future.result()
-            if result:
-                buffer.append(result)
-
-            if len(buffer) >= batch_size:
-                yield pd.DataFrame(buffer)
-                buffer.clear()
-
-        if buffer:
-            yield pd.DataFrame(buffer)

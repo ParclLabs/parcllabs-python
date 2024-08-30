@@ -14,3 +14,18 @@ class NotFoundError(ParclLabsException):
         **kwargs,
     ):
         super().__init__(message, *args, **kwargs)
+
+
+class DataValidationError(ParclLabsException):
+    """Exception raised for data validation errors (422 error)."""
+
+    def __init__(
+        self, message="Data validation error occurred.", details=None, *args, **kwargs
+    ):
+        self.details = details
+        super().__init__(message, *args, **kwargs)
+
+    def __str__(self):
+        if self.details:
+            return f"{super().__str__()}\nDetails: {self.details}"
+        return super().__str__()

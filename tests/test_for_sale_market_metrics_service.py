@@ -1,10 +1,6 @@
 import pytest
-from unittest.mock import AsyncMock
+from unittest.mock import Mock
 from parcllabs import ParclLabsClient
-
-import nest_asyncio
-
-nest_asyncio.apply()
 
 # Mock Data for testing
 mock_response = {"parcl_id": 1, "items": [{"metric": 10}, {"metric": 20}], "links": {}}
@@ -13,20 +9,19 @@ mock_response = {"parcl_id": 1, "items": [{"metric": 10}, {"metric": 20}], "link
 @pytest.fixture
 def client():
     client = ParclLabsClient(api_key="test_api_key")
-    client.for_sale_market_metrics.new_listings_rolling_counts._fetch = AsyncMock(
+    client.for_sale_market_metrics.new_listings_rolling_counts._fetch = Mock(
         return_value=mock_response
     )
-    client.for_sale_market_metrics.for_sale_inventory._fetch = AsyncMock(
+    client.for_sale_market_metrics.for_sale_inventory._fetch = Mock(
         return_value=mock_response
     )
-    client.for_sale_market_metrics.for_sale_inventory_price_changes._fetch = AsyncMock(
+    client.for_sale_market_metrics.for_sale_inventory_price_changes._fetch = Mock(
         return_value=mock_response
     )
     return client
 
 
-@pytest.mark.asyncio
-async def test_for_sale_market_metrics_new_listings_rolling_counts_retrieve(client):
+def test_for_sale_market_metrics_new_listings_rolling_counts_retrieve(client):
     result = client.for_sale_market_metrics.new_listings_rolling_counts.retrieve(
         parcl_ids=[1]
     )
@@ -38,8 +33,7 @@ async def test_for_sale_market_metrics_new_listings_rolling_counts_retrieve(clie
     assert result.iloc[1]["metric"] == 20
 
 
-@pytest.mark.asyncio
-async def test_for_sale_market_metrics_for_sale_inventory_retrieve(client):
+def test_for_sale_market_metrics_for_sale_inventory_retrieve(client):
     result = client.for_sale_market_metrics.for_sale_inventory.retrieve(parcl_ids=[1])
     assert not result.empty
     assert "parcl_id" in result.columns
@@ -49,10 +43,7 @@ async def test_for_sale_market_metrics_for_sale_inventory_retrieve(client):
     assert result.iloc[1]["metric"] == 20
 
 
-@pytest.mark.asyncio
-async def test_for_sale_market_metrics_for_sale_inventory_price_changes_retrieve(
-    client,
-):
+def test_for_sale_market_metrics_for_sale_inventory_price_changes_retrieve(client):
     result = client.for_sale_market_metrics.for_sale_inventory_price_changes.retrieve(
         parcl_ids=[1]
     )

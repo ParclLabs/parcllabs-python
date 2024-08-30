@@ -9,6 +9,7 @@ from parcllabs.common import (
     VALID_SORT_BY,
     VALID_SORT_ORDER,
 )
+from parcllabs.services.validators import Validators
 from parcllabs.services.parcllabs_service import ParclLabsService
 
 
@@ -61,58 +62,64 @@ class SearchMarkets(ParclLabsService):
             Any: The JSON response as a pandas DataFrame.
         """
 
-        if location_type and location_type not in VALID_LOCATION_TYPES:
-            raise ValueError(
-                f"location_type value error. Valid values are: {VALID_LOCATION_TYPES}. Received: {location_type}"
-            )
+        params = {}
 
-        if region and region not in VALID_US_REGIONS:
-            raise ValueError(
-                f"region value error. Valid values are: {VALID_US_REGIONS}. Received: {region}"
-            )
+        params = Validators.validate_input_str_param(
+            param=location_type,
+            param_name="location_type",
+            valid_values=VALID_LOCATION_TYPES,
+            params_dict=params,
+        )
 
-        if state_abbreviation and state_abbreviation not in VALID_US_STATE_ABBREV:
-            raise ValueError(
-                f"state_abbreviation value error. Valid values are: {VALID_US_STATE_ABBREV}. Received: {state_abbreviation}"
-            )
+        params = Validators.validate_input_str_param(
+            param=region,
+            param_name="region",
+            valid_values=VALID_US_REGIONS,
+            params_dict=params,
+        )
 
-        if state_fips_code and state_fips_code not in VALID_US_STATE_FIPS_CODES:
-            raise ValueError(
-                f"state_fips_code value error. Valid values are: {VALID_US_STATE_FIPS_CODES}. Received: {state_fips_code}"
-            )
+        params = Validators.validate_input_str_param(
+            param=state_abbreviation,
+            param_name="state_abbreviation",
+            valid_values=VALID_US_STATE_ABBREV,
+            params_dict=params,
+        )
 
-        if sort_by and sort_by not in VALID_SORT_BY:
-            raise ValueError(
-                f"sort_by value error. Valid values are: {VALID_SORT_BY}. Received: {sort_by}"
-            )
+        params = Validators.validate_input_str_param(
+            param=state_fips_code,
+            param_name="state_fips_code",
+            valid_values=VALID_US_STATE_FIPS_CODES,
+            params_dict=params,
+        )
 
-        if sort_order and sort_order not in VALID_SORT_ORDER:
-            raise ValueError(
-                f"sort_order value error. Valid values are: {VALID_SORT_ORDER}. Received: {sort_order}"
-            )
+        params = Validators.validate_input_str_param(
+            param=sort_by,
+            param_name="sort_by",
+            valid_values=VALID_SORT_BY,
+            params_dict=params,
+        )
 
-        params = {
-            "query": query,
-            "location_type": location_type,
-            "region": region,
-            "state_abbreviation": state_abbreviation,
-            "state_fips_code": state_fips_code,
-            "parcl_id": parcl_id,
-            "sort_by": sort_by,
-            "sort_order": sort_order,
-            "geoid": geoid,
-            "limit": limit if limit is not None else self.limit,
-            **(params or {}),
-        }
-        results = self._sync_request(params=params)
+        params = Validators.validate_input_str_param(
+            param=sort_order,
+            param_name="sort_order",
+            valid_values=VALID_SORT_ORDER,
+            params_dict=params,
+        )
 
-        if auto_paginate:
-            tmp = results.copy()
-            while results["links"].get("next"):
-                results = self._sync_request(url=results["links"]["next"], is_next=True)
-                tmp["items"].extend(results["items"])
-            tmp["links"] = results["links"]
-            results = tmp
+        if query:
+            params["query"] = query
+
+        if parcl_id:
+            params["parcl_id"] = parcl_id
+
+        if geoid:
+            params["geoid"] = geoid
+
+        params["limit"] = limit if limit is not None else self.limit
+
+        results = self._fetch_get(
+            url=self.full_url, params=params, auto_paginate=auto_paginate
+        )
 
         data = self._as_pd_dataframe(results.get("items"))
         self.markets = data

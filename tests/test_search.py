@@ -1,6 +1,7 @@
 import pytest
+import pandas as pd
 from parcllabs.services.search import SearchMarkets
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 # Mock Data for testing
 mock_response = {
@@ -18,12 +19,14 @@ def search_service():
     client_mock.api_url = "https://api.parcllabs.com"
     client_mock.api_key = "test_api_key"
     service = SearchMarkets(client=client_mock, url="/v1/search/markets")
-    service._sync_request = MagicMock(return_value=mock_response)
     return service
 
 
-def test_retrieve(search_service):
+@patch("parcllabs.services.search.SearchMarkets._fetch_get")
+def test_retrieve(mock_sync_request, search_service):
+    mock_sync_request.return_value = mock_response
     result = search_service.retrieve(query="test")
+    assert isinstance(result, pd.DataFrame)
     assert not result.empty
     assert "parcl_id" in result.columns
     assert "name" in result.columns

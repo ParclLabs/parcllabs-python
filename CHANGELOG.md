@@ -1,3 +1,9 @@
+### v1.6.0
+- Introduce `turbo_mode` - smart routing for premium api users to reduce latency for bulk data pulls. 
+- Bux fix on output dataframes - inconsistent column order.
+- Improved handling of 422 data validation errors. Explicit error messages for invalid query parameters.
+- Update `property.events` to accomodate api `v0.18.0` streaming changes. 
+
 ### v1.5.0
 - Performance improvement related to data processing and memory usage for `property.search`.
 - `property.events` now supports concurrent requests. 

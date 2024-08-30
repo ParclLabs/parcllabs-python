@@ -29,19 +29,6 @@ def test_get_headers(parcl_labs_service):
     }
 
 
-@patch("parcllabs.services.parcllabs_service.requests.get")
-def test_sync_request(mock_get, parcl_labs_service):
-    mock_response = Mock()
-    mock_response.json.return_value = {"key": "value"}
-    mock_response.status_code = 200
-    mock_get.return_value = mock_response
-
-    url = "https://api.example.com/123"
-    params = {"limit": 10}
-    response = parcl_labs_service._sync_request(parcl_id=123, params=params)
-    assert response == {"key": "value"}
-
-
 def test_as_pd_dataframe(parcl_labs_service):
     data = [
         {
