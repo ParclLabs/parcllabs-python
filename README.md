@@ -81,80 +81,7 @@ top_market_parcl_ids = markets['parcl_id'].tolist()
 
 #### Services
 
-Services are the core of the Parcl Labs API. They provide access to a wide range of data and analytics on the housing market. The services are divided into the following categories: `Price Feeds`, `Rental Market Metrics`, `For Sale Market Metrics`, `Market Metrics`, `Investor Metrics`, and `Portfolio Metrics`.
-
-#### Property
-
-##### Property Search Markets
-Gets a list of unique identifiers (parcl_property_id) for units that correspond to specific markets or parameters defined by the user. The parcl_property_id is key to navigating the Parcl Labs API, serving as the core mechanism for retrieving unit-level information.
-
-```python
-# search by operators
-invitation_homes_tampa_units = client.property.search.retrieve(
-    parcl_ids=[2900417],
-    property_type='single_family',
-    # square_footage_min=1000,
-    # quare_footage_max=2500,
-    # bedrooms_min=2,
-    # bedrooms_max=5,
-    # bathrooms_min=2,
-    # bathrooms_max=3,
-    # year_built_min=2010,
-    # year_built_max=2023,
-    current_entity_owner_name='invitation_homes',
-    # event_history_sale_flag=True,
-    # event_history_rental_flag=True,
-    # event_history_listing_flag=True,
-    # current_new_oncstruciton_flag=True,
-    # current_owner_occupied_flag=True,
-    # current_investor_owned_flag=True,
-)
-
-# search by buy box - only look at units that have rented
-# and review rental rates
-rental_buy_box = client.property.search.retrieve(
-    parcl_ids=[2900417],
-    property_type='single_family',
-    square_footage_min=1000,
-    square_footage_max=2500,
-    bedrooms_min=2,
-    bedrooms_max=5,
-    # bathrooms_min=2,
-    # bathrooms_max=3,
-    year_built_min=2010,
-    year_built_max=2023,
-    # current_entity_owner_name='invitation_homes',
-    # event_history_sale_flag=True,
-    event_history_rental_flag=True,
-    # event_history_listing_flag=True,
-    # current_new_oncstruciton_flag=True,
-    # current_owner_occupied_flag=True,
-    # current_investor_owned_flag=True,
-)
-
-# to extract parcl_property_id's to retrieve expanded history for 
-# any of these queries, use: 
-parcl_property_id_list = rental_buy_box['parcl_property_id'].tolist()
-```
-
-##### Property Event History
-Gets unit-level properties and their housing event history, including sales, listings, and rentals. The response includes detailed property information and historical event data for each specified property.
-
-```python
-sale_events = client.property.events.retrieve(
-        parcl_property_ids=parcl_property_id_list[0:10],
-        event_type='SALE',
-        start_date='2020-01-01',
-        end_date='2024-06-30'
-)
-
-rental_events = client.property.events.retrieve(
-        parcl_property_ids=parcl_property_id_list[0:10],
-        event_type='RENTAL',
-        start_date='2020-01-01',
-        end_date='2024-06-30'
-)
-```
+Services are the core of the Parcl Labs API. They provide access to a wide range of data and analytics on the housing market. The services are divided into the following categories: `Price Feeds`, `Rental Market Metrics`, `For Sale Market Metrics`, `Market Metrics`, `Investor Metrics`, `Portfolio Metrics` and `Property`.
 
 #### Price Feeds
 The Parcl Labs Price Feed (PLPF) is a daily-updated, real-time indicator of residential real estate prices, measured by price per square foot, across select US markets.
@@ -446,3 +373,92 @@ results = client.portfolio_metrics.sf_new_listings_for_rent_rolling_counts.retri
         portfolio_size='PORTFOLIO_1000_PLUS'
 )
 ```
+
+### Premium Features
+A premium Parcl Labs API key unlocks several critical features. This includes:
+- Access to our unit level, full event lifecycle data
+- Access to `turbo_mode` for faster data retrieval
+
+You can register for a premium Parcl Labs API key through your [account dashboard](https://dashboard.parcllabs.com/).
+
+#### Property
+
+##### Property Search Markets
+Gets a list of unique identifiers (parcl_property_id) for units that correspond to specific markets or parameters defined by the user. The parcl_property_id is key to navigating the Parcl Labs API, serving as the core mechanism for retrieving unit-level information.
+
+```python
+# search by operators
+invitation_homes_tampa_units = client.property.search.retrieve(
+    parcl_ids=[2900417],
+    property_type='single_family',
+    # square_footage_min=1000,
+    # quare_footage_max=2500,
+    # bedrooms_min=2,
+    # bedrooms_max=5,
+    # bathrooms_min=2,
+    # bathrooms_max=3,
+    # year_built_min=2010,
+    # year_built_max=2023,
+    current_entity_owner_name='invitation_homes',
+    # event_history_sale_flag=True,
+    # event_history_rental_flag=True,
+    # event_history_listing_flag=True,
+    # current_new_oncstruciton_flag=True,
+    # current_owner_occupied_flag=True,
+    # current_investor_owned_flag=True,
+)
+
+# search by buy box - only look at units that have rented
+# and review rental rates
+rental_buy_box = client.property.search.retrieve(
+    parcl_ids=[2900417],
+    property_type='single_family',
+    square_footage_min=1000,
+    square_footage_max=2500,
+    bedrooms_min=2,
+    bedrooms_max=5,
+    # bathrooms_min=2,
+    # bathrooms_max=3,
+    year_built_min=2010,
+    year_built_max=2023,
+    # current_entity_owner_name='invitation_homes',
+    # event_history_sale_flag=True,
+    event_history_rental_flag=True,
+    # event_history_listing_flag=True,
+    # current_new_oncstruciton_flag=True,
+    # current_owner_occupied_flag=True,
+    # current_investor_owned_flag=True,
+)
+
+# to extract parcl_property_id's to retrieve expanded history for 
+# any of these queries, use: 
+parcl_property_id_list = rental_buy_box['parcl_property_id'].tolist()
+```
+
+##### Property Event History
+Gets unit-level properties and their housing event history, including sales, listings, and rentals. The response includes detailed property information and historical event data for each specified property.
+
+```python
+sale_events = client.property.events.retrieve(
+        parcl_property_ids=parcl_property_id_list[0:10],
+        event_type='SALE',
+        start_date='2020-01-01',
+        end_date='2024-06-30'
+)
+
+rental_events = client.property.events.retrieve(
+        parcl_property_ids=parcl_property_id_list[0:10],
+        event_type='RENTAL',
+        start_date='2020-01-01',
+        end_date='2024-06-30'
+)
+```
+
+##### Turbo Mode
+Turbo mode is a premium feature that allows you to retrieve data faster. To enable turbo mode, set the `turbo_mode` parameter to `True` when creating an instance of the `ParclLabsClient` class.
+
+```python
+client = ParclLabsClient(api_key, turbo_mode=True)
+```
+
+This will enable turbo mode for all subsequent API calls which is a smart switch to route API calls through more efficient, premium endpoints designed for bulk data retrieval.
