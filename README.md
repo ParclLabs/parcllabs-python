@@ -29,6 +29,12 @@ _The most complete picture of US residential real estate_
 
 We maintain a repository of examples that demonstrate how to use the Parcl Labs API for analysis. You can find the examples in the [Parcl Labs Cookbook](https://github.com/parcllabs/parcllabs-cookbook)
 
+## Premium Users
+Are you a premium user? See the [premium features](#premium-features) section for more information on how to access premium features including:
+- Access all homes for Invitation Homes, American Homes 4 Rent, and other large investors
+- Access national, unit level data with full event cycles (rentals, listings, sales)
+- Access `turbo_mode` for faster data retrieval
+
 ## Getting Started
 
 ### Step 1. Sign Up for an API Key
@@ -42,7 +48,7 @@ To use the Parcl Labs API, you need an API key. To get an API key, sign up at [P
 You can install the package via pip:
 
 ```bash
-pip install parcllabs
+pip install -U parcllabs
 ```
 
 
@@ -82,54 +88,6 @@ top_market_parcl_ids = markets['parcl_id'].tolist()
 #### Services
 
 Services are the core of the Parcl Labs API. They provide access to a wide range of data and analytics on the housing market. The services are divided into the following categories: `Price Feeds`, `Rental Market Metrics`, `For Sale Market Metrics`, `Market Metrics`, `Investor Metrics`, `Portfolio Metrics` and `Property`.
-
-#### Price Feeds
-The Parcl Labs Price Feed (PLPF) is a daily-updated, real-time indicator of residential real estate prices, measured by price per square foot, across select US markets.
-
-The Price Feeds category allows you to access our daily-updated PLPF and derivative metrics, such as volatility.
-
-##### Price Feed
-Gets the daily price feed for a specified `parcl_id`.
-
-##### Price Feed Volatility
-Gets the daily price feed volatility for a specified `parcl_id`.
-
-##### Rental Price Feed
-Gets the daily updated Parcl Labs Rental Price Feed for a given `parcl_id`.
-
-```python
-# get 2 price feeds trading on the Parcl Exchange
-pricefeed_markets = client.search.markets.retrieve(
-        sort_by='PARCL_EXCHANGE_MARKET', # use PRICEFEED_MARKET for all price feed markets
-        sort_order='DESC',
-        limit=2
-)
-# top 2 metros based on population. We will use these markets to query other services in the remainder of this readme
-pricefeed_ids = pricefeed_markets['parcl_id'].tolist()
-start_date = '2024-06-01'
-end_date = '2024-06-05'
-
-price_feeds = client.price_feed.price_feed.retrieve(
-    parcl_ids=pricefeed_ids,
-    start_date=start_date,
-    end_date=end_date
-)
-rental_price_feeds = client.price_feed.rental_price_feed.retrieve(
-    parcl_ids=pricefeed_ids,
-    start_date=start_date,
-    end_date=end_date
-)
-price_feed_volatility = client.price_feed.volatility.retrieve(
-    parcl_ids=pricefeed_ids,
-    start_date=start_date,
-    end_date=end_date
-)
-
-# want to save to csv? Use .to_csv method as follow:
-# price_feeds.to_csv('price_feeds.csv', index=False)
-# rental_price_feeds.to_csv('rental_price_feeds.csv', index=False)
-# price_feed_volatility.to_csv('price_feed_volatility.csv', index=False)
-```
 
 #### Rental Market Metrics
 
@@ -372,6 +330,54 @@ results = client.portfolio_metrics.sf_new_listings_for_rent_rolling_counts.retri
         parcl_ids=top_market_parcl_ids,
         portfolio_size='PORTFOLIO_1000_PLUS'
 )
+```
+
+#### Price Feeds
+The Parcl Labs Price Feed (PLPF) is a daily-updated, real-time indicator of residential real estate prices, measured by price per square foot, across select US markets.
+
+The Price Feeds category allows you to access our daily-updated PLPF and derivative metrics, such as volatility.
+
+##### Price Feed
+Gets the daily price feed for a specified `parcl_id`.
+
+##### Price Feed Volatility
+Gets the daily price feed volatility for a specified `parcl_id`.
+
+##### Rental Price Feed
+Gets the daily updated Parcl Labs Rental Price Feed for a given `parcl_id`.
+
+```python
+# get 2 price feeds trading on the Parcl Exchange
+pricefeed_markets = client.search.markets.retrieve(
+        sort_by='PARCL_EXCHANGE_MARKET', # use PRICEFEED_MARKET for all price feed markets
+        sort_order='DESC',
+        limit=2
+)
+# top 2 metros based on population. We will use these markets to query other services in the remainder of this readme
+pricefeed_ids = pricefeed_markets['parcl_id'].tolist()
+start_date = '2024-06-01'
+end_date = '2024-06-05'
+
+price_feeds = client.price_feed.price_feed.retrieve(
+    parcl_ids=pricefeed_ids,
+    start_date=start_date,
+    end_date=end_date
+)
+rental_price_feeds = client.price_feed.rental_price_feed.retrieve(
+    parcl_ids=pricefeed_ids,
+    start_date=start_date,
+    end_date=end_date
+)
+price_feed_volatility = client.price_feed.volatility.retrieve(
+    parcl_ids=pricefeed_ids,
+    start_date=start_date,
+    end_date=end_date
+)
+
+# want to save to csv? Use .to_csv method as follow:
+# price_feeds.to_csv('price_feeds.csv', index=False)
+# rental_price_feeds.to_csv('rental_price_feeds.csv', index=False)
+# price_feed_volatility.to_csv('price_feed_volatility.csv', index=False)
 ```
 
 ### Premium Features
