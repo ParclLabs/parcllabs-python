@@ -272,7 +272,7 @@ class ParclLabsService:
 
         data_container = []
         # when turbo_mode, we can only fetch 10000 parcl_ids at a time, else 1000
-        max_parcl_ids = 10000 if self.client.turbo_mode and self.full_post_url else 1000
+        max_parcl_ids = 1000
         for i in range(0, len(parcl_ids), max_parcl_ids):
             try:
                 chunk = parcl_ids[i : i + max_parcl_ids]
