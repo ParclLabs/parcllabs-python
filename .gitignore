@@ -16,6 +16,10 @@ sdk_latency.json
 *.json
 *.csv
 
+# Allow data files in tests/data
+!tests/data/**/*.json
+!tests/data/**/*.csv
+
 # Distribution / packaging
 .Python
 build/

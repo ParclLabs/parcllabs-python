@@ -258,6 +258,7 @@ class ParclLabsService:
         params: Optional[Mapping[str, Any]] = None,
         auto_paginate: bool = False,
     ):
+        parcl_ids = Validators.validate_parcl_ids(parcl_ids)
         start_date = Validators.validate_date(start_date)
         end_date = Validators.validate_date(end_date)
 
@@ -271,7 +272,6 @@ class ParclLabsService:
         )
 
         data_container = []
-        # when turbo_mode, we can only fetch 10000 parcl_ids at a time, else 1000
         max_parcl_ids = 1000
         for i in range(0, len(parcl_ids), max_parcl_ids):
             try:
