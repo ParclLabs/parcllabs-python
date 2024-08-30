@@ -48,23 +48,6 @@ class ParclLabsService:
                 - X-Parcl-Labs-Python-Client-Version: The version of the Python client.
                 - X-Parcl-Labs-Python-Client-Platform: The operating system of the client.
                 - X-Parcl-Labs-Python-Client-Platform-Version: The Python version of the client.
-
-        Note:
-            - The API key is assumed to be stored in self.api_key.
-            - The VERSION is a constant.
-            - This method uses the platform module to get system and Python version information.
-
-        Example:
-            >>> client = APIClient("your-api-key")
-            >>> headers = client._get_headers()
-            >>> print(headers)
-            {
-                "Authorization": "your-api-key",
-                "Content-Type": "application/json",
-                "X-Parcl-Labs-Python-Client-Version": "1.0.0",
-                "X-Parcl-Labs-Python-Client-Platform": "Darwin",
-                "X-Parcl-Labs-Python-Client-Platform-Version": "3.8.5"
-            }
         """
         return {
             "Authorization": f"{self.api_key}",
@@ -87,17 +70,6 @@ class ParclLabsService:
 
         Returns:
             Dict[str, Any]: A new dictionary with all None values removed.
-
-        Example:
-            >>> client = APIClient({})
-            >>> original_params = {'key1': 'value1', 'key2': None, 'key3': 0}
-            >>> cleaned_params = client._clean_params(original_params)
-            >>> print(cleaned_params)
-            {'key1': 'value1', 'key3': 0}
-
-        Note:
-            This method does not modify the original dictionary. It returns
-            a new dictionary with the None values filtered out.
         """
         return {k: v for k, v in params.items() if v is not None}
 
@@ -224,10 +196,15 @@ class ParclLabsService:
             to the order of the input parcl_ids.
         """
         results = []
+
         for parcl_id in parcl_ids:
-            url = self.full_url.format(parcl_id=parcl_id)
-            result = self._fetch_get(url, params, auto_paginate)
-            results.append(result)
+            try:
+                url = self.full_url.format(parcl_id=parcl_id)
+                result = self._fetch_get(url, params, auto_paginate)
+                results.append(result)
+            except NotFoundError:
+                continue
+
         return results
 
     def _fetch_post(self, params: Dict[str, Any], auto_paginate: bool):
@@ -261,11 +238,9 @@ class ParclLabsService:
             while result["links"].get("next") is not None:
                 next_url = result["links"]["next"]
                 if referring_method == "post":
-                    next_response = requests.post(
-                        next_url, headers=self._get_headers(), json=original_params
-                    )
+                    next_response = self._post(next_url, data=original_params)
                 else:
-                    next_response = requests.get(next_url, headers=self._get_headers())
+                    next_response = self._get(next_url, params=original_params)
                 next_response.raise_for_status()
                 result = next_response.json()
                 all_items.extend(result["items"])
@@ -296,10 +271,21 @@ class ParclLabsService:
         )
 
         data_container = []
-        for i in range(0, len(parcl_ids), 1000):
-            chunk = parcl_ids[i : i + 1000]
-            results = self._fetch(chunk, params, auto_paginate=auto_paginate)
-            data_container.extend(results if isinstance(results, list) else [results])
+        # when turbo_mode, we can only fetch 10000 parcl_ids at a time, else 1000
+        max_parcl_ids = 10000 if self.client.turbo_mode and self.full_post_url else 1000
+        for i in range(0, len(parcl_ids), max_parcl_ids):
+            try:
+                chunk = parcl_ids[i : i + max_parcl_ids]
+                results = self._fetch(chunk, params, auto_paginate=auto_paginate)
+                data_container.extend(
+                    results if isinstance(results, list) else [results]
+                )
+            except NotFoundError:
+                # we don't want to kill the entire process if one of the chunks fails due to no data
+                # sparse parcl_ids can result in no data found.
+                # The post request can handle all 10k in one request, however the get request is one by one.
+                # get handles this direclty per parcl_id, while post handles all at once.
+                continue
 
         return self._as_pd_dataframe(data_container)
 
@@ -328,7 +314,7 @@ class ParclLabsService:
             if response.status_code == 403:
                 error_message += " Visit https://dashboard.parcllabs.com for more information or reach out to team@parcllabs.com."
             elif response.status_code == 422:
-                error_message += error_details.get("msg")
+                error_message += error_details.get("msg", "validation error")
             elif response.status_code == 429:
                 error_message = error_details.get("error", "Rate Limit Exceeded")
             elif response.status_code == 404:
