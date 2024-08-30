@@ -1,4 +1,7 @@
 ### v1.6.0
+- Bug fix for handling of 422 validation errors.
+
+### v1.6.0
 - Introduce `turbo_mode` - smart routing for premium api users to reduce latency for bulk data pulls. 
 - Bux fix on output dataframes - inconsistent column order.
 - Improved handling of 422 data validation errors. Explicit error messages for invalid query parameters.

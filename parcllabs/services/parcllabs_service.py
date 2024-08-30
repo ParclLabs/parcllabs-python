@@ -312,7 +312,7 @@ class ParclLabsService:
                 error_message += " Visit https://dashboard.parcllabs.com for more information or reach out to team@parcllabs.com."
             elif response.status_code == 422:
                 details = error_details.get("detail")
-                error_message = details.get("msg", "validation error")
+                error_message = details[0].get("msg", "validation error")
             elif response.status_code == 429:
                 error_message = error_details.get("error", "Rate Limit Exceeded")
             elif response.status_code == 404:
