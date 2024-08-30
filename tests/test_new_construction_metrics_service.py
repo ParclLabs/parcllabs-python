@@ -1,10 +1,6 @@
 import pytest
-from unittest.mock import AsyncMock
+from unittest.mock import Mock
 from parcllabs import ParclLabsClient
-
-import nest_asyncio
-
-nest_asyncio.apply()
 
 # Mock Data for testing
 mock_response = {"parcl_id": 1, "items": [{"metric": 10}, {"metric": 20}], "links": {}}
@@ -13,17 +9,16 @@ mock_response = {"parcl_id": 1, "items": [{"metric": 10}, {"metric": 20}], "link
 @pytest.fixture
 def client():
     client = ParclLabsClient(api_key="test_api_key")
-    client.new_construction_metrics.housing_event_prices._fetch = AsyncMock(
+    client.new_construction_metrics.housing_event_prices._fetch = Mock(
         return_value=mock_response
     )
-    client.new_construction_metrics.housing_event_counts._fetch = AsyncMock(
+    client.new_construction_metrics.housing_event_counts._fetch = Mock(
         return_value=mock_response
     )
     return client
 
 
-@pytest.mark.asyncio
-async def test_new_construction_metrics_housing_event_prices(client):
+def test_new_construction_metrics_housing_event_prices(client):
     result = client.new_construction_metrics.housing_event_prices.retrieve(
         parcl_ids=[1]
     )
@@ -35,8 +30,7 @@ async def test_new_construction_metrics_housing_event_prices(client):
     assert result.iloc[1]["metric"] == 20
 
 
-@pytest.mark.asyncio
-async def test_new_construction_metrics_housing_event_counts(client):
+def test_new_construction_metrics_housing_event_counts(client):
     result = client.new_construction_metrics.housing_event_counts.retrieve(
         parcl_ids=[1]
     )

@@ -37,6 +37,7 @@ def profile_api_call(section_name, client_method, output_file, **kwargs):
         # Serialize the DataFrame to a JSON string and calculate its size
         result = result.reset_index(drop=True)  # Ensure the index is unique
         result_json = result.to_json(orient="records")
+        result.to_csv(f"{section_name}.csv", index=False)
         result_size_mb = len(result_json.encode("utf-8")) / (1024**2)
         result_size_kb = len(result_json.encode("utf-8")) / 1024
     else:
@@ -101,10 +102,13 @@ def main():
     if args.env == "dev":
         API_KEY = os.getenv("PARCL_LABS_DEV_API_KEY")
         client = ParclLabsClient(
-            api_key=API_KEY, api_url=os.getenv("PARCL_LABS_DEV_API_URL"), limit=100
+            api_key=API_KEY,
+            api_url=os.getenv("PARCL_LABS_DEV_API_URL"),
+            limit=100,
+            turbo_mode=True,
         )
     else:
-        client = ParclLabsClient(api_key=API_KEY, limit=100)
+        client = ParclLabsClient(api_key=API_KEY, limit=100, turbo_mode=True)
 
     logger.info(f"Parcl Labs Client Version: {parcllabs.__version__}")
 
@@ -115,65 +119,13 @@ def main():
         "Retrieve Top 2 Metros by Population",
         client.search.markets,
         output_file,
-        location_type="CBSA",
+        location_type="COUNTY",
         sort_by="TOTAL_POPULATION",
         sort_order="DESC",
-        limit=10,
+        limit=1000,
+        auto_paginate=True,
     )
     top_market_parcl_ids = markets["parcl_id"].tolist()
-
-    profile_api_call(
-        "Search by Operators",
-        client.property.search,
-        output_file,
-        parcl_ids=[2900128],
-        property_type="single_family",
-        current_entity_owner_name="invitation_homes",
-    )
-
-    rental_buy_box = profile_api_call(
-        "Search by Buy Box",
-        client.property.search,
-        output_file,
-        parcl_ids=[2900128],
-        property_type="single_family",
-        # square_footage_min=1000,
-        # square_footage_max=2500,
-        year_built_max=2023,
-        year_built_min=2000,
-    )
-    parcl_property_id_list = rental_buy_box["parcl_property_id"].tolist()
-    num_units = min(args.number_of_properties, len(parcl_property_id_list))
-    parcl_property_id_list = parcl_property_id_list[:num_units]
-
-    print(f"Total number of parcl property ids: {len(parcl_property_id_list)}")
-
-    profile_api_call(
-        "Retrieve Sale Events",
-        client.property.events,
-        output_file,
-        parcl_property_ids=parcl_property_id_list,
-        event_type="SALE",
-        start_date="2020-01-01",
-        end_date="2024-06-30",
-    )
-
-    profile_api_call(
-        "Retrieve Rental Events",
-        client.property.events,
-        output_file,
-        parcl_property_ids=parcl_property_id_list,
-        event_type="RENTAL",
-        start_date="2020-01-01",
-        end_date="2024-06-30",
-    )
-
-    profile_api_call(
-        "Retrieve Rental History",
-        client.property.events,
-        output_file,
-        parcl_property_ids=parcl_property_id_list,
-    )
 
     pricefeed_markets = profile_api_call(
         "Retrieve Top 2 Price Feed Markets",
@@ -181,11 +133,11 @@ def main():
         output_file,
         sort_by="PARCL_EXCHANGE_MARKET",
         sort_order="DESC",
-        limit=2,
+        limit=100,
     )
     pricefeed_ids = pricefeed_markets["parcl_id"].tolist()
 
-    start_date = "2024-06-01"
+    start_date = "2023-01-01"
     end_date = "2024-06-05"
 
     profile_api_call(
@@ -204,6 +156,7 @@ def main():
         parcl_ids=pricefeed_ids,
         start_date=start_date,
         end_date=end_date,
+        auto_paginate=True,
     )
 
     profile_api_call(
@@ -213,10 +166,12 @@ def main():
         parcl_ids=pricefeed_ids,
         start_date=start_date,
         end_date=end_date,
+        auto_paginate=True,
     )
 
-    start_date = "2024-04-01"
-    end_date = "2024-04-01"
+    start_date = "2023-04-01"
+    end_date = "2024-08-01"
+    limit = 10000
 
     profile_api_call(
         "Retrieve Rental Units Concentration",
@@ -225,6 +180,8 @@ def main():
         parcl_ids=top_market_parcl_ids,
         start_date=start_date,
         end_date=end_date,
+        auto_paginate=True,
+        limit=limit,
     )
 
     profile_api_call(
@@ -234,6 +191,8 @@ def main():
         parcl_ids=top_market_parcl_ids,
         start_date=start_date,
         end_date=end_date,
+        auto_paginate=True,
+        limit=limit,
     )
 
     profile_api_call(
@@ -241,6 +200,8 @@ def main():
         client.rental_market_metrics.new_listings_for_rent_rolling_counts,
         output_file,
         parcl_ids=top_market_parcl_ids,
+        auto_paginate=True,
+        limit=limit,
     )
 
     profile_api_call(
@@ -251,6 +212,8 @@ def main():
         start_date=start_date,
         end_date=end_date,
         property_type="single_family",
+        auto_paginate=True,
+        limit=limit,
     )
 
     profile_api_call(
@@ -260,6 +223,8 @@ def main():
         parcl_ids=top_market_parcl_ids,
         start_date=start_date,
         end_date=end_date,
+        auto_paginate=True,
+        limit=limit,
     )
 
     profile_api_call(
@@ -269,6 +234,8 @@ def main():
         parcl_ids=top_market_parcl_ids,
         start_date=start_date,
         end_date=end_date,
+        auto_paginate=True,
+        limit=limit,
     )
 
     profile_api_call(
@@ -278,6 +245,8 @@ def main():
         parcl_ids=top_market_parcl_ids,
         start_date=start_date,
         end_date=end_date,
+        auto_paginate=True,
+        limit=limit,
     )
 
     profile_api_call(
@@ -287,6 +256,8 @@ def main():
         parcl_ids=top_market_parcl_ids,
         start_date=start_date,
         end_date=end_date,
+        auto_paginate=True,
+        limit=limit,
     )
 
     profile_api_call(
@@ -296,6 +267,8 @@ def main():
         parcl_ids=top_market_parcl_ids,
         start_date=start_date,
         end_date=end_date,
+        auto_paginate=True,
+        limit=limit,
     )
 
     profile_api_call(
@@ -305,6 +278,8 @@ def main():
         parcl_ids=top_market_parcl_ids,
         start_date=start_date,
         end_date=end_date,
+        auto_paginate=True,
+        limit=limit,
     )
 
     profile_api_call(
@@ -314,6 +289,8 @@ def main():
         parcl_ids=top_market_parcl_ids,
         start_date=start_date,
         end_date=end_date,
+        auto_paginate=True,
+        limit=limit,
     )
 
     profile_api_call(
@@ -323,6 +300,8 @@ def main():
         parcl_ids=top_market_parcl_ids,
         start_date=start_date,
         end_date=end_date,
+        auto_paginate=True,
+        limit=limit,
     )
 
     profile_api_call(
@@ -332,6 +311,8 @@ def main():
         parcl_ids=top_market_parcl_ids,
         start_date=start_date,
         end_date=end_date,
+        auto_paginate=True,
+        limit=limit,
     )
 
     profile_api_call(
@@ -341,6 +322,8 @@ def main():
         parcl_ids=top_market_parcl_ids,
         start_date=start_date,
         end_date=end_date,
+        auto_paginate=True,
+        limit=limit,
     )
 
     profile_api_call(
@@ -350,6 +333,8 @@ def main():
         parcl_ids=top_market_parcl_ids,
         start_date=start_date,
         end_date=end_date,
+        auto_paginate=True,
+        limit=limit,
     )
 
     profile_api_call(
@@ -359,6 +344,8 @@ def main():
         parcl_ids=top_market_parcl_ids,
         start_date=start_date,
         end_date=end_date,
+        auto_paginate=True,
+        limit=limit,
     )
 
     profile_api_call(
@@ -366,6 +353,8 @@ def main():
         client.portfolio_metrics.sf_housing_stock_ownership,
         output_file,
         parcl_ids=top_market_parcl_ids,
+        auto_paginate=True,
+        limit=limit,
     )
 
     profile_api_call(
@@ -374,6 +363,8 @@ def main():
         output_file,
         parcl_ids=top_market_parcl_ids,
         portfolio_size="PORTFOLIO_1000_PLUS",
+        auto_paginate=True,
+        limit=limit,
     )
 
     profile_api_call(
@@ -382,6 +373,8 @@ def main():
         output_file,
         parcl_ids=top_market_parcl_ids,
         portfolio_size="PORTFOLIO_1000_PLUS",
+        auto_paginate=True,
+        limit=limit,
     )
 
     profile_api_call(
@@ -390,6 +383,8 @@ def main():
         output_file,
         parcl_ids=top_market_parcl_ids,
         portfolio_size="PORTFOLIO_1000_PLUS",
+        auto_paginate=True,
+        limit=limit,
     )
 
     # Logging estimated credits used

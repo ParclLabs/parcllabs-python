@@ -49,3 +49,39 @@ class Validators:
                     f"{value_type} {value} is not valid. Must be one of {', '.join(valid_list)}."
                 )
         return value
+
+    @staticmethod
+    def validate_input_str_param(
+        param: str, param_name: str, valid_values: List[str], params_dict: dict = None
+    ):
+        if param:
+
+            param = param.upper()
+
+            params_dict[param_name] = param
+
+            if param not in valid_values:
+                raise ValueError(
+                    f"{param_name} value error. Valid values are: {valid_values}. Received: {param}"
+                )
+
+        return params_dict
+
+    @staticmethod
+    def validate_input_bool_param(param, param_name: str, params_dict: dict = None):
+        if param is None:
+            return params_dict  # or return None if that’s preferred
+
+        if not isinstance(param, bool):
+            raise ValueError(
+                f"{param_name} value error. Expected boolean. Received: {param}"
+            )
+
+        params_dict[param_name] = "true" if param else "false"
+        return params_dict
+    
+    @staticmethod
+    def validate_parcl_ids(parcl_ids):
+        if isinstance(parcl_ids, int):
+            parcl_ids = [parcl_ids]
+        return parcl_ids
