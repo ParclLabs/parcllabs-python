@@ -13,6 +13,8 @@ notebooks/
 # ignore test files
 *profile*
 sdk_latency.json
+*.json
+*.csv
 
 # Distribution / packaging
 .Python
