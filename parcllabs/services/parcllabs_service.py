@@ -307,14 +307,12 @@ class ParclLabsService:
     def error_handling(self, response: requests.Response) -> None:
         try:
             error_details = response.json()
-            # error_message = error_details.get("detail", "No detail provided by API")
-            error_message = ''
+            error_message = error_details.get("detail", "No detail provided by API")
             if response.status_code == 403:
                 error_message += " Visit https://dashboard.parcllabs.com for more information or reach out to team@parcllabs.com."
             elif response.status_code == 422:
                 details = error_details.get("detail")
-                msg = details.get("msg", "validation error")
-                error_message += msg
+                error_message = details.get("msg", "validation error")
             elif response.status_code == 429:
                 error_message = error_details.get("error", "Rate Limit Exceeded")
             elif response.status_code == 404:
