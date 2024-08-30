@@ -30,6 +30,8 @@ jobs:
           pipenv run make lint
 
       - name: Run tests
+        env:
+          PARCL_LABS_API_KEY: ${{ secrets.PARCL_LABS_API_KEY }}
         run: |
           set -e
           pipenv run make test
