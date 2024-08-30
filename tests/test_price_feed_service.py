@@ -195,7 +195,7 @@ class TestParclLabsService:
         response = Mock()
         response.status_code = 422
         response.json.return_value = {
-            "detail": {'msg': 'Invalid input'},
+            "detail": [{'msg': 'Invalid input'}],
         }
         with pytest.raises(RequestException, match="422 Client Error"):
             service.error_handling(response)
