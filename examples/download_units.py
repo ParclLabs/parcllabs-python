@@ -56,10 +56,10 @@ def main():
         # entity_owner_name='AMH',
     )
 
-    print(events.loc[events['price']>0]['parcl_property_id'].nunique())
+    print(events.loc[events["price"] > 0]["parcl_property_id"].nunique())
 
-    homes.to_csv('homes.csv', index=False)
-    events.to_csv('events.csv', index=False)
+    homes.to_csv("homes.csv", index=False)
+    events.to_csv("events.csv", index=False)
 
 
 if __name__ == "__main__":

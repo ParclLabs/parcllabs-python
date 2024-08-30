@@ -5,6 +5,7 @@ from parcllabs import ParclLabsClient
 api_key = os.getenv("PARCL_LABS_API_KEY")
 client = ParclLabsClient(api_key=api_key)
 
+
 def main():
     # Search for markets
     markets = client.search.markets.retrieve(
@@ -24,7 +25,7 @@ def main():
         "housing_event_counts": client.market_metrics.housing_event_counts,
         "all_cash": client.market_metrics.all_cash,
         "investor_housing_stock_ownership": client.investor_metrics.housing_stock_ownership,
-        "investor_housing_event_counts": client.investor_metrics.housing_event_counts
+        "investor_housing_event_counts": client.investor_metrics.housing_event_counts,
     }
 
     # Retrieve data and save to CSV
@@ -33,9 +34,10 @@ def main():
             parcl_ids=[PID],
             start_date=start_date,
             end_date=end_date,
-            limit=100 if metric_name == "housing_event_counts" else None
+            limit=100 if metric_name == "housing_event_counts" else None,
         )
         results.to_csv(f"us_{metric_name}.csv", index=False)
+
 
 if __name__ == "__main__":
     main()

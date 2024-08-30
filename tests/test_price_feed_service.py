@@ -3,9 +3,13 @@ import pandas as pd
 import requests
 import json
 from unittest.mock import Mock, patch
-from parcllabs.services.parcllabs_service import ParclLabsService, ParclLabsStreamingService
+from parcllabs.services.parcllabs_service import (
+    ParclLabsService,
+    ParclLabsStreamingService,
+)
 from parcllabs.exceptions import NotFoundError
 from requests.exceptions import RequestException
+
 
 class TestParclLabsService:
 
@@ -39,25 +43,37 @@ class TestParclLabsService:
         cleaned = service._clean_params(params)
         assert cleaned == {"a": 1, "c": "test"}
 
-    @patch('requests.request')
+    @patch("requests.request")
     def test_make_request_get(self, mock_request, service):
         mock_response = Mock()
         mock_response.raise_for_status.return_value = None
         mock_request.return_value = mock_response
 
         service._make_request("GET", "https://api.example.com/test")
-        mock_request.assert_called_once_with("GET", "https://api.example.com/test", headers=service.headers, params={"limit": service.limit})
+        mock_request.assert_called_once_with(
+            "GET",
+            "https://api.example.com/test",
+            headers=service.headers,
+            params={"limit": service.limit},
+        )
 
-    @patch('requests.request')
+    @patch("requests.request")
     def test_make_request_post(self, mock_request, service):
         mock_response = Mock()
         mock_response.raise_for_status.return_value = None
         mock_request.return_value = mock_response
 
-        service._make_request("POST", "https://api.example.com/test", json={"data": "test"})
-        mock_request.assert_called_once_with("POST", "https://api.example.com/test", headers=service.headers, json={"data": "test"})
+        service._make_request(
+            "POST", "https://api.example.com/test", json={"data": "test"}
+        )
+        mock_request.assert_called_once_with(
+            "POST",
+            "https://api.example.com/test",
+            headers=service.headers,
+            json={"data": "test"},
+        )
 
-    @patch('requests.request')
+    @patch("requests.request")
     def test_make_request_http_error(self, mock_request, service):
         mock_response = Mock()
         mock_response.raise_for_status.side_effect = requests.exceptions.HTTPError()
@@ -69,36 +85,43 @@ class TestParclLabsService:
             service._make_request("GET", "https://api.example.com/test")
 
     def test_post(self, service):
-        with patch.object(service, '_make_request') as mock_make_request:
+        with patch.object(service, "_make_request") as mock_make_request:
             service._post("https://api.example.com/test", {"data": "test"})
-            mock_make_request.assert_called_once_with("POST", "https://api.example.com/test", json={"data": "test"})
+            mock_make_request.assert_called_once_with(
+                "POST", "https://api.example.com/test", json={"data": "test"}
+            )
 
     def test_get(self, service):
-        with patch.object(service, '_make_request') as mock_make_request:
+        with patch.object(service, "_make_request") as mock_make_request:
             service._get("https://api.example.com/test", {"param": "test"})
-            mock_make_request.assert_called_once_with("GET", "https://api.example.com/test", params={"param": "test"})
+            mock_make_request.assert_called_once_with(
+                "GET", "https://api.example.com/test", params={"param": "test"}
+            )
 
     def test_fetch_get(self, service):
-        with patch.object(service, '_fetch_get') as mock_fetch_get:
+        with patch.object(service, "_fetch_get") as mock_fetch_get:
             service._fetch([1], {"param": "test"})
             mock_fetch_get.assert_called_once()
 
     def test_fetch_post(self, service):
         service.client.turbo_mode = True
         service.full_post_url = "https://api.example.com/test_post"
-        with patch.object(service, '_fetch_post') as mock_fetch_post:
+        with patch.object(service, "_fetch_post") as mock_fetch_post:
             service._fetch([1, 2], {"param": "test"})
             mock_fetch_post.assert_called_once()
 
     def test_fetch_get_many_parcl_ids(self, service):
-        with patch.object(service, '_fetch_get') as mock_fetch_get:
+        with patch.object(service, "_fetch_get") as mock_fetch_get:
             service._fetch_get_many_parcl_ids([1, 2], {"param": "test"}, False)
             assert mock_fetch_get.call_count == 2
 
-    @patch('requests.post')
+    @patch('parcllabs.services.parcllabs_service.ParclLabsService._post')
     def test_process_and_paginate_response_post(self, mock_post, service):
         mock_response = Mock()
-        mock_response.json.return_value = {"items": [1, 2], "links": {"next": "https://api.example.com/next"}}
+        mock_response.json.return_value = {
+            "items": [1, 2],
+            "links": {"next": "https://api.example.com/next"},
+        }
         mock_response.status_code = 200
 
         mock_next_response = Mock()
@@ -110,11 +133,15 @@ class TestParclLabsService:
         result = service._process_and_paginate_response(mock_response, True, {}, "post")
         assert result["items"] == [1, 2, 3, 4]
         assert service.client.estimated_session_credit_usage == 4
+        mock_post.assert_called_once_with("https://api.example.com/next", data={})
 
-    @patch('requests.get')
+    @patch('parcllabs.services.parcllabs_service.ParclLabsService._get')
     def test_process_and_paginate_response_get(self, mock_get, service):
         mock_response = Mock()
-        mock_response.json.return_value = {"items": [1, 2], "links": {"next": "https://api.example.com/next"}}
+        mock_response.json.return_value = {
+            "items": [1, 2],
+            "links": {"next": "https://api.example.com/next"},
+        }
         mock_response.status_code = 200
 
         mock_next_response = Mock()
@@ -126,9 +153,10 @@ class TestParclLabsService:
         result = service._process_and_paginate_response(mock_response, True, {}, "get")
         assert result["items"] == [1, 2, 3, 4]
         assert service.client.estimated_session_credit_usage == 4
+        mock_get.assert_called_once_with("https://api.example.com/next", params={})
 
     def test_retrieve(self, service):
-        with patch.object(service, '_fetch') as mock_fetch:
+        with patch.object(service, "_fetch") as mock_fetch:
             mock_fetch.return_value = {"items": [{"id": 1}, {"id": 2}]}
             result = service.retrieve([1, 2])
             assert isinstance(result, pd.DataFrame)
@@ -136,7 +164,9 @@ class TestParclLabsService:
 
     def test_sanitize_output(self, service):
         data = {"keep": "value", "delete": "value"}
-        with patch('parcllabs.services.parcllabs_service.DELETE_FROM_OUTPUT', ["delete"]):
+        with patch(
+            "parcllabs.services.parcllabs_service.DELETE_FROM_OUTPUT", ["delete"]
+        ):
             result = service.sanitize_output(data)
             assert "keep" in result
             assert "delete" not in result
@@ -164,7 +194,10 @@ class TestParclLabsService:
     def test_error_handling_422(self, service):
         response = Mock()
         response.status_code = 422
-        response.json.return_value = {"detail": "Validation Error", "msg": "Invalid input"}
+        response.json.return_value = {
+            "detail": "Validation Error",
+            "msg": "Invalid input",
+        }
         with pytest.raises(RequestException, match="422 Client Error"):
             service.error_handling(response)
 
@@ -174,6 +207,7 @@ class TestParclLabsService:
         response.json.return_value = {"error": "Rate Limit Exceeded"}
         with pytest.raises(RequestException, match="429 Client Error"):
             service.error_handling(response)
+
 
 class TestParclLabsStreamingService:
 
@@ -190,7 +224,7 @@ class TestParclLabsStreamingService:
         assert result == {"key": "value"}
 
     def test_convert_text_to_json_invalid(self, streaming_service):
-        json_str = 'invalid json'
+        json_str = "invalid json"
         result = streaming_service._convert_text_to_json(json_str)
         assert result is None
 
