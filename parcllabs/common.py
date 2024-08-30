@@ -17,6 +17,8 @@ VALID_PORTFOLIO_SIZES = [
     "ALL_PORTFOLIOS",
 ]
 
+ID_COLUMNS = ["parcl_id", "parcl_property_id"]
+DATE_COLUMNS = ["date", "event_date"]
 
 DELETE_FROM_OUTPUT = ["total", "limit", "offset", "links"]
 

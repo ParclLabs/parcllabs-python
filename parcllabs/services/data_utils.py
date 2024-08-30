@@ -1,6 +1,11 @@
 import pandas as pd
 import numpy as np
 
+from parcllabs.common import (
+    ID_COLUMNS,
+    DATE_COLUMNS
+)
+
 
 def safe_concat_and_format_dtypes(data_container):
     # Filter out empty DataFrames
@@ -48,8 +53,7 @@ def safe_concat_and_format_dtypes(data_container):
         )  # Return an empty DataFrame if all processed DataFrames are empty
 
     # Cast date columns to datetime
-    date_columns = ["date", "event_date"]
-    for col in date_columns:
+    for col in DATE_COLUMNS:
         if col in output.columns:
             output[col] = pd.to_datetime(output[col], errors="coerce")
 
@@ -57,8 +61,7 @@ def safe_concat_and_format_dtypes(data_container):
     final_columns = []
 
     # Rule 1: parcl_id or parcl_property_id should be the first column
-    id_columns = ["parcl_id", "parcl_property_id"]
-    for col in id_columns:
+    for col in ID_COLUMNS:
         if col in output.columns:
             final_columns.append(col)
             break
