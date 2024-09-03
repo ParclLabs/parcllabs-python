@@ -56,6 +56,7 @@ class ParclLabsClient:
         self.estimated_session_credit_usage = 0
         self.num_workers = num_workers
         self.turbo_mode = turbo_mode
+        self.group = self._create_service_group()
 
         self._initialize_services()
 
@@ -80,7 +81,6 @@ class ParclLabsClient:
             group.add_service(name=name, **config)
 
     def _create_price_feed_services(self):
-        group = self._create_service_group()
         services = {
             "price_feed": {
                 "url": "/v1/price_feed/{parcl_id}/price_feed",
@@ -98,11 +98,10 @@ class ParclLabsClient:
                 "service_class": ParclLabsService,
             },
         }
-        self._add_services_to_group(group, services)
-        return group
+        self._add_services_to_group(self.group, services)
+        return self.group
 
     def _create_investor_metrics_services(self):
-        group = self._create_service_group()
         services = {
             "housing_stock_ownership": {
                 "url": "/v1/investor_metrics/{parcl_id}/housing_stock_ownership",
@@ -130,11 +129,10 @@ class ParclLabsClient:
                 "service_class": ParclLabsService,
             },
         }
-        self._add_services_to_group(group, services)
-        return group
+        self._add_services_to_group(self.group, services)
+        return self.group
 
     def _create_market_metrics_services(self):
-        group = self._create_service_group()
         services = {
             "housing_event_prices": {
                 "url": "/v1/market_metrics/{parcl_id}/housing_event_prices",
@@ -162,11 +160,10 @@ class ParclLabsClient:
                 "service_class": PropertyTypeService,
             },
         }
-        self._add_services_to_group(group, services)
-        return group
+        self._add_services_to_group(self.group, services)
+        return self.group
 
     def _create_new_construction_metrics_services(self):
-        group = self._create_service_group()
         services = {
             "housing_event_prices": {
                 "url": "/v1/new_construction_metrics/{parcl_id}/housing_event_prices",
@@ -179,11 +176,10 @@ class ParclLabsClient:
                 "service_class": PropertyTypeService,
             },
         }
-        self._add_services_to_group(group, services)
-        return group
+        self._add_services_to_group(self.group, services)
+        return self.group
 
     def _create_for_sale_market_metrics_services(self):
-        group = self._create_service_group()
         services = {
             "new_listings_rolling_counts": {
                 "url": "/v1/for_sale_market_metrics/{parcl_id}/new_listings_rolling_counts",
@@ -201,11 +197,10 @@ class ParclLabsClient:
                 "service_class": PropertyTypeService,
             },
         }
-        self._add_services_to_group(group, services)
-        return group
+        self._add_services_to_group(self.group, services)
+        return self.group
 
     def _create_rental_market_metrics_services(self):
-        group = self._create_service_group()
         services = {
             "rental_units_concentration": {
                 "url": "/v1/rental_market_metrics/{parcl_id}/rental_units_concentration",
@@ -223,11 +218,10 @@ class ParclLabsClient:
                 "service_class": PropertyTypeService,
             },
         }
-        self._add_services_to_group(group, services)
-        return group
+        self._add_services_to_group(self.group, services)
+        return self.group
 
     def _create_portfolio_metrics_services(self):
-        group = self._create_service_group()
         services = {
             "sf_housing_stock_ownership": {
                 "url": "/v1/portfolio_metrics/{parcl_id}/sf_housing_stock_ownership",
@@ -250,11 +244,10 @@ class ParclLabsClient:
                 "service_class": PortfolioSizeService,
             },
         }
-        self._add_services_to_group(group, services)
-        return group
+        self._add_services_to_group(self.group, services)
+        return self.group
 
     def _create_search_services(self):
-        group = self._create_service_group()
         services = {
             "markets": {
                 "url": "/v1/search/markets",
@@ -262,11 +255,10 @@ class ParclLabsClient:
                 "service_class": SearchMarkets,
             },
         }
-        self._add_services_to_group(group, services)
-        return group
+        self._add_services_to_group(self.group, services)
+        return self.group
 
     def _create_property_services(self):
-        group = self._create_service_group()
         services = {
             "search": {"url": "/v1/property/search", "service_class": PropertySearch},
             "events": {
@@ -275,5 +267,5 @@ class ParclLabsClient:
                 "service_class": PropertyEventsService,
             },
         }
-        self._add_services_to_group(group, services)
-        return group
+        self._add_services_to_group(self.group, services)
+        return self.group

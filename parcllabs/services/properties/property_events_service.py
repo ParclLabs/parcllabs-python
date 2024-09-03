@@ -12,7 +12,9 @@ from parcllabs.services.data_utils import (
     safe_concat_and_format_dtypes,
 )
 from parcllabs.services.validators import Validators
-from parcllabs.services.parcllabs_service import ParclLabsStreamingService
+from parcllabs.services.streaming.parcl_labs_streaming_service import (
+    ParclLabsStreamingService,
+)
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from parcllabs.exceptions import (
     NotFoundError,

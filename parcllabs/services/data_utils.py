@@ -1,10 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from parcllabs.common import (
-    ID_COLUMNS,
-    DATE_COLUMNS
-)
+from parcllabs.common import ID_COLUMNS, DATE_COLUMNS
 
 
 def safe_concat_and_format_dtypes(data_container):

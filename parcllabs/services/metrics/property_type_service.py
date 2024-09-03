@@ -5,7 +5,6 @@ from parcllabs.services.validators import Validators
 
 
 class PropertyTypeService(ParclLabsService):
-
     def retrieve(
         self,
         parcl_ids: int,
