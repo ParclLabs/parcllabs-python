@@ -26,8 +26,8 @@ class PropertyEventsService(ParclLabsStreamingService):
     Retrieve parcl_property_id event history.
     """
 
-    def __init__(self, limit: int = DEFAULT_LIMIT, *args, **kwargs):
-        super().__init__(limit=limit, *args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def retrieve(
         self,

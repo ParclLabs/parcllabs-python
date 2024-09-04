@@ -6,7 +6,7 @@ from collections import deque
 
 from requests.exceptions import RequestException
 from typing import Any, Mapping, Optional, List, Dict
-from parcllabs.common import DELETE_FROM_OUTPUT, DEFAULT_LIMIT
+from parcllabs.common import DELETE_FROM_OUTPUT, DEFAULT_LIMIT_SMALL, DEFAULT_LIMIT_LARGE
 from parcllabs.exceptions import NotFoundError
 from parcllabs.services.validators import Validators
 from parcllabs.services.data_utils import safe_concat_and_format_dtypes
@@ -19,14 +19,13 @@ class ParclLabsService:
     """
 
     def __init__(
-        self, url: str, client: Any, post_url: str = None, limit: int = DEFAULT_LIMIT
+        self, url: str, client: Any, post_url: str = None
     ) -> None:
         self.url = url
         self.post_url = post_url
         self.client = client
         if client is None:
             raise ValueError("Missing required client object.")
-        self.limit = limit
         self.api_url = client.api_url
         self.full_url = self.api_url + self.url
         self.full_post_url = self.api_url + self.post_url if post_url else None
@@ -103,19 +102,23 @@ class ParclLabsService:
             raise RequestException(f"An unexpected error occurred: {str(e)}")
 
     def _post(
-        self, url: str, data: Optional[Dict[str, Any]] = None
+        self,
+        url: str,
+        params: Optional[Dict[str, Any]] = None,
+        data: Optional[Dict[str, Any]] = None,
     ) -> requests.Response:
         """
         Send a POST request to the specified URL with the given data.
 
         Args:
             url (str): The URL endpoint to request.
+            params (dict, optional): The parameters to send in the query string.
             data (dict, optional): The data to send in the request body.
 
         Returns:
             requests.Response: The response object.
         """
-        return self._make_request("POST", url, json=data)
+        return self._make_request("POST", url, params=params, json=data)
 
     def _get(
         self, url: str, params: Optional[Dict[str, Any]] = None
@@ -155,17 +158,24 @@ class ParclLabsService:
             The result of the fetch operation. The exact return type depends on the specific
             fetch method called (_fetch_post, _fetch_get, or _fetch_get_many_parcl_ids).
         """
-        if params and not params.get("limit"):
-            params["limit"] = self.limit
 
         params = self._clean_params(params)
 
         if self.client.turbo_mode and self.full_post_url:
             # convert the list of parcl_ids into post body params, formatted
             # as strings
-            params = {"parcl_id": [str(pid) for pid in parcl_ids], **params}
-            return self._fetch_post(params, auto_paginate)
+            if params.get("limit"):
+                limit = params["limit"]
+                limit = DEFAULT_LIMIT_LARGE if limit > DEFAULT_LIMIT_LARGE else limit
+
+            data = {"parcl_id": [str(pid) for pid in parcl_ids]}
+
+            return self._fetch_post(params, data, auto_paginate)
         else:
+            if params.get("limit"):
+                limit = params["limit"]
+                limit = DEFAULT_LIMIT_SMALL if limit > DEFAULT_LIMIT_SMALL else limit
+
             if len(parcl_ids) == 1:
                 url = self.full_url.format(parcl_id=parcl_ids[0])
                 return self._fetch_get(url, params, auto_paginate)
@@ -204,8 +214,10 @@ class ParclLabsService:
 
         return results
 
-    def _fetch_post(self, params: Dict[str, Any], auto_paginate: bool):
-        response = self._post(self.full_post_url, data=params)
+    def _fetch_post(
+        self, params: Dict[str, Any], data: Dict[str, Any], auto_paginate: bool
+    ):
+        response = self._post(self.full_post_url, params=params, data=data)
         return self._process_and_paginate_response(
             response, auto_paginate, original_params=params, referring_method="post"
         )
@@ -263,7 +275,7 @@ class ParclLabsService:
             {
                 "start_date": start_date,
                 "end_date": end_date,
-                "limit": limit if limit is not None else self.limit,
+                "limit": limit if limit else None,
                 **(params or {}),
             }
         )
