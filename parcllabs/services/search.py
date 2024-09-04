@@ -1,7 +1,6 @@
 import pandas as pd
 from typing import Any, Mapping, Optional, List
 from parcllabs.common import (
-    DEFAULT_LIMIT,
     VALID_LOCATION_TYPES,
     VALID_US_REGIONS,
     VALID_US_STATE_ABBREV,
@@ -115,7 +114,8 @@ class SearchMarkets(ParclLabsService):
         if geoid:
             params["geoid"] = geoid
 
-        params["limit"] = limit if limit is not None else self.limit
+        if limit:
+            params["limit"] = self._validate_limit("GET", limit)
 
         results = self._fetch_get(
             url=self.full_url, params=params, auto_paginate=auto_paginate

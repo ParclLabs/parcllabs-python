@@ -255,7 +255,7 @@ class ParclLabsClient:
         services = {
             "markets": {
                 "url": "/v1/search/markets",
-                "post_url": "/v1/search/markets",
+                # "post_url": "/v1/search/markets",
                 "service_class": SearchMarkets,
             },
         }

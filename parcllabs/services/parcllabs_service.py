@@ -165,16 +165,17 @@ class ParclLabsService:
             # convert the list of parcl_ids into post body params, formatted
             # as strings
             if params.get("limit"):
-                limit = params["limit"]
-                limit = DEFAULT_LIMIT_LARGE if limit > DEFAULT_LIMIT_LARGE else limit
+                params["limit"] = self._validate_limit("POST", params["limit"])
 
-            data = {"parcl_id": [str(pid) for pid in parcl_ids]}
+            data = {"parcl_id": [str(pid) for pid in parcl_ids], **params}
+            params = {"limit": params["limit"]} if params.get("limit") else {}
+
+            print(f"data: {data}, params: {params}")
 
             return self._fetch_post(params, data, auto_paginate)
         else:
             if params.get("limit"):
-                limit = params["limit"]
-                limit = DEFAULT_LIMIT_SMALL if limit > DEFAULT_LIMIT_SMALL else limit
+                params["limit"] = self._validate_limit("GET", params["limit"])
 
             if len(parcl_ids) == 1:
                 url = self.full_url.format(parcl_id=parcl_ids[0])
@@ -219,7 +220,11 @@ class ParclLabsService:
     ):
         response = self._post(self.full_post_url, params=params, data=data)
         return self._process_and_paginate_response(
-            response, auto_paginate, original_params=params, referring_method="post"
+            response,
+            auto_paginate,
+            original_params=params,
+            data=data,
+            referring_method="post",
         )
 
     def _fetch_get(self, url: str, params: Dict[str, Any], auto_paginate: bool):
@@ -230,7 +235,12 @@ class ParclLabsService:
         return result
 
     def _process_and_paginate_response(
-        self, response, auto_paginate, original_params, referring_method: str = "get"
+        self,
+        response,
+        auto_paginate,
+        original_params,
+        data=None, 
+        referring_method: str = "get",
     ):
 
         if response.status_code == 404:
@@ -247,7 +257,7 @@ class ParclLabsService:
             while result["links"].get("next") is not None:
                 next_url = result["links"]["next"]
                 if referring_method == "post":
-                    next_response = self._post(next_url, data=original_params)
+                    next_response = self._post(next_url, data=data, params=original_params)
                 else:
                     next_response = self._get(next_url, params=original_params)
                 next_response.raise_for_status()
@@ -337,3 +347,22 @@ class ParclLabsService:
         type_of_error = "Client" if 400 <= response.status_code < 500 else "Server"
         msg = f"{response.status_code} {type_of_error} Error: {error_message}"
         raise requests.RequestException(msg)
+
+    @staticmethod
+    def _validate_limit(method, limit):
+        if method.upper() == "POST":
+            if limit > DEFAULT_LIMIT_LARGE:
+                print(
+                    f"Supplied limit value is too large for requested endpoint. Setting limit to maxium value of {DEFAULT_LIMIT_LARGE}."
+                )
+                limit = DEFAULT_LIMIT_LARGE
+        elif method.upper() == "GET":
+            if limit > DEFAULT_LIMIT_SMALL:
+                print(
+                    f"Supplied limit value is too large for requested endpoint. Setting limit to maxium value of {DEFAULT_LIMIT_SMALL}."
+                )
+                limit = DEFAULT_LIMIT_SMALL
+        else:
+            raise ValueError("Invalid method. Must be either 'GET' or 'POST'.")
+
+        return limit

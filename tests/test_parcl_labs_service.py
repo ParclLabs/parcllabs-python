@@ -14,7 +14,7 @@ class MockClient:
 def parcl_labs_service():
     client = MockClient()
     return ParclLabsService(
-        url="https://api.example.com/{parcl_id}", client=client, limit=10
+        url="https://api.example.com/{parcl_id}", client=client
     )
 
 
