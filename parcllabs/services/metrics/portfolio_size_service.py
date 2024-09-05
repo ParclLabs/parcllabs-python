@@ -5,7 +5,6 @@ from parcllabs.services.validators import Validators
 
 
 class PortfolioSizeService(ParclLabsService):
-
     def retrieve(
         self,
         parcl_ids: List[int],

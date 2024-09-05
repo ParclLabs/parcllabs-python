@@ -1,7 +1,6 @@
 import pandas as pd
 from typing import Any, Mapping, Optional, List
 from parcllabs.common import (
-    DEFAULT_LIMIT,
     VALID_LOCATION_TYPES,
     VALID_US_REGIONS,
     VALID_US_STATE_ABBREV,
@@ -18,8 +17,8 @@ class SearchMarkets(ParclLabsService):
     Retrieve parcl_id and metadata for geographic markets in the Parcl Labs API.
     """
 
-    def __init__(self, limit: int = DEFAULT_LIMIT, *args, **kwargs):
-        super().__init__(limit=limit, *args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> Any:
         return pd.DataFrame(data)
@@ -115,7 +114,8 @@ class SearchMarkets(ParclLabsService):
         if geoid:
             params["geoid"] = geoid
 
-        params["limit"] = limit if limit is not None else self.limit
+        if limit:
+            params["limit"] = self._validate_limit("GET", limit)
 
         results = self._fetch_get(
             url=self.full_url, params=params, auto_paginate=auto_paginate

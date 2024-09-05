@@ -1,4 +1,9 @@
-### v1.6.0
+### v1.6.2
+- Fix bug where `limit` parameter was not being applied when `turbo_mode` was enabled.
+- Update handingling of `limit` parameter. If the `limit` parameter is greater than maximum allowed limit on the particular endpoint, the `limit` will automatically default to the maximum allowed value instead of throwing an error. 
+- Refactor `ParclLabsClient` so that `limit` is not set during client instantiation. Limit should be set when calling specific `retrieve` methods.
+
+### v1.6.1
 - Bug fix for handling of 422 validation errors.
 
 ### v1.6.0

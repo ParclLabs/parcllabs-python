@@ -4,7 +4,9 @@ from alive_progress import alive_bar
 from typing import List
 from parcllabs.services.validators import Validators
 from parcllabs.common import VALID_PROPERTY_TYPES_UNIT_SEARCH, VALID_ENTITY_NAMES
-from parcllabs.services.parcllabs_service import ParclLabsStreamingService
+from parcllabs.services.streaming.parcl_labs_streaming_service import (
+    ParclLabsStreamingService,
+)
 
 
 class PropertySearch(ParclLabsStreamingService):

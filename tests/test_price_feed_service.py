@@ -1,3 +1,6 @@
+from parcllabs.services.streaming.parcl_labs_streaming_service import (
+    ParclLabsStreamingService,
+)
 import pytest
 import pandas as pd
 import requests
@@ -5,14 +8,12 @@ import json
 from unittest.mock import Mock, patch
 from parcllabs.services.parcllabs_service import (
     ParclLabsService,
-    ParclLabsStreamingService,
 )
 from parcllabs.exceptions import NotFoundError
 from requests.exceptions import RequestException
 
 
 class TestParclLabsService:
-
     @pytest.fixture
     def service(self):
         mock_client = Mock()
@@ -86,9 +87,9 @@ class TestParclLabsService:
 
     def test_post(self, service):
         with patch.object(service, "_make_request") as mock_make_request:
-            service._post("https://api.example.com/test", {"data": "test"})
+            service._post("https://api.example.com/test", params={}, data={"data": "test"})
             mock_make_request.assert_called_once_with(
-                "POST", "https://api.example.com/test", json={"data": "test"}
+                "POST", "https://api.example.com/test", params={}, json={"data": "test"}
             )
 
     def test_get(self, service):
@@ -115,7 +116,7 @@ class TestParclLabsService:
             service._fetch_get_many_parcl_ids([1, 2], {"param": "test"}, False)
             assert mock_fetch_get.call_count == 2
 
-    @patch('parcllabs.services.parcllabs_service.ParclLabsService._post')
+    @patch("parcllabs.services.parcllabs_service.ParclLabsService._post")
     def test_process_and_paginate_response_post(self, mock_post, service):
         mock_response = Mock()
         mock_response.json.return_value = {
@@ -130,12 +131,12 @@ class TestParclLabsService:
 
         mock_post.return_value = mock_next_response
 
-        result = service._process_and_paginate_response(mock_response, True, {}, "post")
+        result = service._process_and_paginate_response(mock_response, True, {}, {}, "post")
         assert result["items"] == [1, 2, 3, 4]
         assert service.client.estimated_session_credit_usage == 4
-        mock_post.assert_called_once_with("https://api.example.com/next", data={})
+        mock_post.assert_called_once_with("https://api.example.com/next", data={}, params={})
 
-    @patch('parcllabs.services.parcllabs_service.ParclLabsService._get')
+    @patch("parcllabs.services.parcllabs_service.ParclLabsService._get")
     def test_process_and_paginate_response_get(self, mock_get, service):
         mock_response = Mock()
         mock_response.json.return_value = {
@@ -195,7 +196,7 @@ class TestParclLabsService:
         response = Mock()
         response.status_code = 422
         response.json.return_value = {
-            "detail": [{'msg': 'Invalid input'}],
+            "detail": [{"msg": "Invalid input"}],
         }
         with pytest.raises(RequestException, match="422 Client Error"):
             service.error_handling(response)
@@ -209,7 +210,6 @@ class TestParclLabsService:
 
 
 class TestParclLabsStreamingService:
-
     @pytest.fixture
     def streaming_service(self):
         mock_client = Mock()

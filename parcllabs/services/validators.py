@@ -79,7 +79,7 @@ class Validators:
 
         params_dict[param_name] = "true" if param else "false"
         return params_dict
-    
+
     @staticmethod
     def validate_parcl_ids(parcl_ids):
         if isinstance(parcl_ids, int):

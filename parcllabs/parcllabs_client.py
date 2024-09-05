@@ -9,9 +9,8 @@ from typing import Dict, Any, Optional
 
 
 class ServiceGroup:
-    def __init__(self, client, limit):
+    def __init__(self, client):
         self._client = client
-        self._limit = limit
         self._services = {}
 
     def add_service(
@@ -23,7 +22,7 @@ class ServiceGroup:
         alias: Optional[str] = None,
     ):
         service = service_class(
-            url=url, post_url=post_url, client=self._client, limit=self._limit
+            url=url, post_url=post_url, client=self._client
         )
         setattr(self, name, service)
         self._services[name] = service
@@ -40,8 +39,8 @@ class ParclLabsClient:
     def __init__(
         self,
         api_key: str,
-        limit: int = 12,
         api_url: str = api_base,
+        limit: Optional[int] = None,
         turbo_mode: bool = False,
         num_workers: Optional[int] = None,
     ):
@@ -52,7 +51,6 @@ class ParclLabsClient:
 
         self.api_key = api_key
         self.api_url = api_url
-        self.limit = limit
         self.estimated_session_credit_usage = 0
         self.num_workers = num_workers
         self.turbo_mode = turbo_mode
@@ -71,7 +69,7 @@ class ParclLabsClient:
         self.property = self._create_property_services()
 
     def _create_service_group(self):
-        return ServiceGroup(self, self.limit)
+        return ServiceGroup(self)
 
     def _add_services_to_group(
         self, group: ServiceGroup, services: Dict[str, Dict[str, Any]]
@@ -258,7 +256,6 @@ class ParclLabsClient:
         services = {
             "markets": {
                 "url": "/v1/search/markets",
-                "post_url": "/v1/search/markets",
                 "service_class": SearchMarkets,
             },
         }
