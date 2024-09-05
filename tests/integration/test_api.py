@@ -18,7 +18,7 @@ with open(get_test_data_path("test_pids.json"), "r") as f:
 with open(get_test_data_path("pricefeed_markets.json"), "r") as f:
     PRICEFEED_MARKETS = json.load(f)
 
-API_KEY = os.getenv("PARCL_LABS_PROD_API_KEY")
+API_KEY = os.getenv("PARCL_LABS_API_KEY")
 
 
 @pytest.fixture
