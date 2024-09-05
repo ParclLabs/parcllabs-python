@@ -40,6 +40,7 @@ class ParclLabsClient:
         self,
         api_key: str,
         api_url: str = api_base,
+        limit: Optional[int] = None,
         turbo_mode: bool = False,
         num_workers: Optional[int] = None,
     ):
