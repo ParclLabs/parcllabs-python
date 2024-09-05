@@ -1,10 +1,10 @@
-from parcllabs.services.parcllabs_service import ParclLabsService
-
-import json
 from collections import deque
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import json
 
 import pandas as pd
+
+from parcllabs.services.parcllabs_service import ParclLabsService
 
 
 class ParclLabsStreamingService(ParclLabsService):

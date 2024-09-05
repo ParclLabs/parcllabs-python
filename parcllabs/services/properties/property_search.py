@@ -1,10 +1,12 @@
+from typing import List
 from collections import deque
+
 import pandas as pd
 from alive_progress import alive_bar
-from typing import List
-from parcllabs.services.validators import Validators
+
 from parcllabs.common import VALID_PROPERTY_TYPES_UNIT_SEARCH, VALID_ENTITY_NAMES
-from parcllabs.services.streaming.parcl_labs_streaming_service import (
+from parcllabs.services.validators import Validators
+from parcllabs.services.streaming.parcllabs_streaming_service import (
     ParclLabsStreamingService,
 )
 

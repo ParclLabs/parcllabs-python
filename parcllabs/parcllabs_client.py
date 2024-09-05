@@ -1,3 +1,5 @@
+from typing import Dict, Any, Optional
+
 from parcllabs import api_base
 from parcllabs.services.search import SearchMarkets
 from parcllabs.services.parcllabs_service import ParclLabsService
@@ -5,7 +7,6 @@ from parcllabs.services.metrics.property_type_service import PropertyTypeService
 from parcllabs.services.metrics.portfolio_size_service import PortfolioSizeService
 from parcllabs.services.properties.property_events_service import PropertyEventsService
 from parcllabs.services.properties.property_search import PropertySearch
-from typing import Dict, Any, Optional
 
 
 class ServiceGroup:

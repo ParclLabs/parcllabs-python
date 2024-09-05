@@ -1,4 +1,4 @@
-from parcllabs.services.streaming.parcl_labs_streaming_service import (
+from parcllabs.services.streaming.parcllabs_streaming_service import (
     ParclLabsStreamingService,
 )
 import pytest

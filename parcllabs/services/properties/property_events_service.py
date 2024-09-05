@@ -1,9 +1,10 @@
 from collections import deque
 from typing import Any, Mapping, Optional, List
-import pandas as pd
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 from alive_progress import alive_bar
+
 from parcllabs.common import (
-    DEFAULT_LIMIT,
     VALID_EVENT_TYPES,
     VALID_ENTITY_NAMES,
     MAX_POST_LIMIT,
@@ -12,10 +13,9 @@ from parcllabs.services.data_utils import (
     safe_concat_and_format_dtypes,
 )
 from parcllabs.services.validators import Validators
-from parcllabs.services.streaming.parcl_labs_streaming_service import (
+from parcllabs.services.streaming.parcllabs_streaming_service import (
     ParclLabsStreamingService,
 )
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from parcllabs.exceptions import (
     NotFoundError,
 )  # Assuming this is the exception for a 404 error
