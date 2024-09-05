@@ -6,7 +6,11 @@ from collections import deque
 
 from requests.exceptions import RequestException
 from typing import Any, Mapping, Optional, List, Dict
-from parcllabs.common import DELETE_FROM_OUTPUT, DEFAULT_LIMIT_SMALL, DEFAULT_LIMIT_LARGE
+from parcllabs.common import (
+    DELETE_FROM_OUTPUT,
+    DEFAULT_LIMIT_SMALL,
+    DEFAULT_LIMIT_LARGE,
+)
 from parcllabs.exceptions import NotFoundError
 from parcllabs.services.validators import Validators
 from parcllabs.services.data_utils import safe_concat_and_format_dtypes
@@ -18,9 +22,7 @@ class ParclLabsService:
     Base class for working with data from the Parcl Labs API.
     """
 
-    def __init__(
-        self, url: str, client: Any, post_url: str = None
-    ) -> None:
+    def __init__(self, url: str, client: Any, post_url: str = None) -> None:
         self.url = url
         self.post_url = post_url
         self.client = client
@@ -239,7 +241,7 @@ class ParclLabsService:
         response,
         auto_paginate,
         original_params,
-        data=None, 
+        data=None,
         referring_method: str = "get",
     ):
 
@@ -257,7 +259,9 @@ class ParclLabsService:
             while result["links"].get("next") is not None:
                 next_url = result["links"]["next"]
                 if referring_method == "post":
-                    next_response = self._post(next_url, data=data, params=original_params)
+                    next_response = self._post(
+                        next_url, data=data, params=original_params
+                    )
                 else:
                     next_response = self._get(next_url, params=original_params)
                 next_response.raise_for_status()

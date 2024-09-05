@@ -21,9 +21,7 @@ class ServiceGroup:
         post_url: Optional[str] = None,
         alias: Optional[str] = None,
     ):
-        service = service_class(
-            url=url, post_url=post_url, client=self._client
-        )
+        service = service_class(url=url, post_url=post_url, client=self._client)
         setattr(self, name, service)
         self._services[name] = service
         if alias:

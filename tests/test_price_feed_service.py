@@ -87,7 +87,9 @@ class TestParclLabsService:
 
     def test_post(self, service):
         with patch.object(service, "_make_request") as mock_make_request:
-            service._post("https://api.example.com/test", params={}, data={"data": "test"})
+            service._post(
+                "https://api.example.com/test", params={}, data={"data": "test"}
+            )
             mock_make_request.assert_called_once_with(
                 "POST", "https://api.example.com/test", params={}, json={"data": "test"}
             )
@@ -131,10 +133,14 @@ class TestParclLabsService:
 
         mock_post.return_value = mock_next_response
 
-        result = service._process_and_paginate_response(mock_response, True, {}, {}, "post")
+        result = service._process_and_paginate_response(
+            mock_response, True, {}, {}, "post"
+        )
         assert result["items"] == [1, 2, 3, 4]
         assert service.client.estimated_session_credit_usage == 4
-        mock_post.assert_called_once_with("https://api.example.com/next", data={}, params={})
+        mock_post.assert_called_once_with(
+            "https://api.example.com/next", data={}, params={}
+        )
 
     @patch("parcllabs.services.parcllabs_service.ParclLabsService._get")
     def test_process_and_paginate_response_get(self, mock_get, service):
