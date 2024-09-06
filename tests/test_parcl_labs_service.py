@@ -13,9 +13,7 @@ class MockClient:
 @pytest.fixture
 def parcl_labs_service():
     client = MockClient()
-    return ParclLabsService(
-        url="https://api.example.com/{parcl_id}", client=client
-    )
+    return ParclLabsService(url="https://api.example.com/{parcl_id}", client=client)
 
 
 def test_get_headers(parcl_labs_service):

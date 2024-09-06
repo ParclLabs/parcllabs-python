@@ -30,7 +30,7 @@ jobs:
       - name: Run Lint 🧹
         run: |
           set -e
-          pipenv run make lint
+          pipenv run make lint-check
 
       - name: Run tests 🧪
         env:

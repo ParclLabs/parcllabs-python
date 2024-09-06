@@ -1,3 +1,7 @@
+### v1.6.3
+- Fix bug to enforce linting throughout the repository.
+- Minor code improvements
+
 ### v1.6.2
 - Fix bug where `limit` parameter was not being applied when `turbo_mode` was enabled.
 - Update handingling of `limit` parameter. If the `limit` parameter is greater than maximum allowed limit on the particular endpoint, the `limit` will automatically default to the maximum allowed value instead of throwing an error. 

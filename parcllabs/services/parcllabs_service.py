@@ -1,12 +1,17 @@
-import pandas as pd
-import requests
-import json
-import platform
-from collections import deque
-
-from requests.exceptions import RequestException
 from typing import Any, Mapping, Optional, List, Dict
-from parcllabs.common import DELETE_FROM_OUTPUT, DEFAULT_LIMIT_SMALL, DEFAULT_LIMIT_LARGE
+from collections import deque
+import json
+
+import requests
+from requests.exceptions import RequestException
+import platform
+import pandas as pd
+
+from parcllabs.common import (
+    DELETE_FROM_OUTPUT,
+    DEFAULT_LIMIT_SMALL,
+    DEFAULT_LIMIT_LARGE,
+)
 from parcllabs.exceptions import NotFoundError
 from parcllabs.services.validators import Validators
 from parcllabs.services.data_utils import safe_concat_and_format_dtypes
@@ -18,9 +23,7 @@ class ParclLabsService:
     Base class for working with data from the Parcl Labs API.
     """
 
-    def __init__(
-        self, url: str, client: Any, post_url: str = None
-    ) -> None:
+    def __init__(self, url: str, client: Any, post_url: str = None) -> None:
         self.url = url
         self.post_url = post_url
         self.client = client
@@ -239,7 +242,7 @@ class ParclLabsService:
         response,
         auto_paginate,
         original_params,
-        data=None, 
+        data=None,
         referring_method: str = "get",
     ):
 
@@ -257,7 +260,9 @@ class ParclLabsService:
             while result["links"].get("next") is not None:
                 next_url = result["links"]["next"]
                 if referring_method == "post":
-                    next_response = self._post(next_url, data=data, params=original_params)
+                    next_response = self._post(
+                        next_url, data=data, params=original_params
+                    )
                 else:
                     next_response = self._get(next_url, params=original_params)
                 next_response.raise_for_status()
@@ -308,7 +313,8 @@ class ParclLabsService:
 
         return self._as_pd_dataframe(data_container)
 
-    def sanitize_output(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    @staticmethod
+    def sanitize_output(data: Dict[str, Any]) -> Dict[str, Any]:
         return {k: v for k, v in data.items() if k not in DELETE_FROM_OUTPUT}
 
     def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> pd.DataFrame:
@@ -325,7 +331,8 @@ class ParclLabsService:
 
         return safe_concat_and_format_dtypes(data_container)
 
-    def error_handling(self, response: requests.Response) -> None:
+    @staticmethod
+    def error_handling(response: requests.Response) -> None:
         try:
             error_details = response.json()
             error_message = error_details.get("detail", "No detail provided by API")
@@ -349,7 +356,7 @@ class ParclLabsService:
         raise requests.RequestException(msg)
 
     @staticmethod
-    def _validate_limit(method, limit):
+    def _validate_limit(method: str, limit: int) -> int:
         if method.upper() == "POST":
             if limit > DEFAULT_LIMIT_LARGE:
                 print(
