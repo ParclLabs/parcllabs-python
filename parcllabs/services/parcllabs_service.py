@@ -1,8 +1,9 @@
 from typing import Any, Mapping, Optional, List, Dict
 from collections import deque
+import json
+
 import requests
 from requests.exceptions import RequestException
-import json
 import platform
 import pandas as pd
 
@@ -312,7 +313,8 @@ class ParclLabsService:
 
         return self._as_pd_dataframe(data_container)
 
-    def sanitize_output(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    @staticmethod
+    def sanitize_output(data: Dict[str, Any]) -> Dict[str, Any]:
         return {k: v for k, v in data.items() if k not in DELETE_FROM_OUTPUT}
 
     def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> pd.DataFrame:
@@ -329,7 +331,8 @@ class ParclLabsService:
 
         return safe_concat_and_format_dtypes(data_container)
 
-    def error_handling(self, response: requests.Response) -> None:
+    @staticmethod
+    def error_handling(response: requests.Response) -> None:
         try:
             error_details = response.json()
             error_message = error_details.get("detail", "No detail provided by API")
@@ -353,7 +356,7 @@ class ParclLabsService:
         raise requests.RequestException(msg)
 
     @staticmethod
-    def _validate_limit(method, limit):
+    def _validate_limit(method: str, limit: int) -> int:
         if method.upper() == "POST":
             if limit > DEFAULT_LIMIT_LARGE:
                 print(
