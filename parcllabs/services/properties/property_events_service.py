@@ -1,6 +1,7 @@
 from collections import deque
 from typing import Any, Mapping, Optional, List
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import pandas as pd
 
 from alive_progress import alive_bar
 
@@ -70,8 +71,8 @@ class PropertyEventsService(ParclLabsStreamingService):
             local_params["parcl_property_id"] = batch_ids
             try:
                 response = self._post(url=self.full_post_url, data=local_params)
-                data = response.text
-                return data  # Return raw data
+                data = response.json()
+                return data  # Return data as json
             except NotFoundError:
                 return None
             except Exception as e:
@@ -79,7 +80,7 @@ class PropertyEventsService(ParclLabsStreamingService):
                 return None
 
         all_data = deque()
-        with alive_bar(total_properties) as bar:
+        with alive_bar(total_properties, title="Processing Parcl Property IDs") as bar:
             with ThreadPoolExecutor(max_workers=self.client.num_workers) as executor:
                 futures = {
                     executor.submit(
@@ -90,14 +91,10 @@ class PropertyEventsService(ParclLabsStreamingService):
 
                 for future in as_completed(futures):
                     batch_result = future.result()
-                    if batch_result is not None:
-                        # Process streaming data here
-                        processed_data = self._process_streaming_data(
-                            batch_result, num_workers=1
-                        )
-                        all_data.extend(processed_data)
+                    if batch_result:
+                        batch_df = pd.DataFrame(batch_result)
+                        all_data.append(batch_df)
                     bar(futures[future])
 
         df = safe_concat_and_format_dtypes(all_data)
-
         return df

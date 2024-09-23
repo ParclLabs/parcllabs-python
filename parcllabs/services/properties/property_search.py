@@ -122,19 +122,10 @@ class PropertySearch(ParclLabsStreamingService):
             for parcl_id in parcl_ids:
                 params["parcl_id"] = parcl_id
                 response = self._get(url=self.full_url, params=params)
-                data = response.text
-                df_container = pd.DataFrame()
-
-                for df_batch in self._process_streaming_data(
-                    data, batch_size=10000, num_workers=self.client.num_workers
-                ):
-                    df_container = pd.concat(
-                        [df_container, df_batch], ignore_index=True
-                    )
-
+                data = response.json()
+                df_container = pd.DataFrame(data)
                 output_data.append(df_container)
                 bar()
-
         results = pd.concat(output_data).reset_index(drop=True)
         self.client.estimated_session_credit_usage += results.shape[0]
         return results
