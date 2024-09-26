@@ -1,3 +1,4 @@
+import json
 import pytest
 import pandas as pd
 from unittest.mock import MagicMock, patch
@@ -5,25 +6,31 @@ from parcllabs.services.properties.property_events_service import PropertyEvents
 from parcllabs.exceptions import NotFoundError
 
 # Sample data for testing
-sample_response = """
-{
-    "property": {
-        "parcl_property_id": "123456"
+sample_response = """[
+    {
+        "parcl_property_id": 173637433,
+        "event_date": "2015-08-13",
+        "event_type": "SALE",
+        "event_name": "SOLD",
+        "price": 268750,
+        "owner_occupied_flag": 1,
+        "new_construction_flag": 1,
+        "sale_index": 3,
+        "investor_flag": null,
+        "entity_owner_name": null
     },
-    "events": [
-        {
-            "event_type": "LISTED_FOR_SALE",
-            "date": "2023-01-01",
-            "price": 500000
-        },
-        {
-            "event_type": "SOLD",
-            "date": "2023-02-15",
-            "price": 495000
-        }
-    ]
-}
-"""
+    {
+        "parcl_property_id": 173637433,
+        "event_date": "2012-03-23",
+        "event_type": "SALE",
+        "event_name": "SOLD",
+        "price": null,
+        "owner_occupied_flag": 0,
+        "new_construction_flag": 1,
+        "sale_index": 2,
+        "investor_flag": null,
+        "entity_owner_name": null
+    }]"""
 
 
 @pytest.fixture
@@ -39,25 +46,10 @@ def property_events_service():
 @patch(
     "parcllabs.services.properties.property_events_service.PropertyEventsService._post"
 )
-@patch(
-    "parcllabs.services.properties.property_events_service.PropertyEventsService._process_streaming_data"
-)
-def test_retrieve_success(
-    mock_process_streaming_data, mock_post, property_events_service
-):
+def test_retrieve_success(mock_post, property_events_service):
     mock_response = MagicMock()
-    mock_response.text = sample_response
+    mock_response.json.return_value = json.loads(sample_response)
     mock_post.return_value = mock_response
-    mock_process_streaming_data.return_value = [
-        pd.DataFrame(
-            {
-                "parcl_property_id": ["123456", "123456"],
-                "event_type": ["LISTED_FOR_SALE", "SOLD"],
-                "date": ["2023-01-01", "2023-02-15"],
-                "price": [500000, 495000],
-            }
-        )
-    ]
 
     result = property_events_service.retrieve(parcl_property_ids=[123456])
 
@@ -65,7 +57,6 @@ def test_retrieve_success(
     assert len(result) == 2
     assert "parcl_property_id" in result.columns
     assert "event_type" in result.columns
-    assert "date" in result.columns
     assert "price" in result.columns
 
 
