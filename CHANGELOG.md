@@ -1,3 +1,6 @@
+### v1.6.4
+- Performance improvements to property endpoints
+
 ### v1.6.3
 - Fix bug to enforce linting throughout the repository.
 - Minor code improvements
