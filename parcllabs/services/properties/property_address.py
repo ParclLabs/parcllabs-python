@@ -31,11 +31,11 @@ class PropertyAddressSearch(ParclLabsService):
             DataFrame: A DataFrame containing the parcl_property_id and address information.
         """
 
+        required_params = ["address", "city", "state_abbreviation", "zip_code"]
         for address in addresses:
-            param = Validators.validate_field_exists(address, "address")
-            param = Validators.validate_field_exists(address, "city")
-            param = Validators.validate_field_exists(address, "state_abbreviation")
-            param = Validators.validate_field_exists(address, "zip_code")
+            for param in required_params:
+                param = Validators.validate_field_exists(address, param)
+
             param = Validators.validate_input_str_param(
                 param=address.get("state_abbreviation"),
                 param_name="state_abbreviation",
