@@ -33,8 +33,7 @@ class PropertyAddressSearch(ParclLabsService):
 
         required_params = ["address", "city", "state_abbreviation", "zip_code"]
         for address in addresses:
-            for param in required_params:
-                param = Validators.validate_field_exists(address, param)
+            param = Validators.validate_field_exists(address, required_params)
 
             param = Validators.validate_input_str_param(
                 param=address.get("state_abbreviation"),
