@@ -1,25 +1,25 @@
 ### v1.7.0
 - Add support for `property_address.search` endpoint. This endpoint allows users to pass in a list of addresses and get the corresponding `parcl_property_id` back.
 ```python
-    addresses = client.property_address.search.retrieve(
-        addresses=[
-            {
-                "address": "123 Main St",
-                "city": "New York",
-                "state_abbreviation": "NY",
-                "zip_code": "10001",
-                "source_id": "123",
-            },
-            {
-                "address": "456 Main St",
-                "unit": "Apt 101",
-                "city": "Charlotte",
-                "state_abbreviation": "NC",
-                "zip_code": "28226",
-                "source_id": "456",
-            },
-        ]
-    )
+addresses = client.property_address.search.retrieve(
+    addresses=[
+        {
+            "address": "123 Main St",
+            "city": "New York",
+            "state_abbreviation": "NY",
+            "zip_code": "10001",
+            "source_id": "123",
+        },
+        {
+            "address": "6251 coldwater canyon ave",
+            "unit": "unit 311",
+            "city": "north hollywood",
+            "state_abbreviation": "CA",
+            "zip_code": "91606",
+            "source_id": "456",
+        },
+    ]
+)
 ```
 
 ### v1.6.4
