@@ -85,3 +85,16 @@ class Validators:
         if isinstance(parcl_ids, int):
             parcl_ids = [parcl_ids]
         return parcl_ids
+
+
+    @staticmethod
+    def validate_us_zip_code(zip_code: str) -> str:
+        """
+        Validates the US zip code string and returns it in the expected format.
+        Raises ValueError if the zip code is invalid or not in the expected format.
+        """
+        if zip_code:
+            zip_code = zip_code.strip()
+            if not zip_code.isdigit() or len(zip_code) != 5:
+                raise ValueError(f"Zip code {zip_code} is not a valid 5-digit US zip code.")
+        return zip_code
