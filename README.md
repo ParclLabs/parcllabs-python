@@ -460,6 +460,32 @@ rental_events = client.property.events.retrieve(
 )
 ```
 
+
+#### Property Address Search 
+Pass in a list of addresses -- `address, unit, city, state_abbreviation, zip_code, source_id` -- and receive the associated `parcl_property_id`, if there is a match. `unit` and `source_id` are optional fields.
+
+```python
+    addresses = client.property_address.search.retrieve(
+        addresses=[
+            {
+                "address": "123 Main St",
+                "city": "New York",
+                "state_abbreviation": "NY",
+                "zip_code": "10001",
+                "source_id": "123",
+            },
+            {
+                "address": "456 Main St",
+                "unit": "Apt 101",
+                "city": "Charlotte",
+                "state_abbreviation": "NC",
+                "zip_code": "28226",
+                "source_id": "456",
+            },
+        ]
+    )
+```
+
 ##### Turbo Mode
 Turbo mode is a premium feature that allows you to retrieve data faster. To enable turbo mode, set the `turbo_mode` parameter to `True` when creating an instance of the `ParclLabsClient` class.
 
