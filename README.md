@@ -475,11 +475,11 @@ addresses = client.property_address.search.retrieve(
             "source_id": "123",
         },
         {
-            "address": "456 Main St",
-            "unit": "Apt 101",
-            "city": "Charlotte",
-            "state_abbreviation": "NC",
-            "zip_code": "28226",
+            "address": "6251 coldwater canyon ave",
+            "unit": "unit 311",
+            "city": "north hollywood",
+            "state_abbreviation": "CA",
+            "zip_code": "91606",
             "source_id": "456",
         },
     ]
