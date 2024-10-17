@@ -102,8 +102,8 @@ class Validators:
         """
         Validates that the required fields exist in the provided dictionary.
         """
-        missing_fields = [field for field in fields if field not in data]
+        missing_fields = [field for field in fields if field not in data.keys()]
         if missing_fields:
             raise ValueError(
-                f"Missing required fields: {', '.join(missing_fields)}. Provided data: {data}"
+                f"Missing required fields: {', '.join(missing_fields)}. Provided request: {data}"
             )
