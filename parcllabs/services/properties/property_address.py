@@ -32,16 +32,17 @@ class PropertyAddressSearch(ParclLabsService):
         """
 
         for address in addresses:
+            param = Validators.validate_field_exists(address, "address")
+            param = Validators.validate_field_exists(address, "city")
+            param = Validators.validate_field_exists(address, "state_abbreviation")
+            param = Validators.validate_field_exists(address, "zip_code")
             param = Validators.validate_input_str_param(
-                param=address["state_abbreviation"],
+                param=address.get("state_abbreviation"),
                 param_name="state_abbreviation",
                 valid_values=VALID_US_STATE_ABBREV,
                 params_dict={},
             )
-
-            param = Validators.validate_us_zip_code(
-                zip_code=address["zip_code"]
-            )
+            param = Validators.validate_us_zip_code(zip_code=address.get("zip_code"))
 
         response = self._post(url=self.full_url, data=addresses)
         resp_data = response.json()

@@ -34,13 +34,16 @@ SAMPLE_RESPONSE = """[
   }
 ]"""
 
+
 @pytest.fixture
 def property_events_service():
     client_mock = MagicMock()
     client_mock.api_url = "https://api.parcllabs.com"
     client_mock.api_key = "test_api_key"
     client_mock.num_workers = 1
-    service = PropertyAddressSearch(client=client_mock, url="/v1/property/search_address")
+    service = PropertyAddressSearch(
+        client=client_mock, url="/v1/property/search_address"
+    )
     return service
 
 
