@@ -1,3 +1,6 @@
+### v1.8.0
+- Add support for 3 new institutional owners: MAYMONT_HOMES, SFR3, VINEBROOK_HOMES for `property.search` and `property.events`
+
 ### v1.7.0
 - Add support for `property_address.search` endpoint. This endpoint allows users to pass in a list of addresses and get the corresponding `parcl_property_id` back.
 ```python
