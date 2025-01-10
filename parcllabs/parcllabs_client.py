@@ -52,6 +52,7 @@ class ParclLabsClient:
         self.api_key = api_key
         self.api_url = api_url
         self.estimated_session_credit_usage = 0
+        self.remaining_credits = 0
         self.num_workers = num_workers
         self.turbo_mode = turbo_mode
 
@@ -287,3 +288,9 @@ class ParclLabsClient:
         }
         self._add_services_to_group(group, services)
         return group
+
+    def account(self):
+        return dict(
+            estimated_session_credit_usage=self.estimated_session_credit_usage,
+            remaining_credits=self.remaining_credits,
+        )

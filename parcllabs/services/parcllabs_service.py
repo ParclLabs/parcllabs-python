@@ -270,7 +270,6 @@ class ParclLabsService:
                 all_items.extend(result["items"])
             result["items"] = all_items
 
-        self.client.estimated_session_credit_usage += len(result.get("items", []))
         return result
 
     def retrieve(
@@ -313,6 +312,16 @@ class ParclLabsService:
 
         return self._as_pd_dataframe(data_container)
 
+    def _update_account_info(self, account_info: dict):
+        """
+        Update the account info for the client.
+        """
+        if account_info:
+            self.client.estimated_session_credit_usage += account_info.get(
+                "est_credits_used", 0
+            )
+            self.client.remaining_credits = account_info.get("est_remaining_credits", 0)
+
     @staticmethod
     def sanitize_output(data: Dict[str, Any]) -> Dict[str, Any]:
         return {k: v for k, v in data.items() if k not in DELETE_FROM_OUTPUT}
@@ -322,12 +331,14 @@ class ParclLabsService:
         for results in data:
             if results is None:
                 continue
+            account_info = results.get("account")
             results = self.sanitize_output(results)
             meta_fields = [k for k in results.keys() if k != "items"]
             df = pd.json_normalize(results, record_path="items", meta=meta_fields)
             updated_cols_names = [c.replace(".", "_") for c in df.columns.tolist()]
             df.columns = updated_cols_names
             data_container.append(df)
+            self._update_account_info(account_info)
 
         return safe_concat_and_format_dtypes(data_container)
 

@@ -23,7 +23,7 @@ VALID_PORTFOLIO_SIZES = [
 ID_COLUMNS = ["parcl_id", "parcl_property_id"]
 DATE_COLUMNS = ["date", "event_date"]
 
-DELETE_FROM_OUTPUT = ["total", "limit", "offset", "links"]
+DELETE_FROM_OUTPUT = ["total", "limit", "offset", "links", "account"]
 
 DEFAULT_LIMIT = 12
 MAX_POST_LIMIT = 1000

@@ -72,7 +72,8 @@ class PropertyEventsService(ParclLabsStreamingService):
             try:
                 response = self._post(url=self.full_post_url, data=local_params)
                 data = response.json()
-                return data  # Return data as json
+                self._update_account_info(data.get("account"))
+                return data.get("items")  # Return data as json
             except NotFoundError:
                 return None
             except Exception as e:

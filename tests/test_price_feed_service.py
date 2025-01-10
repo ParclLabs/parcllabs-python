@@ -4,7 +4,6 @@ from parcllabs.services.streaming.parcllabs_streaming_service import (
 import pytest
 import pandas as pd
 import requests
-import json
 from unittest.mock import Mock, patch
 from parcllabs.services.parcllabs_service import (
     ParclLabsService,
@@ -137,7 +136,6 @@ class TestParclLabsService:
             mock_response, True, {}, {}, "post"
         )
         assert result["items"] == [1, 2, 3, 4]
-        assert service.client.estimated_session_credit_usage == 4
         mock_post.assert_called_once_with(
             "https://api.example.com/next", data={}, params={}
         )
@@ -159,7 +157,6 @@ class TestParclLabsService:
 
         result = service._process_and_paginate_response(mock_response, True, {}, "get")
         assert result["items"] == [1, 2, 3, 4]
-        assert service.client.estimated_session_credit_usage == 4
         mock_get.assert_called_once_with("https://api.example.com/next", params={})
 
     def test_retrieve(self, service):
