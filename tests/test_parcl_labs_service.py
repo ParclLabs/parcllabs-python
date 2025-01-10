@@ -8,8 +8,7 @@ class MockClient:
     def __init__(self):
         self.api_url = "https://api.example.com/"
         self.api_key = "test_api_key"
-        self.estimated_session_credit_usage = 0
-        self.remaining_credits = 0
+        self.account_info = {"est_session_credits_used": 0}
 
 
 @pytest.fixture
@@ -46,5 +45,5 @@ def test_as_pd_dataframe(parcl_labs_service):
 def test_update_account_info(parcl_labs_service):
     data = {"est_credits_used": 1, "est_remaining_credits": 9999}
     parcl_labs_service._update_account_info(data)
-    assert parcl_labs_service.client.estimated_session_credit_usage == 1
-    assert parcl_labs_service.client.remaining_credits == 9999
+    assert parcl_labs_service.client.account_info["est_session_credits_used"] == 1
+    assert parcl_labs_service.client.account_info["est_remaining_credits"] == 9999

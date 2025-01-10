@@ -317,10 +317,13 @@ class ParclLabsService:
         Update the account info for the client.
         """
         if account_info:
-            self.client.estimated_session_credit_usage += account_info.get(
-                "est_credits_used", 0
+            current_session_credits = self.client.account_info.get(
+                "est_session_credits_used", 0
             )
-            self.client.remaining_credits = account_info.get("est_remaining_credits", 0)
+            account_info["est_session_credits_used"] = (
+                current_session_credits + account_info.pop("est_credits_used", 0)
+            )
+            self.client.account_info = account_info
 
     @staticmethod
     def sanitize_output(data: Dict[str, Any]) -> Dict[str, Any]:
