@@ -494,3 +494,11 @@ client = ParclLabsClient(api_key, turbo_mode=True)
 ```
 
 This will enable turbo mode for all subsequent API calls which is a smart switch to route API calls through more efficient, premium endpoints designed for bulk data retrieval.
+
+
+##### Account Info
+Monitor your API usage and quota limits by calling the `account()` method in the `ParclLabsClient` class.
+```python
+client = ParclLabsClient(api_key)
+account_info = client.account()
+```
