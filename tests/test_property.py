@@ -6,7 +6,8 @@ from parcllabs.services.properties.property_events_service import PropertyEvents
 from parcllabs.exceptions import NotFoundError
 
 # Sample data for testing
-sample_response = """[
+sample_response = """{
+    "items": [
     {
         "parcl_property_id": 173637433,
         "event_date": "2015-08-13",
@@ -30,7 +31,8 @@ sample_response = """[
         "sale_index": 2,
         "investor_flag": null,
         "entity_owner_name": null
-    }]"""
+    }]
+}"""
 
 
 @pytest.fixture

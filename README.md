@@ -51,7 +51,6 @@ You can install the package via pip:
 pip install -U parcllabs
 ```
 
-
 ### Step 3. Usage
 
 The `ParclLabsClient` class is the entry point to the Parcl Labs API. You can use the client to access methods that allow you to retrieve and analyze data from the Parcl Labs API. You'll need to pass in your API key when you create an instance of the `ParclLabsClient` class.
@@ -398,7 +397,7 @@ invitation_homes_tampa_units = client.property.search.retrieve(
     parcl_ids=[2900417],
     property_type='single_family',
     # square_footage_min=1000,
-    # quare_footage_max=2500,
+    # square_footage_max=2500,
     # bedrooms_min=2,
     # bedrooms_max=5,
     # bathrooms_min=2,
@@ -494,3 +493,11 @@ client = ParclLabsClient(api_key, turbo_mode=True)
 ```
 
 This will enable turbo mode for all subsequent API calls which is a smart switch to route API calls through more efficient, premium endpoints designed for bulk data retrieval.
+
+
+##### Account Info
+Monitor your API usage and quota limits by calling the `account()` method in the `ParclLabsClient` class.
+```python
+client = ParclLabsClient(api_key)
+account_info = client.account()
+```

@@ -44,7 +44,7 @@ class PropertyAddressSearch(ParclLabsService):
             param = Validators.validate_us_zip_code(zip_code=address.get("zip_code"))
 
         response = self._post(url=self.full_url, data=addresses)
-        resp_data = response.json()
-        results = pd.DataFrame(resp_data)
-        self.client.estimated_session_credit_usage += results.shape[0]
-        return results
+        results = response.json()
+        data = pd.DataFrame(results.get("items"))
+        self._update_account_info(results.get("account"))
+        return data

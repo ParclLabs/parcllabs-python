@@ -123,9 +123,9 @@ class PropertySearch(ParclLabsStreamingService):
                 params["parcl_id"] = parcl_id
                 response = self._get(url=self.full_url, params=params)
                 data = response.json()
-                df_container = pd.DataFrame(data)
+                df_container = pd.DataFrame(data.get("items"))
+                self._update_account_info(data.get("account"))
                 output_data.append(df_container)
                 bar()
         results = pd.concat(output_data).reset_index(drop=True)
-        self.client.estimated_session_credit_usage += results.shape[0]
         return results

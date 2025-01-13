@@ -1,3 +1,7 @@
+### v1.9.0
+- Add support for response schema changes for property endpoints.
+- New `remaining_credits` and `estimated_session_credit_usage` attributes to `ParclLabsClient` to track credit usage. Accessible via `client.account()` method.
+
 ### v1.8.0
 - Add support for 3 new institutional owners: MAYMONT_HOMES, SFR3, VINEBROOK_HOMES for `property.search` and `property.events`
 

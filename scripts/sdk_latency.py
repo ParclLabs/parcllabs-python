@@ -94,6 +94,10 @@ def main():
         "--env", type=str, default=ENV, help="Environment to use for the API calls"
     )
 
+    parser.add_argument(
+        "--num_workers", type=int, default=10, help="Number of workers to use"
+    )
+
     args = parser.parse_args()
 
     API_KEY = os.getenv("PARCL_LABS_API_KEY")
@@ -101,10 +105,15 @@ def main():
     if args.env == "dev":
         API_KEY = os.getenv("PARCL_LABS_DEV_API_KEY")
         client = ParclLabsClient(
-            api_key=API_KEY, api_url=os.getenv("PARCL_LABS_DEV_API_URL"), limit=100
+            api_key=API_KEY,
+            api_url=os.getenv("PARCL_LABS_DEV_API_URL"),
+            limit=100,
+            num_workers=args.num_workers,
         )
     else:
-        client = ParclLabsClient(api_key=API_KEY, limit=100)
+        client = ParclLabsClient(
+            api_key=API_KEY, limit=100, num_workers=args.num_workers
+        )
 
     logger.info(f"Parcl Labs Client Version: {parcllabs.__version__}")
 
@@ -121,6 +130,15 @@ def main():
         limit=10,
     )
     top_market_parcl_ids = markets["parcl_id"].tolist()
+
+    profile_api_call(
+        "Search by Property Type",
+        client.property.search,
+        output_file,
+        parcl_ids=[2900128],
+        property_type="single_family",
+        # current_entity_owner_name="invitation_homes",
+    )
 
     profile_api_call(
         "Search by Operators",
@@ -175,222 +193,222 @@ def main():
         parcl_property_ids=parcl_property_id_list,
     )
 
-    pricefeed_markets = profile_api_call(
-        "Retrieve Top 2 Price Feed Markets",
-        client.search.markets,
-        output_file,
-        sort_by="PARCL_EXCHANGE_MARKET",
-        sort_order="DESC",
-        limit=2,
-    )
-    pricefeed_ids = pricefeed_markets["parcl_id"].tolist()
+    # pricefeed_markets = profile_api_call(
+    #     "Retrieve Top 2 Price Feed Markets",
+    #     client.search.markets,
+    #     output_file,
+    #     sort_by="PARCL_EXCHANGE_MARKET",
+    #     sort_order="DESC",
+    #     limit=2,
+    # )
+    # pricefeed_ids = pricefeed_markets["parcl_id"].tolist()
 
-    start_date = "2024-06-01"
-    end_date = "2024-06-05"
+    # start_date = "2024-06-01"
+    # end_date = "2024-06-05"
 
-    profile_api_call(
-        "Retrieve Price Feeds",
-        client.price_feed.price_feed,
-        output_file,
-        parcl_ids=pricefeed_ids,
-        start_date=start_date,
-        end_date=end_date,
-    )
+    # profile_api_call(
+    #     "Retrieve Price Feeds",
+    #     client.price_feed.price_feed,
+    #     output_file,
+    #     parcl_ids=pricefeed_ids,
+    #     start_date=start_date,
+    #     end_date=end_date,
+    # )
 
-    profile_api_call(
-        "Retrieve Rental Price Feeds",
-        client.price_feed.rental_price_feed,
-        output_file,
-        parcl_ids=pricefeed_ids,
-        start_date=start_date,
-        end_date=end_date,
-    )
+    # profile_api_call(
+    #     "Retrieve Rental Price Feeds",
+    #     client.price_feed.rental_price_feed,
+    #     output_file,
+    #     parcl_ids=pricefeed_ids,
+    #     start_date=start_date,
+    #     end_date=end_date,
+    # )
 
-    profile_api_call(
-        "Retrieve Price Feed Volatility",
-        client.price_feed.volatility,
-        output_file,
-        parcl_ids=pricefeed_ids,
-        start_date=start_date,
-        end_date=end_date,
-    )
+    # profile_api_call(
+    #     "Retrieve Price Feed Volatility",
+    #     client.price_feed.volatility,
+    #     output_file,
+    #     parcl_ids=pricefeed_ids,
+    #     start_date=start_date,
+    #     end_date=end_date,
+    # )
 
-    start_date = "2024-04-01"
-    end_date = "2024-04-01"
+    # start_date = "2024-04-01"
+    # end_date = "2024-04-01"
 
-    profile_api_call(
-        "Retrieve Rental Units Concentration",
-        client.rental_market_metrics.rental_units_concentration,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-        start_date=start_date,
-        end_date=end_date,
-    )
+    # profile_api_call(
+    #     "Retrieve Rental Units Concentration",
+    #     client.rental_market_metrics.rental_units_concentration,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    #     start_date=start_date,
+    #     end_date=end_date,
+    # )
 
-    profile_api_call(
-        "Retrieve Gross Yield",
-        client.rental_market_metrics.gross_yield,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-        start_date=start_date,
-        end_date=end_date,
-    )
+    # profile_api_call(
+    #     "Retrieve Gross Yield",
+    #     client.rental_market_metrics.gross_yield,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    #     start_date=start_date,
+    #     end_date=end_date,
+    # )
 
-    profile_api_call(
-        "Retrieve New Listings for Rent Rolling Counts",
-        client.rental_market_metrics.new_listings_for_rent_rolling_counts,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-    )
+    # profile_api_call(
+    #     "Retrieve New Listings for Rent Rolling Counts",
+    #     client.rental_market_metrics.new_listings_for_rent_rolling_counts,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    # )
 
-    profile_api_call(
-        "Retrieve New Listings for Sale Rolling Counts",
-        client.for_sale_market_metrics.new_listings_rolling_counts,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-        start_date=start_date,
-        end_date=end_date,
-        property_type="single_family",
-    )
+    # profile_api_call(
+    #     "Retrieve New Listings for Sale Rolling Counts",
+    #     client.for_sale_market_metrics.new_listings_rolling_counts,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    #     start_date=start_date,
+    #     end_date=end_date,
+    #     property_type="single_family",
+    # )
 
-    profile_api_call(
-        "Retrieve For Sale Inventory",
-        client.for_sale_market_metrics.for_sale_inventory,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-        start_date=start_date,
-        end_date=end_date,
-    )
+    # profile_api_call(
+    #     "Retrieve For Sale Inventory",
+    #     client.for_sale_market_metrics.for_sale_inventory,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    #     start_date=start_date,
+    #     end_date=end_date,
+    # )
 
-    profile_api_call(
-        "Retrieve For Sale Inventory Price Changes",
-        client.for_sale_market_metrics.for_sale_inventory_price_changes,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-        start_date=start_date,
-        end_date=end_date,
-    )
+    # profile_api_call(
+    #     "Retrieve For Sale Inventory Price Changes",
+    #     client.for_sale_market_metrics.for_sale_inventory_price_changes,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    #     start_date=start_date,
+    #     end_date=end_date,
+    # )
 
-    profile_api_call(
-        "Retrieve Housing Event Prices",
-        client.market_metrics.housing_event_prices,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-        start_date=start_date,
-        end_date=end_date,
-    )
+    # profile_api_call(
+    #     "Retrieve Housing Event Prices",
+    #     client.market_metrics.housing_event_prices,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    #     start_date=start_date,
+    #     end_date=end_date,
+    # )
 
-    profile_api_call(
-        "Retrieve Housing Stock",
-        client.market_metrics.housing_stock,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-        start_date=start_date,
-        end_date=end_date,
-    )
+    # profile_api_call(
+    #     "Retrieve Housing Stock",
+    #     client.market_metrics.housing_stock,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    #     start_date=start_date,
+    #     end_date=end_date,
+    # )
 
-    profile_api_call(
-        "Retrieve Housing Event Counts",
-        client.market_metrics.housing_event_counts,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-        start_date=start_date,
-        end_date=end_date,
-    )
+    # profile_api_call(
+    #     "Retrieve Housing Event Counts",
+    #     client.market_metrics.housing_event_counts,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    #     start_date=start_date,
+    #     end_date=end_date,
+    # )
 
-    profile_api_call(
-        "Retrieve Housing Event Property Attributes",
-        client.market_metrics.housing_event_property_attributes,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-        start_date=start_date,
-        end_date=end_date,
-    )
+    # profile_api_call(
+    #     "Retrieve Housing Event Property Attributes",
+    #     client.market_metrics.housing_event_property_attributes,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    #     start_date=start_date,
+    #     end_date=end_date,
+    # )
 
-    profile_api_call(
-        "Retrieve All Cash Transactions",
-        client.market_metrics.all_cash,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-        start_date=start_date,
-        end_date=end_date,
-    )
+    # profile_api_call(
+    #     "Retrieve All Cash Transactions",
+    #     client.market_metrics.all_cash,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    #     start_date=start_date,
+    #     end_date=end_date,
+    # )
 
-    profile_api_call(
-        "Retrieve New Construction Housing Event Prices",
-        client.new_construction_metrics.housing_event_prices,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-        start_date=start_date,
-        end_date=end_date,
-    )
+    # profile_api_call(
+    #     "Retrieve New Construction Housing Event Prices",
+    #     client.new_construction_metrics.housing_event_prices,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    #     start_date=start_date,
+    #     end_date=end_date,
+    # )
 
-    profile_api_call(
-        "Retrieve New Construction Housing Event Counts",
-        client.new_construction_metrics.housing_event_counts,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-        start_date=start_date,
-        end_date=end_date,
-    )
+    # profile_api_call(
+    #     "Retrieve New Construction Housing Event Counts",
+    #     client.new_construction_metrics.housing_event_counts,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    #     start_date=start_date,
+    #     end_date=end_date,
+    # )
 
-    profile_api_call(
-        "Retrieve Housing Stock Ownership",
-        client.investor_metrics.housing_stock_ownership,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-        start_date=start_date,
-        end_date=end_date,
-    )
+    # profile_api_call(
+    #     "Retrieve Housing Stock Ownership",
+    #     client.investor_metrics.housing_stock_ownership,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    #     start_date=start_date,
+    #     end_date=end_date,
+    # )
 
-    profile_api_call(
-        "Retrieve New Listings for Sale Rolling Counts by Portfolio Size",
-        client.investor_metrics.new_listings_for_sale_rolling_counts,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-        start_date=start_date,
-        end_date=end_date,
-    )
+    # profile_api_call(
+    #     "Retrieve New Listings for Sale Rolling Counts by Portfolio Size",
+    #     client.investor_metrics.new_listings_for_sale_rolling_counts,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    #     start_date=start_date,
+    #     end_date=end_date,
+    # )
 
-    profile_api_call(
-        "Retrieve Purchase to Sale Ratio",
-        client.investor_metrics.purchase_to_sale_ratio,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-        start_date=start_date,
-        end_date=end_date,
-    )
+    # profile_api_call(
+    #     "Retrieve Purchase to Sale Ratio",
+    #     client.investor_metrics.purchase_to_sale_ratio,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    #     start_date=start_date,
+    #     end_date=end_date,
+    # )
 
-    profile_api_call(
-        "Retrieve Portfolio Metrics - Housing Stock Ownership",
-        client.portfolio_metrics.sf_housing_stock_ownership,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-    )
+    # profile_api_call(
+    #     "Retrieve Portfolio Metrics - Housing Stock Ownership",
+    #     client.portfolio_metrics.sf_housing_stock_ownership,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    # )
 
-    profile_api_call(
-        "Retrieve Portfolio Metrics - New Listings for Sale",
-        client.portfolio_metrics.sf_new_listings_for_sale_rolling_counts,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-        portfolio_size="PORTFOLIO_1000_PLUS",
-    )
+    # profile_api_call(
+    #     "Retrieve Portfolio Metrics - New Listings for Sale",
+    #     client.portfolio_metrics.sf_new_listings_for_sale_rolling_counts,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    #     portfolio_size="PORTFOLIO_1000_PLUS",
+    # )
 
-    profile_api_call(
-        "Retrieve Portfolio Metrics - Housing Event Counts",
-        client.portfolio_metrics.sf_housing_event_counts,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-        portfolio_size="PORTFOLIO_1000_PLUS",
-    )
+    # profile_api_call(
+    #     "Retrieve Portfolio Metrics - Housing Event Counts",
+    #     client.portfolio_metrics.sf_housing_event_counts,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    #     portfolio_size="PORTFOLIO_1000_PLUS",
+    # )
 
-    profile_api_call(
-        "Retrieve Portfolio Metrics - New Listings for Rent",
-        client.portfolio_metrics.sf_new_listings_for_rent_rolling_counts,
-        output_file,
-        parcl_ids=top_market_parcl_ids,
-        portfolio_size="PORTFOLIO_1000_PLUS",
-    )
+    # profile_api_call(
+    #     "Retrieve Portfolio Metrics - New Listings for Rent",
+    #     client.portfolio_metrics.sf_new_listings_for_rent_rolling_counts,
+    #     output_file,
+    #     parcl_ids=top_market_parcl_ids,
+    #     portfolio_size="PORTFOLIO_1000_PLUS",
+    # )
 
     # Logging estimated credits used
     credits_used = client.estimated_session_credit_usage
