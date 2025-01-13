@@ -51,7 +51,6 @@ You can install the package via pip:
 pip install -U parcllabs
 ```
 
-
 ### Step 3. Usage
 
 The `ParclLabsClient` class is the entry point to the Parcl Labs API. You can use the client to access methods that allow you to retrieve and analyze data from the Parcl Labs API. You'll need to pass in your API key when you create an instance of the `ParclLabsClient` class.
