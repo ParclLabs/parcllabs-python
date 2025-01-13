@@ -320,9 +320,9 @@ class ParclLabsService:
             current_session_credits = self.client.account_info.get(
                 "est_session_credits_used", 0
             )
-            account_info[
-                "est_session_credits_used"
-            ] = current_session_credits + account_info.pop("est_credits_used", 0)
+            account_info["est_session_credits_used"] = (
+                current_session_credits + account_info.pop("est_credits_used", 0)
+            )
             self.client.account_info = account_info
 
     @staticmethod
