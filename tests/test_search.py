@@ -18,6 +18,7 @@ def search_service():
     client_mock = MagicMock()
     client_mock.api_url = "https://api.parcllabs.com"
     client_mock.api_key = "test_api_key"
+    client_mock.limit = 100
     service = SearchMarkets(client=client_mock, url="/v1/search/markets")
     return service
 

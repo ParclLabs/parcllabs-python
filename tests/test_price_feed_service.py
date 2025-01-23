@@ -102,14 +102,16 @@ class TestParclLabsService:
 
     def test_fetch_get(self, service):
         with patch.object(service, "_fetch_get") as mock_fetch_get:
-            service._fetch([1], {"param": "test"})
+            params = {"param": "test", "limit": 100}
+            service._fetch([1], params)
             mock_fetch_get.assert_called_once()
 
     def test_fetch_post(self, service):
         service.client.turbo_mode = True
         service.full_post_url = "https://api.example.com/test_post"
         with patch.object(service, "_fetch_post") as mock_fetch_post:
-            service._fetch([1, 2], {"param": "test"})
+            params = {"param": "test", "limit": 100}
+            service._fetch([1, 2], params)
             mock_fetch_post.assert_called_once()
 
     def test_fetch_get_many_parcl_ids(self, service):
