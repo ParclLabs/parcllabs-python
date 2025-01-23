@@ -53,6 +53,7 @@ class ParclLabsClient:
         self.api_url = api_url
         self.account_info = {"est_session_credits_used": 0}
         self.num_workers = num_workers
+        self.limit = limit
         self.turbo_mode = turbo_mode
 
         self._initialize_services()
