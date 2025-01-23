@@ -145,24 +145,23 @@ class ParclLabsService:
         auto_paginate: bool = False,
     ):
         """
-        Fetch data for given Parcl IDs with specified parameters.
-
         This method handles the fetching of data based on the provided Parcl IDs and parameters.
         It supports both GET and POST requests, depending on the client's configuration and the number of Parcl IDs.
-
         Args:
             parcl_ids (List[int]): A list of Parcl IDs to fetch data for.
             params (Optional[Mapping[str, Any]]): Additional parameters for the request.
                 If not provided or None, no additional parameters will be used.
             auto_paginate (bool, optional): Whether to automatically handle pagination.
                 Defaults to False.
-
         Returns:
             The result of the fetch operation. The exact return type depends on the specific
             fetch method called (_fetch_post, _fetch_get, or _fetch_get_many_parcl_ids).
         """
+        params = self._clean_params(params) if params else {}
 
-        params = self._clean_params(params)
+        # Use client's default limit if no limit specified in params
+        if "limit" not in params or params["limit"] is None:
+            params["limit"] = self.client.limit
 
         if self.client.turbo_mode and self.full_post_url:
             # convert the list of parcl_ids into post body params, formatted

@@ -42,7 +42,6 @@ class SearchMarkets(ParclLabsService):
         Retrieve parcl_id and metadata for geographic markets in the Parcl Labs API.
 
         Args:
-
             query (str, optional): The search query to filter results by.
             location_type (str, optional): The location type to filter results by.
             region (str, optional): The region to filter results by.
@@ -57,11 +56,10 @@ class SearchMarkets(ParclLabsService):
             auto_paginate (bool, optional): Automatically paginate through the results.
 
         Returns:
-
             Any: The JSON response as a pandas DataFrame.
         """
 
-        params = {}
+        params = params or {}
 
         params = Validators.validate_input_str_param(
             param=location_type,
@@ -116,6 +114,8 @@ class SearchMarkets(ParclLabsService):
 
         if limit:
             params["limit"] = self._validate_limit("GET", limit)
+        elif self.client.limit:
+            params["limit"] = self._validate_limit("GET", self.client.limit)
 
         results = self._fetch_get(
             url=self.full_url, params=params, auto_paginate=auto_paginate
