@@ -1,3 +1,6 @@
+### v1.10.0
+- Add support for new record_added_date and record_updated_date filters for `property.search` and `property.events` endpoints.
+
 ### v1.9.0
 - Add support for response schema changes for property endpoints.
 - New `remaining_credits` and `estimated_session_credit_usage` attributes to `ParclLabsClient` to track credit usage. Accessible via `client.account()` method.
