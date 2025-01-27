@@ -38,6 +38,8 @@ class PropertySearch(ParclLabsStreamingService):
         current_new_construction_flag: bool = None,
         current_owner_occupied_flag: bool = None,
         current_investor_owned_flag: bool = None,
+        record_added_date_start: str = None,
+        record_added_date_end: str = None,
     ):
         params = {}
 
@@ -114,6 +116,14 @@ class PropertySearch(ParclLabsStreamingService):
 
         if square_footage_min:
             params["square_footage_min"] = square_footage_min
+
+        if record_added_date_start:
+            record_added_date_start = Validators.validate_date(record_added_date_start)
+            params["record_added_date_start"] = record_added_date_start
+
+        if record_added_date_end:
+            record_added_date_end = Validators.validate_date(record_added_date_end)
+            params["record_added_date_end"] = record_added_date_end
 
         output_data = deque()
         total_parcl_ids = len(parcl_ids)

@@ -37,6 +37,8 @@ class PropertyEventsService(ParclLabsStreamingService):
         start_date: str = None,
         end_date: str = None,
         entity_owner_name: str = None,
+        record_updated_date_start: str = None,
+        record_updated_date_end: str = None,
         params: Optional[Mapping[str, Any]] = {},
     ):
         """
@@ -62,6 +64,16 @@ class PropertyEventsService(ParclLabsStreamingService):
 
         if end_date:
             params["end_date"] = end_date
+
+        if record_updated_date_start:
+            record_updated_date_start = Validators.validate_date(
+                record_updated_date_start
+            )
+            params["record_updated_date_start"] = record_updated_date_start
+
+        if record_updated_date_end:
+            record_updated_date_end = Validators.validate_date(record_updated_date_end)
+            params["record_updated_date_end"] = record_updated_date_end
 
         parcl_property_ids = [str(i) for i in parcl_property_ids]
         total_properties = len(parcl_property_ids)
