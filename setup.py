@@ -27,12 +27,9 @@ setup(
     install_requires=[
         "requests",
         "pandas",
-        "alive-progress",
         "numpy",
         "aiohttp",
         "nest_asyncio",
-        "plotly",
-        "kaleido",
     ],
     extras_require={"test": ["pytest", "responses"]},
     classifiers=[

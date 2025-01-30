@@ -3,8 +3,6 @@ from typing import Any, Mapping, Optional, List
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import pandas as pd
 
-from alive_progress import alive_bar
-
 from parcllabs.common import (
     VALID_EVENT_TYPES,
     VALID_ENTITY_NAMES,
@@ -93,21 +91,19 @@ class PropertyEventsService(ParclLabsStreamingService):
                 return None
 
         all_data = deque()
-        with alive_bar(total_properties, title="Processing Parcl Property IDs") as bar:
-            with ThreadPoolExecutor(max_workers=self.client.num_workers) as executor:
-                futures = {
-                    executor.submit(
-                        process_batch, parcl_property_ids[i : i + MAX_POST_LIMIT]
-                    ): len(parcl_property_ids[i : i + MAX_POST_LIMIT])
-                    for i in range(0, total_properties, MAX_POST_LIMIT)
-                }
+        with ThreadPoolExecutor(max_workers=self.client.num_workers) as executor:
+            futures = {
+                executor.submit(
+                    process_batch, parcl_property_ids[i : i + MAX_POST_LIMIT]
+                ): len(parcl_property_ids[i : i + MAX_POST_LIMIT])
+                for i in range(0, total_properties, MAX_POST_LIMIT)
+            }
 
-                for future in as_completed(futures):
-                    batch_result = future.result()
-                    if batch_result:
-                        batch_df = pd.DataFrame(batch_result)
-                        all_data.append(batch_df)
-                    bar(futures[future])
+            for future in as_completed(futures):
+                batch_result = future.result()
+                if batch_result:
+                    batch_df = pd.DataFrame(batch_result)
+                    all_data.append(batch_df)
 
         df = safe_concat_and_format_dtypes(all_data)
         return df
