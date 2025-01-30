@@ -3,6 +3,7 @@ from typing import Any, Mapping, Optional, List
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import pandas as pd
 
+
 from parcllabs.common import (
     VALID_EVENT_TYPES,
     VALID_ENTITY_NAMES,
