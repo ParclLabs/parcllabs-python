@@ -6,12 +6,9 @@ name = "pypi"
 [packages]
 requests = ">=2.25"
 pandas = ">=1.2"
-alive-progress = "*"
 numpy = "*"
 aiohttp = "*"
 nest_asyncio = "*"
-plotly = "*"
-kaleido = "*"
 click = ">=8.1.7"
 
 [dev-packages]

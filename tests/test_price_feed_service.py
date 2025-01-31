@@ -1,15 +1,15 @@
+import pytest
+from unittest.mock import Mock, patch
+import pandas as pd
+import requests
+from requests.exceptions import RequestException
+
+from parcllabs.services.parcllabs_service import ParclLabsService
 from parcllabs.services.streaming.parcllabs_streaming_service import (
     ParclLabsStreamingService,
 )
-import pytest
-import pandas as pd
-import requests
-from unittest.mock import Mock, patch
-from parcllabs.services.parcllabs_service import (
-    ParclLabsService,
-)
 from parcllabs.exceptions import NotFoundError
-from requests.exceptions import RequestException
+from parcllabs.common import GET_METHOD, POST_METHOD
 
 
 class TestParclLabsService:
@@ -49,9 +49,9 @@ class TestParclLabsService:
         mock_response.raise_for_status.return_value = None
         mock_request.return_value = mock_response
 
-        service._make_request("GET", "https://api.example.com/test")
+        service._make_request(GET_METHOD, "https://api.example.com/test")
         mock_request.assert_called_once_with(
-            "GET",
+            GET_METHOD,
             "https://api.example.com/test",
             headers=service.headers,
             params={},
@@ -64,10 +64,12 @@ class TestParclLabsService:
         mock_request.return_value = mock_response
 
         service._make_request(
-            "POST", "https://api.example.com/test", json={"data": "test"}
+            POST_METHOD,
+            "https://api.example.com/test",
+            json={"data": "test"},
         )
         mock_request.assert_called_once_with(
-            "POST",
+            POST_METHOD,
             "https://api.example.com/test",
             headers=service.headers,
             json={"data": "test"},
@@ -82,7 +84,7 @@ class TestParclLabsService:
         mock_request.return_value = mock_response
 
         with pytest.raises(RequestException):
-            service._make_request("GET", "https://api.example.com/test")
+            service._make_request(GET_METHOD, "https://api.example.com/test")
 
     def test_post(self, service):
         with patch.object(service, "_make_request") as mock_make_request:
@@ -90,14 +92,19 @@ class TestParclLabsService:
                 "https://api.example.com/test", params={}, data={"data": "test"}
             )
             mock_make_request.assert_called_once_with(
-                "POST", "https://api.example.com/test", params={}, json={"data": "test"}
+                POST_METHOD,
+                "https://api.example.com/test",
+                params={},
+                json={"data": "test"},
             )
 
     def test_get(self, service):
         with patch.object(service, "_make_request") as mock_make_request:
             service._get("https://api.example.com/test", {"param": "test"})
             mock_make_request.assert_called_once_with(
-                "GET", "https://api.example.com/test", params={"param": "test"}
+                GET_METHOD,
+                "https://api.example.com/test",
+                params={"param": "test"},
             )
 
     def test_fetch_get(self, service):

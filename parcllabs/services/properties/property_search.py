@@ -2,7 +2,6 @@ from typing import List
 from collections import deque
 
 import pandas as pd
-from alive_progress import alive_bar
 
 from parcllabs.common import VALID_PROPERTY_TYPES_UNIT_SEARCH, VALID_ENTITY_NAMES
 from parcllabs.services.validators import Validators
@@ -128,14 +127,12 @@ class PropertySearch(ParclLabsStreamingService):
         output_data = deque()
         total_parcl_ids = len(parcl_ids)
 
-        with alive_bar(total_parcl_ids, title="Processing Parcl IDs") as bar:
-            for parcl_id in parcl_ids:
-                params["parcl_id"] = parcl_id
-                response = self._get(url=self.full_url, params=params)
-                data = response.json()
-                df_container = pd.DataFrame(data.get("items"))
-                self._update_account_info(data.get("account"))
-                output_data.append(df_container)
-                bar()
+        for parcl_id in parcl_ids:
+            params["parcl_id"] = parcl_id
+            response = self._get(url=self.full_url, params=params)
+            data = response.json()
+            df_container = pd.DataFrame(data.get("items"))
+            self._update_account_info(data.get("account"))
+            output_data.append(df_container)
         results = pd.concat(output_data).reset_index(drop=True)
         return results

@@ -7,11 +7,8 @@ from requests.exceptions import RequestException
 import platform
 import pandas as pd
 
-from parcllabs.common import (
-    DELETE_FROM_OUTPUT,
-    DEFAULT_LIMIT_SMALL,
-    DEFAULT_LIMIT_LARGE,
-)
+from parcllabs.common import DELETE_FROM_OUTPUT, GET_METHOD, POST_METHOD
+from parcllabs.enums import RequestMethods, RequestLimits
 from parcllabs.exceptions import NotFoundError
 from parcllabs.services.validators import Validators
 from parcllabs.services.data_utils import safe_concat_and_format_dtypes
@@ -90,7 +87,7 @@ class ParclLabsService:
             RequestException: If the request fails or an unexpected error occurs.
         """
         try:
-            if method.upper() == "GET":
+            if method == GET_METHOD:
                 params = kwargs.get("params", {})
                 kwargs["params"] = params
 
@@ -121,7 +118,7 @@ class ParclLabsService:
         Returns:
             requests.Response: The response object.
         """
-        return self._make_request("POST", url, params=params, json=data)
+        return self._make_request(POST_METHOD, url, params=params, json=data)
 
     def _get(
         self, url: str, params: Optional[Dict[str, Any]] = None
@@ -136,7 +133,7 @@ class ParclLabsService:
         Returns:
             requests.Response: The response object.
         """
-        return self._make_request("GET", url, params=params)
+        return self._make_request(GET_METHOD, url, params=params)
 
     def _fetch(
         self,
@@ -167,7 +164,7 @@ class ParclLabsService:
             # convert the list of parcl_ids into post body params, formatted
             # as strings
             if params.get("limit"):
-                params["limit"] = self._validate_limit("POST", params["limit"])
+                params["limit"] = self._validate_limit(POST_METHOD, params["limit"])
 
             data = {"parcl_id": [str(pid) for pid in parcl_ids], **params}
             params = {"limit": params["limit"]} if params.get("limit") else {}
@@ -177,7 +174,7 @@ class ParclLabsService:
             return self._fetch_post(params, data, auto_paginate)
         else:
             if params.get("limit"):
-                params["limit"] = self._validate_limit("GET", params["limit"])
+                params["limit"] = self._validate_limit(GET_METHOD, params["limit"])
 
             if len(parcl_ids) == 1:
                 url = self.full_url.format(parcl_id=parcl_ids[0])
@@ -316,13 +313,15 @@ class ParclLabsService:
         Update the account info for the client.
         """
         if account_info:
-            current_session_credits = self.client.account_info.get(
-                "est_session_credits_used", 0
+            final_account_dict = dict(
+                est_credits_used=account_info.get("est_credits_used", 0),
+                est_session_credits_used=(
+                    self.client.account_info.get("est_session_credits_used", 0)
+                    + account_info.get("est_credits_used", 0)
+                ),
+                est_remaining_credits=account_info.get("est_remaining_credits", 0),
             )
-            account_info["est_session_credits_used"] = (
-                current_session_credits + account_info.pop("est_credits_used", 0)
-            )
-            self.client.account_info = account_info
+            self.client.account_info = final_account_dict
 
     @staticmethod
     def sanitize_output(data: Dict[str, Any]) -> Dict[str, Any]:
@@ -369,19 +368,24 @@ class ParclLabsService:
         raise requests.RequestException(msg)
 
     @staticmethod
-    def _validate_limit(method: str, limit: int) -> int:
-        if method.upper() == "POST":
-            if limit > DEFAULT_LIMIT_LARGE:
+    def _validate_limit(method: RequestMethods, limit: int) -> int:
+        default_large = RequestLimits.DEFAULT_LARGE.value
+        default_small = RequestLimits.DEFAULT_SMALL.value
+
+        if method == POST_METHOD:
+            if limit > default_large:
                 print(
-                    f"Supplied limit value is too large for requested endpoint. Setting limit to maxium value of {DEFAULT_LIMIT_LARGE}."
+                    f"Supplied limit value is too large for requested endpoint. Setting limit to maxium value of {default_large}."
                 )
-                limit = DEFAULT_LIMIT_LARGE
-        elif method.upper() == "GET":
-            if limit > DEFAULT_LIMIT_SMALL:
+                limit = default_large
+
+        elif method == GET_METHOD:
+            if limit > default_small:
                 print(
-                    f"Supplied limit value is too large for requested endpoint. Setting limit to maxium value of {DEFAULT_LIMIT_SMALL}."
+                    f"Supplied limit value is too large for requested endpoint. Setting limit to maxium value of {default_small}."
                 )
-                limit = DEFAULT_LIMIT_SMALL
+                limit = default_small
+
         else:
             raise ValueError("Invalid method. Must be either 'GET' or 'POST'.")
 
