@@ -369,18 +369,23 @@ class ParclLabsService:
 
     @staticmethod
     def _validate_limit(method: RequestMethods, limit: int) -> int:
+        default_large = RequestLimits.DEFAULT_LARGE.value
+        default_small = RequestLimits.DEFAULT_SMALL.value
+
         if method == POST_METHOD:
-            if limit > RequestLimits.DEFAULT_LARGE.value:
+            if limit > default_large:
                 print(
-                    f"Supplied limit value is too large for requested endpoint. Setting limit to maxium value of {RequestLimits.DEFAULT_LARGE.value}."
+                    f"Supplied limit value is too large for requested endpoint. Setting limit to maxium value of {default_large}."
                 )
-                limit = RequestLimits.DEFAULT_LARGE.value
+                limit = default_large
+
         elif method == GET_METHOD:
-            if limit > RequestLimits.DEFAULT_SMALL.value:
+            if limit > default_small:
                 print(
-                    f"Supplied limit value is too large for requested endpoint. Setting limit to maxium value of {RequestLimits.DEFAULT_SMALL.value}."
+                    f"Supplied limit value is too large for requested endpoint. Setting limit to maxium value of {default_small}."
                 )
-                limit = RequestLimits.DEFAULT_SMALL.value
+                limit = default_small
+
         else:
             raise ValueError("Invalid method. Must be either 'GET' or 'POST'.")
 
