@@ -1,3 +1,7 @@
+### v1.11.0
+- Add `est_credits_used` attribute to `account.client()` call to track per-request credit usage.
+- Enhancements and simplification of backend logic. 
+
 ### v1.10.0
 - Add support for new record_added_date and record_updated_date filters for `property.search` and `property.events` endpoints.
 
