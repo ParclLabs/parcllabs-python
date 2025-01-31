@@ -1,115 +1,13 @@
-VALID_PROPERTY_TYPES = ["SINGLE_FAMILY", "CONDO", "TOWNHOUSE", "ALL_PROPERTIES"]
-VALID_PROPERTY_TYPES_UNIT_SEARCH = ["SINGLE_FAMILY", "CONDO", "TOWNHOUSE", "OTHER"]
-VALID_ENTITY_NAMES = [
-    "AMH",
-    "TRICON",
-    "INVITATION_HOMES",
-    "HOME_PARTNERS_OF_AMERICA",
-    "PROGRESS_RESIDENTIAL",
-    "FIRSTKEY_HOMES",
-    "AMHERST",
-    "VINEBROOK_HOMES",
-    "MAYMONT_HOMES",
-    "SFR3",
-]
-VALID_PORTFOLIO_SIZES = [
-    "PORTFOLIO_2_TO_9",
-    "PORTFOLIO_10_TO_99",
-    "PORTFOLIO_100_TO_999",
-    "PORTFOLIO_1000_PLUS",
-    "ALL_PORTFOLIOS",
-]
+from parcllabs.enums import *
 
-ID_COLUMNS = ["parcl_id", "parcl_property_id"]
-DATE_COLUMNS = ["date", "event_date"]
 
-DELETE_FROM_OUTPUT = ["total", "limit", "offset", "links", "account"]
-
-DEFAULT_LIMIT = 12
-MAX_POST_LIMIT = 1000
-DEFAULT_LIMIT_SMALL = 1000
-DEFAULT_LIMIT_LARGE = 10000
-
-VALID_LOCATION_TYPES = [
-    "COUNTY",
-    "CITY",
-    "ZIP5",
-    "CDP",
-    "VILLAGE",
-    "TOWN",
-    "CBSA",
-    "ALL",
-]
-
-VALID_US_REGIONS = [
-    "EAST_NORTH_CENTRAL",
-    "EAST_SOUTH_CENTRAL",
-    "MIDDLE_ATLANTIC",
-    "MOUNTAIN",
-    "NEW_ENGLAND",
-    "PACIFIC",
-    "SOUTH_ATLANTIC",
-    "WEST_NORTH_CENTRAL",
-    "WEST_SOUTH_CENTRAL",
-    "ALL",
-]
-
-VALID_US_STATE_ABBREV = [
-    "AK",
-    "AL",
-    "AR",
-    "AZ",
-    "CA",
-    "CO",
-    "CT",
-    "DC",
-    "DE",
-    "FL",
-    "GA",
-    "HI",
-    "IA",
-    "ID",
-    "IL",
-    "IN",
-    "KS",
-    "KY",
-    "LA",
-    "MA",
-    "MD",
-    "ME",
-    "MI",
-    "MN",
-    "MO",
-    "MS",
-    "MT",
-    "NC",
-    "ND",
-    "NE",
-    "NH",
-    "NJ",
-    "NM",
-    "NV",
-    "NY",
-    "OH",
-    "OK",
-    "OR",
-    "PA",
-    "PR",
-    "RI",
-    "SC",
-    "SD",
-    "TN",
-    "TX",
-    "UT",
-    "VA",
-    "VI",
-    "VT",
-    "WA",
-    "WI",
-    "WV",
-    "WY",
-    "ALL",
-]
+VALID_PROPERTY_TYPES = get_enum_values(PropertyTypes)
+VALID_PROPERTY_TYPES_UNIT_SEARCH = get_enum_values(PropertyTypesUnit)
+VALID_ENTITY_NAMES = get_enum_values(EntityNames)
+VALID_PORTFOLIO_SIZES = get_enum_values(PortfolioSizes)
+VALID_LOCATION_TYPES = get_enum_values(LocationTypes)
+VALID_US_REGIONS = get_enum_values(USRegions)
+VALID_US_STATE_ABBREV = get_enum_values(USStateAbbreviations)
 
 VALID_US_STATE_FIPS_CODES = [
     "01",
@@ -171,19 +69,22 @@ VALID_US_STATE_FIPS_CODES = [
     "ALL",
 ]
 
-VALID_SORT_BY = [
-    "TOTAL_POPULATION",
-    "MEDIAN_INCOME",
-    "CASE_SHILLER_20_MARKET",
-    "CASE_SHILLER_10_MARKET",
-    "PRICEFEED_MARKET",
-    "PARCL_EXCHANGE_MARKET",
+VALID_SORT_BY = get_enum_values(SortByParams)
+VALID_SORT_ORDER = get_enum_values(SortOrder)
+VALID_EVENT_TYPES = get_enum_values(EventTypes)
+
+ID_COLUMNS = [ResponseColumns.PARCL_ID.value, ResponseColumns.PARCL_PROPERTY_ID.value]
+DATE_COLUMNS = [ResponseColumns.DATE.value, ResponseColumns.EVENT_DATE.value]
+DELETE_FROM_OUTPUT = [
+    ResponseColumns.TOTAL.value,
+    ResponseColumns.LIMIT.value,
+    ResponseColumns.OFFSET.value,
+    ResponseColumns.LINKS.value,
+    ResponseColumns.ACCOUNT.value,
 ]
-
-VALID_SORT_ORDER = ["ASC", "DESC"]
-
-VALID_EVENT_TYPES = ["SALE", "LISTING", "RENTAL", "ALL"]
 
 PARCL_LABS_DASHBOARD_URL = "https://dashboard.parcllabs.com/signup"
 
-NO_API_KEY_ERROR = f"API Key is required. Please visit {PARCL_LABS_DASHBOARD_URL} to get an API key."
+NO_API_KEY_ERROR = (
+    f"API Key is required. Please visit {PARCL_LABS_DASHBOARD_URL} to get an API key."
+)

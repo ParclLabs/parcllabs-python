@@ -7,8 +7,8 @@ import pandas as pd
 from parcllabs.common import (
     VALID_EVENT_TYPES,
     VALID_ENTITY_NAMES,
-    MAX_POST_LIMIT,
 )
+from parcllabs.enums import RequestLimits
 from parcllabs.services.data_utils import (
     safe_concat_and_format_dtypes,
 )
@@ -93,11 +93,12 @@ class PropertyEventsService(ParclLabsStreamingService):
 
         all_data = deque()
         with ThreadPoolExecutor(max_workers=self.client.num_workers) as executor:
+            max_post_limit = RequestLimits.MAX_POST.value
             futures = {
                 executor.submit(
-                    process_batch, parcl_property_ids[i : i + MAX_POST_LIMIT]
-                ): len(parcl_property_ids[i : i + MAX_POST_LIMIT])
-                for i in range(0, total_properties, MAX_POST_LIMIT)
+                    process_batch, parcl_property_ids[i : i + max_post_limit]
+                ): len(parcl_property_ids[i : i + max_post_limit])
+                for i in range(0, total_properties, max_post_limit)
             }
 
             for future in as_completed(futures):

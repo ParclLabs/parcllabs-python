@@ -8,6 +8,7 @@ from parcllabs.common import (
     VALID_SORT_BY,
     VALID_SORT_ORDER,
 )
+from parcllabs.enums import RequestMethods
 from parcllabs.services.validators import Validators
 from parcllabs.services.parcllabs_service import ParclLabsService
 
@@ -113,9 +114,11 @@ class SearchMarkets(ParclLabsService):
             params["geoid"] = geoid
 
         if limit:
-            params["limit"] = self._validate_limit("GET", limit)
+            params["limit"] = self._validate_limit(RequestMethods.GET.value, limit)
         elif self.client.limit:
-            params["limit"] = self._validate_limit("GET", self.client.limit)
+            params["limit"] = self._validate_limit(
+                RequestMethods.GET.value, self.client.limit
+            )
 
         results = self._fetch_get(
             url=self.full_url, params=params, auto_paginate=auto_paginate
