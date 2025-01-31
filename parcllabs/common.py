@@ -29,3 +29,6 @@ PARCL_LABS_DASHBOARD_URL = "https://dashboard.parcllabs.com/signup"
 NO_API_KEY_ERROR = (
     f"API Key is required. Please visit {PARCL_LABS_DASHBOARD_URL} to get an API key."
 )
+
+GET_METHOD = RequestMethods.GET.value
+POST_METHOD = RequestMethods.POST.value
