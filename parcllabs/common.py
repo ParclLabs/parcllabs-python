@@ -183,3 +183,7 @@ VALID_SORT_BY = [
 VALID_SORT_ORDER = ["ASC", "DESC"]
 
 VALID_EVENT_TYPES = ["SALE", "LISTING", "RENTAL", "ALL"]
+
+PARCL_LABS_DASHBOARD_URL = "https://dashboard.parcllabs.com/signup"
+
+NO_API_KEY_ERROR = f"API Key is required. Please visit {PARCL_LABS_DASHBOARD_URL} to get an API key."

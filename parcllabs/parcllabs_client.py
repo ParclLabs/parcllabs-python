@@ -1,6 +1,7 @@
 from typing import Dict, Any, Optional
 
 from parcllabs import api_base
+from parcllabs.common import NO_API_KEY_ERROR
 from parcllabs.services.search import SearchMarkets
 from parcllabs.services.parcllabs_service import ParclLabsService
 from parcllabs.services.metrics.property_type_service import PropertyTypeService
@@ -45,9 +46,7 @@ class ParclLabsClient:
         num_workers: Optional[int] = None,
     ):
         if not api_key:
-            raise ValueError(
-                "API Key is required. Please visit https://dashboard.parcllabs.com/signup to get an API key."
-            )
+            raise ValueError(NO_API_KEY_ERROR)
 
         self.api_key = api_key
         self.api_url = api_url
