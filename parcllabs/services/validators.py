@@ -107,3 +107,16 @@ class Validators:
             raise ValueError(
                 f"Missing required fields: {', '.join(missing_fields)}. Provided request: {data}"
             )
+
+    @staticmethod
+    def validate_integer_list(value, param_name: str = "Parameter") -> List[int]:
+        """
+        Validates that the input is a list of integers.
+        """
+        if not isinstance(value, list):
+            raise ValueError(f"{param_name} must be a list. Received: {type(value)}")
+
+        if not all(isinstance(item, int) for item in value):
+            raise ValueError(f"{param_name} must contain only integers")
+
+        return value

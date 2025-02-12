@@ -57,6 +57,9 @@ class PropertyEventsService(ParclLabsStreamingService):
             valid_values=VALID_ENTITY_NAMES,
             params_dict=params,
         )
+        parcl_property_ids = Validators.validate_integer_list(
+            parcl_property_ids, "parcl_property_ids"
+        )
 
         if start_date:
             params["start_date"] = start_date
