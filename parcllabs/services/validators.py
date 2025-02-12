@@ -81,12 +81,6 @@ class Validators:
         return params_dict
 
     @staticmethod
-    def validate_parcl_ids(parcl_ids):
-        if isinstance(parcl_ids, int):
-            parcl_ids = [parcl_ids]
-        return parcl_ids
-
-    @staticmethod
     def validate_us_zip_code(zip_code: str) -> str:
         """
         Validates the US zip code string and returns it in the expected format.

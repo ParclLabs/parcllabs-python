@@ -1,3 +1,6 @@
+### v1.11.1
+- Add list validator on all endpoints
+
 ### v1.11.0
 - Add `est_credits_used` attribute to `account.client()` call to track per-request credit usage.
 - Enhancements and simplification of backend logic. 
