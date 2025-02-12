@@ -8,7 +8,6 @@ from parcllabs.common import (
     VALID_SORT_BY,
     VALID_SORT_ORDER,
     GET_METHOD,
-    POST_METHOD,
 )
 from parcllabs.services.validators import Validators
 from parcllabs.services.parcllabs_service import ParclLabsService

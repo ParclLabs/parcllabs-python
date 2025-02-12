@@ -42,6 +42,8 @@ class PropertySearch(ParclLabsStreamingService):
     ):
         params = {}
 
+        parcl_ids = Validators.validate_integer_list(parcl_ids, "parcl_ids")
+
         params = Validators.validate_input_str_param(
             param=property_type,
             param_name="property_type",

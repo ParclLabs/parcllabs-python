@@ -15,6 +15,7 @@ class PortfolioSizeService(ParclLabsService):
         auto_paginate: bool = False,
     ):
         portfolio_size = Validators.validate_portfolio_size(portfolio_size)
+        parcl_ids = Validators.validate_integer_list(parcl_ids, "parcl_ids")
 
         if portfolio_size:
             params["portfolio_size"] = portfolio_size
