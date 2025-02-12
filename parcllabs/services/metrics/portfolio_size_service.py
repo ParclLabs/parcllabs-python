@@ -14,6 +14,9 @@ class PortfolioSizeService(ParclLabsService):
         params: Optional[Mapping[str, Any]] = {},
         auto_paginate: bool = False,
     ):
+        """
+        Retrieve portfolio size metrics for a list of parcl_ids.
+        """
         portfolio_size = Validators.validate_portfolio_size(portfolio_size)
         parcl_ids = Validators.validate_integer_list(parcl_ids, "parcl_ids")
 

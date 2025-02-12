@@ -15,6 +15,9 @@ class PropertyTypeService(ParclLabsService):
         params: Optional[Mapping[str, Any]] = {},
         auto_paginate: bool = False,
     ):
+        """
+        Retrieve property type metrics for a list of parcl_ids.
+        """
         property_type = Validators.validate_property_type(property_type)
         parcl_ids = Validators.validate_integer_list(parcl_ids, "parcl_ids")
 
