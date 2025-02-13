@@ -394,7 +394,7 @@ Gets a list of unique identifiers (parcl_property_id) for units that correspond 
 ```python
 # search by operators
 invitation_homes_tampa_units = client.property.search.retrieve(
-    parcl_ids=[2900417],
+    parcl_ids=[2887280],
     property_type='single_family',
     # square_footage_min=1000,
     # square_footage_max=2500,
