@@ -1,3 +1,7 @@
+### v1.11.2
+- Fixes bug on format for markets identified in the search market endpoint.
+- Fixes bug on `property.search` where markets with no data prevented the function from returning existing data.
+
 ### v1.11.1
 - Add list validator on all endpoints
 

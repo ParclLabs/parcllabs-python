@@ -8,6 +8,7 @@ from parcllabs.services.validators import Validators
 from parcllabs.services.streaming.parcllabs_streaming_service import (
     ParclLabsStreamingService,
 )
+from parcllabs.exceptions import NotFoundError
 
 
 class PropertySearch(ParclLabsStreamingService):
@@ -128,13 +129,34 @@ class PropertySearch(ParclLabsStreamingService):
 
         output_data = deque()
         total_parcl_ids = len(parcl_ids)
+        markets_with_no_data = []
 
         for parcl_id in parcl_ids:
-            params["parcl_id"] = parcl_id
-            response = self._get(url=self.full_url, params=params)
-            data = response.json()
-            df_container = pd.DataFrame(data.get("items"))
-            self._update_account_info(data.get("account"))
-            output_data.append(df_container)
+            try:
+                params["parcl_id"] = parcl_id
+                response = self._get(url=self.full_url, params=params)
+                data = response.json()
+                df_container = pd.DataFrame(data.get("items"))
+                self._update_account_info(data.get("account"))
+                output_data.append(df_container)
+            except NotFoundError:
+                # Track markets with no data
+                markets_with_no_data.append(parcl_id)
+                continue
+            except Exception as e:
+                # For other exceptions, we'll still raise them
+                raise e
+
+        if not output_data:
+            # If no data was found for any market, return empty DataFrame
+            return pd.DataFrame()
+
         results = pd.concat(output_data).reset_index(drop=True)
+
+        # Print message about markets with no data if any exist
+        if markets_with_no_data:
+            print(
+                f"No data found for markets with parcl_ids: {', '.join(map(str, markets_with_no_data))}"
+            )
+
         return results
