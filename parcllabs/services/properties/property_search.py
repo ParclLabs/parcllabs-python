@@ -155,6 +155,8 @@ class PropertySearch(ParclLabsStreamingService):
 
         # Print message about markets with no data if any exist
         if markets_with_no_data:
-            print(f"No data found for markets with parcl_ids: {', '.join(map(str, markets_with_no_data))}")
+            print(
+                f"No data found for markets with parcl_ids: {', '.join(map(str, markets_with_no_data))}"
+            )
 
         return results

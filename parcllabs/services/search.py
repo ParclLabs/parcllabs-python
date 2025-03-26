@@ -25,7 +25,7 @@ class SearchMarkets(ParclLabsService):
         df = pd.DataFrame(data)
         # Convert numpy integers to regular Python integers
         for col in df.columns:
-            if df[col].dtype in ['int64', 'int32', 'int16', 'int8']:
+            if df[col].dtype in ["int64", "int32", "int16", "int8"]:
                 df[col] = df[col].astype(int)
         return df
 
