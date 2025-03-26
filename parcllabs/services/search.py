@@ -22,7 +22,12 @@ class SearchMarkets(ParclLabsService):
         super().__init__(*args, **kwargs)
 
     def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> Any:
-        return pd.DataFrame(data)
+        df = pd.DataFrame(data)
+        # Convert numpy integers to regular Python integers
+        for col in df.columns:
+            if df[col].dtype in ['int64', 'int32', 'int16', 'int8']:
+                df[col] = df[col].astype(int)
+        return df
 
     def retrieve(
         self,
