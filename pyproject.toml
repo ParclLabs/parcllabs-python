@@ -33,8 +33,6 @@ dependencies = [
     "requests",
     "aiohttp",
     "nest_asyncio",
-    "plotly",
-    "kaleido",
 ]
 
 [project.optional-dependencies]
