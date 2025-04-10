@@ -1,3 +1,6 @@
+### v1.12.0
+- Added `current_on_market_flag` parameter to `client.property.search.retrieve` to filter properties based on their current market status.
+
 ### v1.11.2
 - Fixes bug on format for markets identified in the search market endpoint.
 - Fixes bug on `property.search` where markets with no data prevented the function from returning existing data.
