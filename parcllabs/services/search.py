@@ -27,9 +27,6 @@ class SearchMarkets(ParclLabsService):
         for col in df.columns:
             if df[col].dtype in ["int64", "int32", "int16", "int8"]:
                 df[col] = df[col].astype(int)
-                python_ints = [int(x) for x in df[col]]
-                df[col] = python_ints
-
         return df
 
     def retrieve(
