@@ -40,7 +40,37 @@ class PropertySearch(ParclLabsStreamingService):
         current_investor_owned_flag: bool = None,
         record_added_date_start: str = None,
         record_added_date_end: str = None,
+        current_on_market_flag: bool = None,
     ):
+        """
+        Retrieve parcl_property_id for geographic markets based on specified criteria.
+
+        Args:
+            parcl_ids (List[int]): List of Parcl IDs for the geographic markets.
+            property_type (str): The type of property to search for (e.g., 'single_family').
+            square_footage_min (int, optional): Minimum square footage. Defaults to None.
+            square_footage_max (int, optional): Maximum square footage. Defaults to None.
+            bedrooms_min (int, optional): Minimum number of bedrooms. Defaults to None.
+            bedrooms_max (int, optional): Maximum number of bedrooms. Defaults to None.
+            bathrooms_min (int, optional): Minimum number of bathrooms. Defaults to None.
+            bathrooms_max (int, optional): Maximum number of bathrooms. Defaults to None.
+            year_built_min (int, optional): Minimum year built. Defaults to None.
+            year_built_max (int, optional): Maximum year built. Defaults to None.
+            current_entity_owner_name (str, optional): Filter by current owner entity name. Defaults to None.
+            event_history_sale_flag (bool, optional): Filter properties with sale events in history. Defaults to None.
+            event_history_rental_flag (bool, optional): Filter properties with rental events in history. Defaults to None.
+            event_history_listing_flag (bool, optional): Filter properties with listing events in history. Defaults to None.
+            current_new_construction_flag (bool, optional): Filter properties that are new construction. Defaults to None.
+            current_owner_occupied_flag (bool, optional): Filter properties that are owner-occupied. Defaults to None.
+            current_investor_owned_flag (bool, optional): Filter properties that are investor-owned. Defaults to None.
+            record_added_date_start (str, optional): Filter properties added on or after this date (YYYY-MM-DD). Defaults to None.
+            record_added_date_end (str, optional): Filter properties added on or before this date (YYYY-MM-DD). Defaults to None.
+            current_on_market_flag (bool, optional): Filter properties currently on the market. Defaults to None.
+
+        Returns:
+            pd.DataFrame: A DataFrame containing the parcl_property_id and other details for matching properties.
+                         Returns an empty DataFrame if no data is found for any market.
+        """
         params = {}
 
         parcl_ids = Validators.validate_integer_list(parcl_ids, "parcl_ids")
@@ -92,6 +122,12 @@ class PropertySearch(ParclLabsStreamingService):
         params = Validators.validate_input_bool_param(
             param=current_investor_owned_flag,
             param_name="current_investor_owned_flag",
+            params_dict=params,
+        )
+
+        params = Validators.validate_input_bool_param(
+            param=current_on_market_flag,
+            param_name="current_on_market_flag",
             params_dict=params,
         )
 

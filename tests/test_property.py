@@ -1,12 +1,13 @@
 import json
 import pytest
 import pandas as pd
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, call
 from parcllabs.services.properties.property_events_service import PropertyEventsService
+from parcllabs.services.properties.property_search import PropertySearch
 from parcllabs.exceptions import NotFoundError
 
-# Sample data for testing
-sample_response = """{
+# Sample data for testing PropertyEventsService
+sample_events_response = """{
     "items": [
     {
         "parcl_property_id": 173637433,
@@ -34,6 +35,29 @@ sample_response = """{
     }]
 }"""
 
+# Sample data for testing PropertySearch
+sample_search_response = """{
+    "items": [
+        {
+            "parcl_property_id": 12345,
+            "address": "123 Main St",
+            "city": "Anytown",
+            "state_abbreviation": "CA",
+            "zip_code": "90210",
+            "current_on_market_flag": 1
+        },
+        {
+            "parcl_property_id": 67890,
+            "address": "456 Oak Ave",
+            "city": "Anytown",
+            "state_abbreviation": "CA",
+            "zip_code": "90210",
+            "current_on_market_flag": 0
+        }
+    ],
+    "account": { "credits_used_session": 10 }
+}"""
+
 
 @pytest.fixture
 def property_events_service():
@@ -50,7 +74,7 @@ def property_events_service():
 )
 def test_retrieve_success(mock_post, property_events_service):
     mock_response = MagicMock()
-    mock_response.json.return_value = json.loads(sample_response)
+    mock_response.json.return_value = json.loads(sample_events_response)
     mock_post.return_value = mock_response
 
     result = property_events_service.retrieve(parcl_property_ids=[123456])
@@ -98,3 +122,76 @@ def test_retrieve_general_exception(mock_post, property_events_service):
 
     assert isinstance(result, pd.DataFrame)
     assert result.empty
+
+
+# --- Tests for PropertySearch ---
+
+
+@pytest.fixture
+def property_search_service():
+    client_mock = MagicMock()
+    client_mock.api_url = "https://api.parcllabs.com"
+    client_mock.api_key = "test_api_key"
+    # PropertySearch specific attributes if needed
+    service = PropertySearch(client=client_mock, url="/v1/property/search")
+    return service
+
+
+@patch("parcllabs.services.properties.property_search.PropertySearch._get")
+def test_retrieve_with_on_market_flag(mock_get, property_search_service):
+    """Test retrieve method with current_on_market_flag parameter."""
+    mock_response = MagicMock()
+    # Use the search-specific sample response
+    mock_response.json.return_value = json.loads(sample_search_response)
+    mock_get.return_value = mock_response
+
+    parcl_ids_to_test = [5503877]
+    property_type_to_test = "single_family"
+
+    # Test with flag = True
+    result_on = property_search_service.retrieve(
+        parcl_ids=parcl_ids_to_test,
+        property_type=property_type_to_test,
+        current_on_market_flag=True,
+    )
+
+    # Test with flag = False
+    result_off = property_search_service.retrieve(
+        parcl_ids=parcl_ids_to_test,
+        property_type=property_type_to_test,
+        current_on_market_flag=False,
+    )
+
+    # Assertions
+    assert isinstance(result_on, pd.DataFrame)
+    assert len(result_on) == 2  # Based on sample_search_response
+    assert "current_on_market_flag" in result_on.columns
+
+    assert isinstance(result_off, pd.DataFrame)
+
+    # Check the calls made directly to the _get mock using call_args_list
+    expected_params_on = {
+        "property_type": property_type_to_test.upper(),
+        "current_on_market_flag": "true",
+        "parcl_id": parcl_ids_to_test[0],
+    }
+    expected_params_off = {
+        "property_type": property_type_to_test.upper(),
+        "current_on_market_flag": "false",
+        "parcl_id": parcl_ids_to_test[0],
+    }
+
+    assert len(mock_get.call_args_list) == 2
+
+    # Check first call (flag=True)
+    call_on_args, call_on_kwargs = mock_get.call_args_list[0]
+    assert call_on_kwargs["url"] == property_search_service.full_url
+    assert call_on_kwargs["params"] == expected_params_on
+
+    # Check second call (flag=False)
+    call_off_args, call_off_kwargs = mock_get.call_args_list[1]
+    assert call_off_kwargs["url"] == property_search_service.full_url
+    assert call_off_kwargs["params"] == expected_params_off
+
+    # Check that .json() was called on the response mock twice
+    assert mock_response.json.call_count == 2
