@@ -29,11 +29,6 @@ class SearchMarkets(ParclLabsService):
                 df[col] = df[col].astype(int)
                 python_ints = [int(x) for x in df[col]]
                 df[col] = python_ints
-        #        array = df[col].to_list()
-        #        array = [int(str(x)) for x in array]
-        #        print(array)
-        #        print(type(array[0]))
-        #        df[col] = array
 
         return df
 

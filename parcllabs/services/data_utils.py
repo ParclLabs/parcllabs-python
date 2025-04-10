@@ -45,7 +45,9 @@ def safe_concat_and_format_dtypes(data_container):
     if processed_dfs:
         output = pd.concat(processed_dfs, axis=0, ignore_index=True)
     else:
-        return pd.DataFrame()  # Return an empty DataFrame if all processed DataFrames are empty
+        return (
+            pd.DataFrame()
+        )  # Return an empty DataFrame if all processed DataFrames are empty
 
     # Convert numpy integers to regular Python integers
     for col in output.columns:
