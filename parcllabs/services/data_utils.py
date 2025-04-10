@@ -49,11 +49,6 @@ def safe_concat_and_format_dtypes(data_container):
             pd.DataFrame()
         )  # Return an empty DataFrame if all processed DataFrames are empty
 
-    # Convert numpy integers to regular Python integers
-    for col in output.columns:
-        if output[col].dtype in ["int64", "int32", "int16", "int8"]:
-            output[col] = output[col].astype(int)
-
     # Cast date columns to datetime
     for col in DATE_COLUMNS:
         if col in output.columns:
