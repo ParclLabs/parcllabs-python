@@ -12,6 +12,8 @@ VALID_US_STATE_FIPS_CODES = get_enum_values(USStateFIPSCodes)
 VALID_SORT_BY = get_enum_values(SortByParams)
 VALID_SORT_ORDER = get_enum_values(SortOrder)
 VALID_EVENT_TYPES = get_enum_values(EventTypes)
+VALID_EVENT_NAMES = get_enum_values(EventNames)
+VALID_OWNER_NAMES = get_enum_values(ValidOwnerNames)
 
 ID_COLUMNS = [ResponseColumns.PARCL_ID.value, ResponseColumns.PARCL_PROPERTY_ID.value]
 
