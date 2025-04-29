@@ -9,7 +9,7 @@ from parcllabs.services.metrics.portfolio_size_service import PortfolioSizeServi
 from parcllabs.services.properties.property_events_service import PropertyEventsService
 from parcllabs.services.properties.property_search import PropertySearch
 from parcllabs.services.properties.property_address import PropertyAddressSearch
-
+from parcllabs.services.properties.property_search_v2 import PropertySearchV2Service
 
 class ServiceGroup:
     def __init__(self, client):
@@ -68,6 +68,7 @@ class ParclLabsClient:
         self.search = self._create_search_services()
         self.property = self._create_property_services()
         self.property_address = self._create_property_address_services()
+        self.property_search_v2 = self._create_property_search_v2_services()
 
     def _create_service_group(self):
         return ServiceGroup(self)
@@ -288,5 +289,17 @@ class ParclLabsClient:
         self._add_services_to_group(group, services)
         return group
 
+    def _create_property_search_v2_services(self):
+        group = self._create_service_group()
+        services = {
+            "search": {
+                "url": "/v2/property_search",
+                "post_url": "/v2/property_search",
+                "service_class": PropertySearchV2Service,
+            },
+        }
+        self._add_services_to_group(group, services)
+        return group
+    
     def account(self):
         return self.account_info
