@@ -6,7 +6,7 @@ from parcllabs.services.validators import Validators
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
-class PropertySearchV2Service(ParclLabsService):
+class PropertyV2Service(ParclLabsService):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
