@@ -1,3 +1,6 @@
+### v1.13.0
+- Add support for `property_v2.search` endpoint.
+
 ### v1.12.0
 - Added `current_on_market_flag` parameter to `client.property.search.retrieve` to filter properties based on their current market status.
 
