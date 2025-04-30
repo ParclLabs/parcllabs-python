@@ -121,6 +121,24 @@ class PropertyV2Service(ParclLabsService):
 
         return all_data_df
 
+    def _get_metadata(self, results: List[Mapping[str, Any]]) -> Dict[str, Any]:
+        """Get metadata from results with accurate returned_count."""
+        if not results:
+            return {}
+
+        # Start with a copy of the first result's metadata
+        metadata = results[0].get("metadata", {}).copy()
+
+        # Calculate total returned_count
+        total_returned = sum(
+            result.get("metadata", {}).get("results", {}).get("returned_count", 0)
+            for result in results
+        )
+        if "results" in metadata:
+            metadata["results"]["returned_count"] = total_returned
+
+        return metadata
+
     def _build_search_criteria(
         self,
         parcl_ids: Optional[List[int]] = None,
@@ -321,10 +339,8 @@ class PropertyV2Service(ParclLabsService):
         # Make request with pagination
         results = self._fetch_post(params=params or {}, data=data)
 
-        metadata = {}
-        if results:
-            # get metadata
-            metadata = results[0].get("metadata")
+        # Get metadata from results
+        metadata = self._get_metadata(results)
 
         # Process results
         final_df = self._as_pd_dataframe(results)
