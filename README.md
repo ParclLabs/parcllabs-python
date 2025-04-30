@@ -485,6 +485,39 @@ addresses = client.property_address.search.retrieve(
 )
 ```
 
+
+#### Property Search V2
+Gets a list of unique properties and their associated metadata and events based on a set of filters. Use one of three search methods:
+1. `parcl_ids`
+2. `parcl_property_ids`
+3. `location` (must provide latitude, longitude, and radius)
+
+```python
+results, filter_data = client.property_v2.search.retrieve(
+    parcl_property_ids=[78353317, 135921544],
+    event_names=["LISTED_RENT"],
+    is_new_construction=False,
+    max_event_date="2024-12-31",
+    min_event_date="2023-01-01",
+    max_price=3000,
+    min_price=100,
+    is_investor_owned=True,
+    is_owner_occupied=False,
+    owner_name=["BLACKSTONE"],
+    include_property_details=True,
+    max_beds=5,
+    min_beds=1,
+    max_year_built=2020,
+    min_year_built=1998,
+    min_baths=1,
+    min_sqft=500,
+    max_record_added_date="2024-12-31",
+    min_record_added_date="2024-12-13",
+    property_types=["SINGLE_FAMILY", "CONDO", "TOWNHOUSE"],
+)
+```
+
+
 ##### Turbo Mode
 Turbo mode is a premium feature that allows you to retrieve data faster. To enable turbo mode, set the `turbo_mode` parameter to `True` when creating an instance of the `ParclLabsClient` class.
 
