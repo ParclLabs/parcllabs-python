@@ -11,6 +11,7 @@ from parcllabs.services.properties.property_search import PropertySearch
 from parcllabs.services.properties.property_address import PropertyAddressSearch
 from parcllabs.services.properties.property_v2 import PropertyV2Service
 
+
 class ServiceGroup:
     def __init__(self, client):
         self._client = client
@@ -300,6 +301,6 @@ class ParclLabsClient:
         }
         self._add_services_to_group(group, services)
         return group
-    
+
     def account(self):
         return self.account_info

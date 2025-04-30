@@ -128,7 +128,7 @@ class ValidOwnerNames(str, Enum):
     BLACKSTONE = "BLACKSTONE"
     BX = "BX"
 
-   
+
 class ResponseColumns(Enum):
     PARCL_ID = "parcl_id"
     PARCL_PROPERTY_ID = "parcl_property_id"

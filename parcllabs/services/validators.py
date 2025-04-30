@@ -31,7 +31,7 @@ class Validators:
         return Validators._validate_from_list(
             property_type, VALID_PROPERTY_TYPES, "Property type"
         )
-    
+
     @staticmethod
     def validate_property_types(property_types: List[str]) -> List[str]:
         for property_type in property_types:
@@ -41,19 +41,15 @@ class Validators:
     @staticmethod
     def validate_event_names(event_names: List[str]) -> List[str]:
         for event_name in event_names:
-           Validators._validate_from_list(
-            event_name, VALID_EVENT_NAMES, "Event name"
-        )
+            Validators._validate_from_list(event_name, VALID_EVENT_NAMES, "Event name")
         return event_names
-    
+
     @staticmethod
     def validate_owner_names(owner_names: List[str]) -> List[str]:
         for owner_name in owner_names:
-            Validators._validate_from_list(
-                owner_name, VALID_OWNER_NAMES, "Owner name"
-            )
+            Validators._validate_from_list(owner_name, VALID_OWNER_NAMES, "Owner name")
         return owner_names
-    
+
     @staticmethod
     def validate_portfolio_size(portfolio_size: str) -> str:
         """
