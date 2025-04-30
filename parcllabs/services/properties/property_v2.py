@@ -129,27 +129,17 @@ class PropertyV2Service(ParclLabsService):
     ) -> Dict[str, Any]:
         """Build and validate search criteria."""
         data = {}
-        valid_search_method = False
 
         if parcl_ids:
             data["parcl_ids"] = Validators.validate_integer_list(parcl_ids, "parcl_ids")
-            valid_search_method = True
 
         if parcl_property_ids:
             data["parcl_property_ids"] = Validators.validate_integer_list(
                 parcl_property_ids, "parcl_property_ids"
             )
-            valid_search_method = True
 
         if location and all(k in location for k in ["latitude", "longitude", "radius"]):
             data.update(location)
-            valid_search_method = True
-
-        if not valid_search_method:
-            raise ValueError(
-                "No valid search method provided, use parcl_ids, "
-                "parcl_property_ids, or latitude/longitude/radius"
-            )
 
         return data
 
@@ -173,9 +163,7 @@ class PropertyV2Service(ParclLabsService):
 
         # Handle property types
         if kwargs.get("property_types"):
-            property_filters["property_types"] = Validators.validate_property_types(
-                kwargs["property_types"]
-            )
+            property_filters["property_types"] = kwargs["property_types"]
 
         # Handle date filters
         date_filters = [
@@ -205,9 +193,7 @@ class PropertyV2Service(ParclLabsService):
 
         # Handle event names
         if kwargs.get("event_names"):
-            event_filters["event_names"] = Validators.validate_event_names(
-                kwargs["event_names"]
-            )
+            event_filters["event_names"] = kwargs["event_names"]
 
         # Handle date filters
         date_filters = [
@@ -243,9 +229,7 @@ class PropertyV2Service(ParclLabsService):
 
         # Handle owner names
         if kwargs.get("owner_name"):
-            owner_filters["owner_name"] = Validators.validate_owner_names(
-                kwargs["owner_name"]
-            )
+            owner_filters["owner_name"] = kwargs["owner_name"]
 
         # Handle boolean parameters
         bool_params = ["is_current_owner", "is_investor_owned", "is_owner_occupied"]
