@@ -1,5 +1,7 @@
-import pytest
 from unittest.mock import Mock
+
+import pytest
+
 from parcllabs import ParclLabsClient
 
 # Mock Data for testing
@@ -7,7 +9,7 @@ mock_response = {"parcl_id": 1, "items": [{"metric": 10}, {"metric": 20}], "link
 
 
 @pytest.fixture
-def client():
+def client() -> ParclLabsClient:
     client = ParclLabsClient(api_key="test_api_key")
     client.new_construction_metrics.housing_event_prices._fetch = Mock(
         return_value=mock_response
@@ -18,7 +20,9 @@ def client():
     return client
 
 
-def test_new_construction_metrics_housing_event_prices(client):
+def test_new_construction_metrics_housing_event_prices(
+    client: ParclLabsClient,
+) -> None:
     result = client.new_construction_metrics.housing_event_prices.retrieve(
         parcl_ids=[1]
     )
@@ -30,7 +34,9 @@ def test_new_construction_metrics_housing_event_prices(client):
     assert result.iloc[1]["metric"] == 20
 
 
-def test_new_construction_metrics_housing_event_counts(client):
+def test_new_construction_metrics_housing_event_counts(
+    client: ParclLabsClient,
+) -> None:
     result = client.new_construction_metrics.housing_event_counts.retrieve(
         parcl_ids=[1]
     )

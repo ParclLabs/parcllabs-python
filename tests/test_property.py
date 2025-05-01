@@ -1,10 +1,12 @@
 import json
-import pytest
+from unittest.mock import MagicMock, Mock, patch
+
 import pandas as pd
-from unittest.mock import MagicMock, patch, call
+import pytest
+
+from parcllabs.exceptions import NotFoundError
 from parcllabs.services.properties.property_events_service import PropertyEventsService
 from parcllabs.services.properties.property_search import PropertySearch
-from parcllabs.exceptions import NotFoundError
 
 # Sample data for testing PropertyEventsService
 sample_events_response = """{
@@ -60,19 +62,20 @@ sample_search_response = """{
 
 
 @pytest.fixture
-def property_events_service():
+def property_events_service() -> PropertyEventsService:
     client_mock = MagicMock()
     client_mock.api_url = "https://api.parcllabs.com"
     client_mock.api_key = "test_api_key"
     client_mock.num_workers = 1
-    service = PropertyEventsService(client=client_mock, url="/v1/property_events")
-    return service
+    return PropertyEventsService(client=client_mock, url="/v1/property_events")
 
 
 @patch(
     "parcllabs.services.properties.property_events_service.PropertyEventsService._post"
 )
-def test_retrieve_success(mock_post, property_events_service):
+def test_retrieve_success(
+    mock_post: Mock, property_events_service: PropertyEventsService
+) -> None:
     mock_response = MagicMock()
     mock_response.json.return_value = json.loads(sample_events_response)
     mock_post.return_value = mock_response
@@ -86,14 +89,18 @@ def test_retrieve_success(mock_post, property_events_service):
     assert "price" in result.columns
 
 
-def test_retrieve_invalid_event_type(property_events_service):
+def test_retrieve_invalid_event_type(
+    property_events_service: PropertyEventsService,
+) -> None:
     with pytest.raises(ValueError):
         property_events_service.retrieve(
             parcl_property_ids=[123456], event_type="INVALID_EVENT"
         )
 
 
-def test_retrieve_invalid_entity_owner_name(property_events_service):
+def test_retrieve_invalid_entity_owner_name(
+    property_events_service: PropertyEventsService,
+) -> None:
     with pytest.raises(ValueError):
         property_events_service.retrieve(
             parcl_property_ids=[123456], entity_owner_name="INVALID_ENTITY"
@@ -103,7 +110,9 @@ def test_retrieve_invalid_entity_owner_name(property_events_service):
 @patch(
     "parcllabs.services.properties.property_events_service.PropertyEventsService._post"
 )
-def test_retrieve_not_found_error(mock_post, property_events_service):
+def test_retrieve_not_found_error(
+    mock_post: Mock, property_events_service: PropertyEventsService
+) -> None:
     mock_post.side_effect = NotFoundError("Not found")
 
     result = property_events_service.retrieve(parcl_property_ids=[123456])
@@ -115,7 +124,9 @@ def test_retrieve_not_found_error(mock_post, property_events_service):
 @patch(
     "parcllabs.services.properties.property_events_service.PropertyEventsService._post"
 )
-def test_retrieve_general_exception(mock_post, property_events_service):
+def test_retrieve_general_exception(
+    mock_post: Mock, property_events_service: PropertyEventsService
+) -> None:
     mock_post.side_effect = Exception("General error")
 
     result = property_events_service.retrieve(parcl_property_ids=[123456])
@@ -128,17 +139,18 @@ def test_retrieve_general_exception(mock_post, property_events_service):
 
 
 @pytest.fixture
-def property_search_service():
+def property_search_service() -> PropertySearch:
     client_mock = MagicMock()
     client_mock.api_url = "https://api.parcllabs.com"
     client_mock.api_key = "test_api_key"
     # PropertySearch specific attributes if needed
-    service = PropertySearch(client=client_mock, url="/v1/property/search")
-    return service
+    return PropertySearch(client=client_mock, url="/v1/property/search")
 
 
 @patch("parcllabs.services.properties.property_search.PropertySearch._get")
-def test_retrieve_with_on_market_flag(mock_get, property_search_service):
+def test_retrieve_with_on_market_flag(
+    mock_get: Mock, property_search_service: PropertySearch
+) -> None:
     """Test retrieve method with current_on_market_flag parameter."""
     mock_response = MagicMock()
     # Use the search-specific sample response

@@ -1,45 +1,44 @@
 from collections import deque
-from typing import Any, Mapping, Optional, List
+from collections.abc import Mapping
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Any
+
 import pandas as pd
 
-
 from parcllabs.common import (
-    VALID_EVENT_TYPES,
     VALID_ENTITY_NAMES,
+    VALID_EVENT_TYPES,
 )
 from parcllabs.enums import RequestLimits
+from parcllabs.exceptions import (
+    NotFoundError,
+)
 from parcllabs.services.data_utils import (
     safe_concat_and_format_dtypes,
 )
+from parcllabs.services.parcllabs_service import ParclLabsService
 from parcllabs.services.validators import Validators
-from parcllabs.services.streaming.parcllabs_streaming_service import (
-    ParclLabsStreamingService,
-)
-from parcllabs.exceptions import (
-    NotFoundError,
-)  # Assuming this is the exception for a 404 error
 
 
-class PropertyEventsService(ParclLabsStreamingService):
+class PropertyEventsService(ParclLabsService):
     """
     Retrieve parcl_property_id event history.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: object, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
 
     def retrieve(
         self,
-        parcl_property_ids: List[int],
-        event_type: str = None,
-        start_date: str = None,
-        end_date: str = None,
-        entity_owner_name: str = None,
-        record_updated_date_start: str = None,
-        record_updated_date_end: str = None,
-        params: Optional[Mapping[str, Any]] = {},
-    ):
+        parcl_property_ids: list[int],
+        event_type: str | None = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        entity_owner_name: str | None = None,
+        record_updated_date_start: str | None = None,
+        record_updated_date_end: str | None = None,
+        params: Mapping[str, Any] | None = {},
+    ) -> pd.DataFrame:
         """
         Retrieve property events for given parameters.
         """
@@ -80,7 +79,7 @@ class PropertyEventsService(ParclLabsStreamingService):
         parcl_property_ids = [str(i) for i in parcl_property_ids]
         total_properties = len(parcl_property_ids)
 
-        def process_batch(batch_ids):
+        def process_batch(batch_ids: list[str]) -> list[dict] | None:
             local_params = params.copy()
             local_params["parcl_property_id"] = batch_ids
             try:
@@ -91,7 +90,7 @@ class PropertyEventsService(ParclLabsStreamingService):
             except NotFoundError:
                 return None
             except Exception as e:
-                print(f"Error processing batch {batch_ids}: {str(e)}")
+                print(f"Error processing batch {batch_ids}: {e!s}")
                 return None
 
         all_data = deque()
@@ -110,5 +109,4 @@ class PropertyEventsService(ParclLabsStreamingService):
                     batch_df = pd.DataFrame(batch_result)
                     all_data.append(batch_df)
 
-        df = safe_concat_and_format_dtypes(all_data)
-        return df
+        return safe_concat_and_format_dtypes(all_data)

@@ -1,10 +1,10 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 
-from parcllabs.common import ID_COLUMNS, DATE_COLUMNS
+from parcllabs.common import DATE_COLUMNS, ID_COLUMNS
 
 
-def safe_concat_and_format_dtypes(data_container):
+def safe_concat_and_format_dtypes(data_container: list) -> pd.DataFrame:  # noqa: C901, PLR0912
     # Filter out empty DataFrames
     non_empty_dfs = [df for df in data_container if not df.empty]
 
@@ -25,21 +25,24 @@ def safe_concat_and_format_dtypes(data_container):
 
     for df in non_empty_dfs:
         # Select only common columns
-        df = df[common_columns].copy()
+        common_cols_df = df[common_columns].copy()
 
         # Remove columns that are entirely NA
-        df = df.dropna(axis=1, how="all")
+        common_cols_df = common_cols_df.dropna(axis=1, how="all")
 
         # For columns that are all empty strings, replace with NaN
-        for col in df.columns:
-            if df[col].dtype == object and df[col].astype(str).str.strip().eq("").all():
-                df[col] = np.nan
+        for col in common_cols_df.columns:
+            if (
+                common_cols_df[col].dtype == object
+                and common_cols_df[col].astype(str).str.strip().eq("").all()
+            ):
+                common_cols_df[col] = np.nan
 
         # Remove columns that became all NaN after replacing empty strings
-        df = df.dropna(axis=1, how="all")
+        common_cols_df = common_cols_df.dropna(axis=1, how="all")
 
-        if not df.empty:
-            processed_dfs.append(df)
+        if not common_cols_df.empty:
+            processed_dfs.append(common_cols_df)
 
     # Concatenate the processed DataFrames
     if processed_dfs:
@@ -76,6 +79,4 @@ def safe_concat_and_format_dtypes(data_container):
             final_columns.append(col)
 
     # Reorder the DataFrame
-    output = output[final_columns]
-
-    return output
+    return output[final_columns]

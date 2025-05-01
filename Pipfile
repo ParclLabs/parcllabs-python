@@ -7,22 +7,14 @@ name = "pypi"
 requests = ">=2.25"
 pandas = ">=1.2"
 numpy = "*"
-aiohttp = "*"
-nest_asyncio = "*"
-click = ">=8.1.7"
 
 [dev-packages]
-black = ">=22"
 parcllabs = {path = ".", editable = true}
 pytest = ">=8"
 requests-mock = ">=1"
 asynctest = ">=0.13"
 pytest_asyncio = ">=0.15"
-ipykernel = "*"
-nbformat = "*"
-tomli = "*"
-exceptiongroup = "*"
-async-timeout = "*"
+ruff = "*"
 
 [requires]
 python_version = "==3.11.8"

@@ -1,16 +1,18 @@
-from typing import Any, Dict, List, Mapping, Optional, Union
-from collections import deque
+from collections.abc import Mapping
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Any
+
 import pandas as pd
+
 from parcllabs.services.parcllabs_service import ParclLabsService
 from parcllabs.services.validators import Validators
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 class PropertyV2Service(ParclLabsService):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: object, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
 
-    def _fetch_post(self, params: dict[str, Any], data: dict[str, Any]) -> Any:
+    def _fetch_post(self, params: dict[str, Any], data: dict[str, Any]) -> list[dict]:
         """Fetch data using POST request with pagination support."""
         response = self._post(url=self.full_post_url, data=data, params=params)
         result = response.json()
@@ -56,8 +58,11 @@ class PropertyV2Service(ParclLabsService):
 
         return all_data
 
-    def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> pd.DataFrame:
-        """Convert API response data to a pandas DataFrame with events as rows using json_normalize."""
+    def _as_pd_dataframe(self, data: list[Mapping[str, Any]]) -> pd.DataFrame:
+        """
+        Convert API response data to a pandas DataFrame with events as rows
+        using json_normalize.
+        """
         # First, extract all properties with their events
         properties_with_events = []
 
@@ -114,14 +119,14 @@ class PropertyV2Service(ParclLabsService):
 
                 # Add the event data back to the main dataframe
                 for col in event_df.columns:
-                    all_data_df.loc[event_indices, col] = event_df[col].values
+                    all_data_df.loc[event_indices, col] = event_df[col].to_numpy()
 
                 # Drop the original event column
                 all_data_df = all_data_df.drop("event", axis=1)
 
         return all_data_df
 
-    def _get_metadata(self, results: List[Mapping[str, Any]]) -> Dict[str, Any]:
+    def _get_metadata(self, results: list[Mapping[str, Any]]) -> dict[str, Any]:
         """Get metadata from results with accurate returned_count."""
         if not results:
             return {}
@@ -141,10 +146,10 @@ class PropertyV2Service(ParclLabsService):
 
     def _build_search_criteria(
         self,
-        parcl_ids: Optional[List[int]] = None,
-        parcl_property_ids: Optional[List[int]] = None,
-        location: Optional[Dict[str, float]] = None,
-    ) -> Dict[str, Any]:
+        parcl_ids: list[int] | None = None,
+        parcl_property_ids: list[int] | None = None,
+        location: dict[str, float] | None = None,
+    ) -> dict[str, Any]:
         """Build and validate search criteria."""
         data = {}
 
@@ -161,7 +166,7 @@ class PropertyV2Service(ParclLabsService):
 
         return data
 
-    def _build_property_filters(self, **kwargs) -> Dict[str, Any]:
+    def _build_property_filters(self, **kwargs: dict) -> dict[str, Any]:
         """Build property filters from keyword arguments."""
         property_filters = {}
 
@@ -173,7 +178,7 @@ class PropertyV2Service(ParclLabsService):
             "year_built": ("min_year_built", "max_year_built"),
         }
 
-        for field, (min_key, max_key) in numeric_filters.items():
+        for _, (min_key, max_key) in numeric_filters.items():
             if kwargs.get(min_key):
                 property_filters[min_key] = kwargs[min_key]
             if kwargs.get(max_key):
@@ -205,7 +210,7 @@ class PropertyV2Service(ParclLabsService):
 
         return property_filters
 
-    def _build_event_filters(self, **kwargs) -> Dict[str, Any]:
+    def _build_event_filters(self, **kwargs: dict) -> dict[str, Any]:
         """Build event filters from keyword arguments."""
         event_filters = {}
 
@@ -241,7 +246,7 @@ class PropertyV2Service(ParclLabsService):
 
         return event_filters
 
-    def _build_owner_filters(self, **kwargs) -> Dict[str, Any]:
+    def _build_owner_filters(self, **kwargs: dict) -> dict[str, Any]:
         """Build owner filters from keyword arguments."""
         owner_filters = {}
 
@@ -264,37 +269,37 @@ class PropertyV2Service(ParclLabsService):
 
     def retrieve(
         self,
-        parcl_ids: List[int] = None,
-        parcl_property_ids: List[int] = None,
-        latitude: float = None,
-        longitude: float = None,
-        radius: float = None,
-        property_types: List[str] = None,
-        min_beds: int = None,
-        max_beds: int = None,
-        min_baths: int = None,
-        max_baths: int = None,
-        min_sqft: int = None,
-        max_sqft: int = None,
-        min_year_built: int = None,
-        max_year_built: int = None,
-        include_property_details: bool = None,
-        min_record_added_date: str = None,
-        max_record_added_date: str = None,
-        event_names: List[str] = None,
-        min_event_date: str = None,
-        max_event_date: str = None,
-        min_price: int = None,
-        max_price: int = None,
-        is_new_construction: bool = None,
-        min_record_updated_date: str = None,
-        max_record_updated_date: str = None,
-        is_current_owner: bool = None,
-        owner_name: List[str] = None,
-        is_investor_owned: bool = None,
-        is_owner_occupied: bool = None,
-        limit: Optional[int] = None,
-        params: Optional[Mapping[str, Any]] = None,
+        parcl_ids: list[int] | None = None,
+        parcl_property_ids: list[int] | None = None,
+        latitude: float | None = None,
+        longitude: float | None = None,
+        radius: float | None = None,
+        property_types: list[str] | None = None,
+        min_beds: int | None = None,
+        max_beds: int | None = None,
+        min_baths: int | None = None,
+        max_baths: int | None = None,
+        min_sqft: int | None = None,
+        max_sqft: int | None = None,
+        min_year_built: int | None = None,
+        max_year_built: int | None = None,
+        include_property_details: bool | None = None,
+        min_record_added_date: str | None = None,
+        max_record_added_date: str | None = None,
+        event_names: list[str] | None = None,
+        min_event_date: str | None = None,
+        max_event_date: str | None = None,
+        min_price: int | None = None,
+        max_price: int | None = None,
+        is_new_construction: bool | None = None,
+        min_record_updated_date: str | None = None,
+        max_record_updated_date: str | None = None,
+        is_current_owner: bool | None = None,
+        owner_name: list[str] | None = None,
+        is_investor_owned: bool | None = None,
+        is_owner_occupied: bool | None = None,
+        limit: int | None = None,
+        params: Mapping[str, Any] | None = None,
     ) -> tuple[pd.DataFrame, dict[str, Any]]:
         """
         Retrieve property data based on search criteria and filters.

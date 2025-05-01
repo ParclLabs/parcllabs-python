@@ -27,12 +27,9 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-    "alive-progress",
     "numpy",
     "pandas",
     "requests",
-    "aiohttp",
-    "nest_asyncio",
 ]
 
 [project.optional-dependencies]

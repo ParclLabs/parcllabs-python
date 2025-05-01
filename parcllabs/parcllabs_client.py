@@ -1,19 +1,19 @@
-from typing import Dict, Any, Optional
+from typing import Any
 
 from parcllabs import api_base
 from parcllabs.common import NO_API_KEY_ERROR
-from parcllabs.services.search import SearchMarkets
-from parcllabs.services.parcllabs_service import ParclLabsService
-from parcllabs.services.metrics.property_type_service import PropertyTypeService
 from parcllabs.services.metrics.portfolio_size_service import PortfolioSizeService
+from parcllabs.services.metrics.property_type_service import PropertyTypeService
+from parcllabs.services.parcllabs_service import ParclLabsService
+from parcllabs.services.properties.property_address import PropertyAddressSearch
 from parcllabs.services.properties.property_events_service import PropertyEventsService
 from parcllabs.services.properties.property_search import PropertySearch
-from parcllabs.services.properties.property_address import PropertyAddressSearch
 from parcllabs.services.properties.property_v2 import PropertyV2Service
+from parcllabs.services.search import SearchMarkets
 
 
 class ServiceGroup:
-    def __init__(self, client):
+    def __init__(self, client: object) -> None:
         self._client = client
         self._services = {}
 
@@ -21,10 +21,10 @@ class ServiceGroup:
         self,
         name: str,
         url: str,
-        service_class: Any,
-        post_url: Optional[str] = None,
-        alias: Optional[str] = None,
-    ):
+        service_class: ParclLabsService,
+        post_url: str | None = None,
+        alias: str | None = None,
+    ) -> None:
         service = service_class(url=url, post_url=post_url, client=self._client)
         setattr(self, name, service)
         self._services[name] = service
@@ -33,7 +33,7 @@ class ServiceGroup:
             self._services[alias] = service
 
     @property
-    def services(self):
+    def services(self) -> list:
         return list(self._services.keys())
 
 
@@ -42,10 +42,10 @@ class ParclLabsClient:
         self,
         api_key: str,
         api_url: str = api_base,
-        limit: Optional[int] = None,
+        limit: int | None = None,
         turbo_mode: bool = False,
-        num_workers: Optional[int] = None,
-    ):
+        num_workers: int | None = None,
+    ) -> None:
         if not api_key:
             raise ValueError(NO_API_KEY_ERROR)
 
@@ -58,7 +58,7 @@ class ParclLabsClient:
 
         self._initialize_services()
 
-    def _initialize_services(self):
+    def _initialize_services(self) -> None:
         self.price_feed = self._create_price_feed_services()
         self.investor_metrics = self._create_investor_metrics_services()
         self.market_metrics = self._create_market_metrics_services()
@@ -71,16 +71,16 @@ class ParclLabsClient:
         self.property_address = self._create_property_address_services()
         self.property_v2 = self._create_property_v2_services()
 
-    def _create_service_group(self):
+    def _create_service_group(self) -> ServiceGroup:
         return ServiceGroup(self)
 
     def _add_services_to_group(
-        self, group: ServiceGroup, services: Dict[str, Dict[str, Any]]
-    ):
+        self, group: ServiceGroup, services: dict[str, dict[str, Any]]
+    ) -> None:
         for name, config in services.items():
             group.add_service(name=name, **config)
 
-    def _create_price_feed_services(self):
+    def _create_price_feed_services(self) -> ServiceGroup:
         group = self._create_service_group()
         services = {
             "price_feed": {
@@ -102,7 +102,7 @@ class ParclLabsClient:
         self._add_services_to_group(group, services)
         return group
 
-    def _create_investor_metrics_services(self):
+    def _create_investor_metrics_services(self) -> ServiceGroup:
         group = self._create_service_group()
         services = {
             "housing_stock_ownership": {
@@ -111,7 +111,8 @@ class ParclLabsClient:
                 "service_class": ParclLabsService,
             },
             "new_listings_for_sale_rolling_counts": {
-                "url": "/v1/investor_metrics/{parcl_id}/new_listings_for_sale_rolling_counts",
+                "url":
+                    "/v1/investor_metrics/{parcl_id}/new_listings_for_sale_rolling_counts",
                 "post_url": "/v1/investor_metrics/new_listings_for_sale_rolling_counts",
                 "service_class": PropertyTypeService,
             },
@@ -134,7 +135,7 @@ class ParclLabsClient:
         self._add_services_to_group(group, services)
         return group
 
-    def _create_market_metrics_services(self):
+    def _create_market_metrics_services(self) -> ServiceGroup:
         group = self._create_service_group()
         services = {
             "housing_event_prices": {
@@ -158,7 +159,8 @@ class ParclLabsClient:
                 "service_class": PropertyTypeService,
             },
             "housing_event_property_attributes": {
-                "url": "/v1/market_metrics/{parcl_id}/housing_event_property_attributes",
+                "url":
+                    "/v1/market_metrics/{parcl_id}/housing_event_property_attributes",
                 "post_url": "/v1/market_metrics/housing_event_property_attributes",
                 "service_class": PropertyTypeService,
             },
@@ -166,7 +168,7 @@ class ParclLabsClient:
         self._add_services_to_group(group, services)
         return group
 
-    def _create_new_construction_metrics_services(self):
+    def _create_new_construction_metrics_services(self) -> ServiceGroup:
         group = self._create_service_group()
         services = {
             "housing_event_prices": {
@@ -183,11 +185,12 @@ class ParclLabsClient:
         self._add_services_to_group(group, services)
         return group
 
-    def _create_for_sale_market_metrics_services(self):
+    def _create_for_sale_market_metrics_services(self) -> ServiceGroup:
         group = self._create_service_group()
         services = {
             "new_listings_rolling_counts": {
-                "url": "/v1/for_sale_market_metrics/{parcl_id}/new_listings_rolling_counts",
+                "url":
+                    "/v1/for_sale_market_metrics/{parcl_id}/new_listings_rolling_counts",
                 "post_url": "/v1/for_sale_market_metrics/new_listings_rolling_counts",
                 "service_class": PropertyTypeService,
             },
@@ -197,19 +200,22 @@ class ParclLabsClient:
                 "service_class": PropertyTypeService,
             },
             "for_sale_inventory_price_changes": {
-                "url": "/v1/for_sale_market_metrics/{parcl_id}/for_sale_inventory_price_changes",
-                "post_url": "/v1/for_sale_market_metrics/for_sale_inventory_price_changes",
+                "url":
+                    "/v1/for_sale_market_metrics/{parcl_id}/for_sale_inventory_price_changes",
+                "post_url":
+                    "/v1/for_sale_market_metrics/for_sale_inventory_price_changes",
                 "service_class": PropertyTypeService,
             },
         }
         self._add_services_to_group(group, services)
         return group
 
-    def _create_rental_market_metrics_services(self):
+    def _create_rental_market_metrics_services(self) -> ServiceGroup:
         group = self._create_service_group()
         services = {
             "rental_units_concentration": {
-                "url": "/v1/rental_market_metrics/{parcl_id}/rental_units_concentration",
+                "url":
+                    "/v1/rental_market_metrics/{parcl_id}/rental_units_concentration",
                 "post_url": "/v1/rental_market_metrics/rental_units_concentration",
                 "service_class": PropertyTypeService,
             },
@@ -219,15 +225,17 @@ class ParclLabsClient:
                 "service_class": PropertyTypeService,
             },
             "new_listings_for_rent_rolling_counts": {
-                "url": "/v1/rental_market_metrics/{parcl_id}/new_listings_for_rent_rolling_counts",
-                "post_url": "/v1/rental_market_metrics/new_listings_for_rent_rolling_counts",
+                "url":
+                    "/v1/rental_market_metrics/{parcl_id}/new_listings_for_rent_rolling_counts",
+                "post_url":
+                    "/v1/rental_market_metrics/new_listings_for_rent_rolling_counts",
                 "service_class": PropertyTypeService,
             },
         }
         self._add_services_to_group(group, services)
         return group
 
-    def _create_portfolio_metrics_services(self):
+    def _create_portfolio_metrics_services(self) -> ServiceGroup:
         group = self._create_service_group()
         services = {
             "sf_housing_stock_ownership": {
@@ -236,13 +244,17 @@ class ParclLabsClient:
                 "service_class": ParclLabsService,
             },
             "sf_new_listings_for_sale_rolling_counts": {
-                "url": "/v1/portfolio_metrics/{parcl_id}/sf_new_listings_for_sale_rolling_counts",
-                "post_url": "/v1/portfolio_metrics/sf_new_listings_for_sale_rolling_counts",
+                "url":
+                    "/v1/portfolio_metrics/{parcl_id}/sf_new_listings_for_sale_rolling_counts",
+                "post_url":
+                    "/v1/portfolio_metrics/sf_new_listings_for_sale_rolling_counts",
                 "service_class": PortfolioSizeService,
             },
             "sf_new_listings_for_rent_rolling_counts": {
-                "url": "/v1/portfolio_metrics/{parcl_id}/sf_new_listings_for_rent_rolling_counts",
-                "post_url": "/v1/portfolio_metrics/sf_new_listings_for_rent_rolling_counts",
+                "url":
+                    "/v1/portfolio_metrics/{parcl_id}/sf_new_listings_for_rent_rolling_counts",
+                "post_url":
+                    "/v1/portfolio_metrics/sf_new_listings_for_rent_rolling_counts",
                 "service_class": PortfolioSizeService,
             },
             "sf_housing_event_counts": {
@@ -254,7 +266,7 @@ class ParclLabsClient:
         self._add_services_to_group(group, services)
         return group
 
-    def _create_search_services(self):
+    def _create_search_services(self) -> ServiceGroup:
         group = self._create_service_group()
         services = {
             "markets": {
@@ -265,7 +277,7 @@ class ParclLabsClient:
         self._add_services_to_group(group, services)
         return group
 
-    def _create_property_services(self):
+    def _create_property_services(self) -> ServiceGroup:
         group = self._create_service_group()
         services = {
             "search": {"url": "/v1/property/search", "service_class": PropertySearch},
@@ -278,7 +290,7 @@ class ParclLabsClient:
         self._add_services_to_group(group, services)
         return group
 
-    def _create_property_address_services(self):
+    def _create_property_address_services(self) -> ServiceGroup:
         group = self._create_service_group()
         services = {
             "search": {
@@ -290,7 +302,7 @@ class ParclLabsClient:
         self._add_services_to_group(group, services)
         return group
 
-    def _create_property_v2_services(self):
+    def _create_property_v2_services(self) -> ServiceGroup:
         group = self._create_service_group()
         services = {
             "search": {
@@ -302,5 +314,5 @@ class ParclLabsClient:
         self._add_services_to_group(group, services)
         return group
 
-    def account(self):
+    def account(self) -> dict[str, Any]:
         return self.account_info

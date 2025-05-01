@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Any
+from typing import Any
 
 
 class RequestMethods(Enum):
@@ -12,6 +12,16 @@ class RequestLimits(Enum):
     MAX_POST = 1000
     DEFAULT_SMALL = 1000
     DEFAULT_LARGE = 10000
+
+
+class ResponseCodes(Enum):
+    SUCCESS = 200
+    CLIENT_ERROR = 400
+    FORBIDDEN = 403
+    NOT_FOUND = 404
+    VALIDATION_ERROR = 422
+    RATE_LIMIT_EXCEEDED = 429
+    SERVER_ERROR = 500
 
 
 class PropertyTypes(Enum):
@@ -224,7 +234,7 @@ class USStateFIPSCodes(Enum):
     ALL = "ALL"
 
 
-def get_enum_values(enum_class: Enum) -> List[Any]:
+def get_enum_values(enum_class: Enum) -> list[Any]:
     """
     Get the values of an enum class.
 
@@ -235,5 +245,4 @@ def get_enum_values(enum_class: Enum) -> List[Any]:
         List[Any]: A list of the values of the enum class.
     """
 
-    values = [item.value for item in enum_class]
-    return values
+    return [item.value for item in enum_class]

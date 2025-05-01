@@ -1,9 +1,10 @@
 import json
-import pytest
-import pandas as pd
-from unittest.mock import MagicMock, patch
-from parcllabs.services.properties.property_address import PropertyAddressSearch
+from unittest.mock import MagicMock, Mock, patch
 
+import pandas as pd
+import pytest
+
+from parcllabs.services.properties.property_address import PropertyAddressSearch
 
 SAMPLE_ADDRESSES = [
     {
@@ -46,19 +47,18 @@ SAMPLE_RESPONSE = """{
 
 
 @pytest.fixture
-def property_events_service():
+def property_events_service() -> PropertyAddressSearch:
     client_mock = MagicMock()
     client_mock.api_url = "https://api.parcllabs.com"
     client_mock.api_key = "test_api_key"
     client_mock.num_workers = 1
-    service = PropertyAddressSearch(
-        client=client_mock, url="/v1/property/search_address"
-    )
-    return service
+    return PropertyAddressSearch(client=client_mock, url="/v1/property/search_address")
 
 
 @patch("parcllabs.services.properties.property_address.PropertyAddressSearch._post")
-def test_retrieve_success(mock_post, property_events_service):
+def test_retrieve_success(
+    mock_post: Mock, property_events_service: PropertyAddressSearch
+) -> None:
     mock_response = MagicMock()
     mock_response.json.return_value = json.loads(SAMPLE_RESPONSE)
     mock_post.return_value = mock_response
