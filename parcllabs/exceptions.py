@@ -24,7 +24,7 @@ class DataValidationError(ParclLabsError):
     def __init__(
         self,
         message: str = "Data validation error occurred.",
-        details: object | None = None,
+        details: object = None,
         *args: object,
         **kwargs: object,
     ) -> None:
