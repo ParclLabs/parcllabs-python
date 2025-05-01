@@ -1,16 +1,19 @@
+from collections.abc import Mapping
+from typing import Any
+
 import pandas as pd
-from typing import Any, Mapping, Optional, List
+
 from parcllabs.common import (
+    GET_METHOD,
     VALID_LOCATION_TYPES,
+    VALID_SORT_BY,
+    VALID_SORT_ORDER,
     VALID_US_REGIONS,
     VALID_US_STATE_ABBREV,
     VALID_US_STATE_FIPS_CODES,
-    VALID_SORT_BY,
-    VALID_SORT_ORDER,
-    GET_METHOD,
 )
-from parcllabs.services.validators import Validators
 from parcllabs.services.parcllabs_service import ParclLabsService
+from parcllabs.services.validators import Validators
 
 
 class SearchMarkets(ParclLabsService):
@@ -18,32 +21,32 @@ class SearchMarkets(ParclLabsService):
     Retrieve parcl_id and metadata for geographic markets in the Parcl Labs API.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: object, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
 
-    def _as_pd_dataframe(self, data: List[Mapping[str, Any]]) -> Any:
-        df = pd.DataFrame(data)
+    def _as_pd_dataframe(self, data: list[Mapping[str, Any]]) -> pd.DataFrame:
+        final_df = pd.DataFrame(data)
         # Convert numpy integers to regular Python integers
-        for col in df.columns:
-            if df[col].dtype in ["int64", "int32", "int16", "int8"]:
-                df[col] = df[col].astype(int)
-        return df
+        for col in final_df.columns:
+            if final_df[col].dtype in ["int64", "int32", "int16", "int8"]:
+                final_df[col] = final_df[col].astype(int)
+        return final_df
 
     def retrieve(
         self,
-        query: Optional[str] = None,
-        location_type: str = None,
-        region: str = None,
-        state_abbreviation: str = None,
-        state_fips_code: str = None,
-        parcl_id: int = None,
-        geoid: str = None,
-        sort_by: str = None,
-        sort_order: str = None,
-        limit: Optional[int] = None,
-        params: Optional[Mapping[str, Any]] = None,
+        query: str | None = None,
+        location_type: str | None = None,
+        region: str | None = None,
+        state_abbreviation: str | None = None,
+        state_fips_code: str | None = None,
+        parcl_id: int | None = None,
+        geoid: str | None = None,
+        sort_by: str | None = None,
+        sort_order: str | None = None,
+        limit: int | None = None,
+        params: Mapping[str, Any] | None = None,
         auto_paginate: bool = False,
-    ):
+    ) -> pd.DataFrame:
         """
         Retrieve parcl_id and metadata for geographic markets in the Parcl Labs API.
 
@@ -51,7 +54,8 @@ class SearchMarkets(ParclLabsService):
             query (str, optional): The search query to filter results by.
             location_type (str, optional): The location type to filter results by.
             region (str, optional): The region to filter results by.
-            state_abbreviation (str, optional): The state abbreviation to filter results by.
+            state_abbreviation (str, optional): The state abbreviation to filter results
+            by.
             state_fips_code (str, optional): The state FIPS code to filter results by.
             parcl_id (int, optional): The parcl_id to filter results by.
             geoid (str, optional): The geoid to filter results by.
@@ -123,9 +127,7 @@ class SearchMarkets(ParclLabsService):
         elif self.client.limit:
             params["limit"] = self._validate_limit(GET_METHOD, self.client.limit)
 
-        results = self._fetch_get(
-            url=self.full_url, params=params, auto_paginate=auto_paginate
-        )
+        results = self._fetch_get(url=self.full_url, params=params, auto_paginate=auto_paginate)
         data = self._as_pd_dataframe(results.get("items"))
         self._update_account_info(results.get("account"))
         self.markets = data

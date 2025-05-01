@@ -1,10 +1,12 @@
 e.PHONY: lint lint-check
 
 lint:
-	black --target-version=py311 --verbose .
+	ruff check --fix .
+	ruff format .
 
 lint-check:
-	black --target-version=py311 --verbose --check .
+	ruff check .
+	ruff format --check .
 
 test:
 	python3 -m pytest -v

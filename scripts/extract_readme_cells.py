@@ -1,23 +1,22 @@
 import re
-import os
+from pathlib import Path
 
 
-def extract_code_blocks(readme_content):
-    code_blocks = re.findall(r"```python\n(.*?)```", readme_content, re.DOTALL)
-    return code_blocks
+def extract_code_blocks(readme_content: str) -> list[str]:
+    return re.findall(r"```python\n(.*?)```", readme_content, re.DOTALL)
 
 
-def save_code_blocks_to_file(code_blocks, output_file):
-    with open(output_file, "w") as f:
+def save_code_blocks_to_file(code_blocks: list[str], output_file: Path) -> None:
+    with Path(output_file).open("w") as f:
         for block in code_blocks:
             f.write(block + "\n\n")
 
 
-def main():
-    input_readme = os.path.join(os.path.dirname(__file__), "..", "README.md")
-    output_file = os.path.join(os.path.dirname(__file__), "extracted_readme_code.py")
+def main() -> None:
+    input_readme = Path(__file__).parent.parent / "README.md"
+    output_file = Path(__file__).parent / "extracted_readme_code.py"
 
-    with open(input_readme, "r") as file:
+    with Path(input_readme).open() as file:
         readme_content = file.read()
 
     code_blocks = extract_code_blocks(readme_content)

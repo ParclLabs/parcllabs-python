@@ -1,6 +1,3 @@
 pandas>=1.2
 requests>=2.25
-click>=8.1.7
 numpy>=2.1.0
-aiohttp>=3.10.5
-nest_asyncio

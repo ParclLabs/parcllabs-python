@@ -1,10 +1,13 @@
+import argparse
+import json
+import logging
 import os
 import time
-import logging
+from pathlib import Path
+
 import parcllabs
 from parcllabs import ParclLabsClient
-import json
-import argparse
+from parcllabs.services.parcllabs_service import ParclLabsService
 
 # Configure logging
 logging.basicConfig(
@@ -19,7 +22,9 @@ DEFAULT_EXPERIMENT_NAME = "test_with_processing"
 DEFAULT_OUTPUT_FILE = "api_latency_properties_test.json"
 
 
-def profile_api_call(section_name, client_method, output_file, **kwargs):
+def profile_api_call(
+    section_name: str, client_method: ParclLabsService, output_file: str, **kwargs: dict
+) -> None:
     """
     Profiles an API call, logs the results, and saves to a file.
 
@@ -64,13 +69,13 @@ def profile_api_call(section_name, client_method, output_file, **kwargs):
             "response_size_kb": result_size_kb,
             "url": url,
         }
-        with open(output_file, "a") as f:
+        with Path(output_file).open("a") as f:
             f.write(json.dumps(record) + "\n")
 
     return result
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Profile ParclLabs API calls.")
 
     parser.add_argument(
@@ -91,24 +96,22 @@ def main():
         default=DEFAULT_OUTPUT_FILE,
         help="File to save the API call results.",
     )
-    parser.add_argument(
-        "--env", type=str, default=ENV, help="Environment to use for the API calls"
-    )
+    parser.add_argument("--env", type=str, default=ENV, help="Environment to use for the API calls")
 
     args = parser.parse_args()
 
-    API_KEY = os.getenv("PARCL_LABS_API_KEY")
+    api_key = os.getenv("PARCL_LABS_API_KEY")
 
     if args.env == "dev":
-        API_KEY = os.getenv("PARCL_LABS_DEV_API_KEY")
+        api_key = os.getenv("PARCL_LABS_DEV_API_KEY")
         client = ParclLabsClient(
-            api_key=API_KEY,
+            api_key=api_key,
             api_url=os.getenv("PARCL_LABS_DEV_API_URL"),
             limit=100,
             turbo_mode=True,
         )
     else:
-        client = ParclLabsClient(api_key=API_KEY, limit=100, turbo_mode=True)
+        client = ParclLabsClient(api_key=api_key, limit=100, turbo_mode=True)
 
     logger.info(f"Parcl Labs Client Version: {parcllabs.__version__}")
 
