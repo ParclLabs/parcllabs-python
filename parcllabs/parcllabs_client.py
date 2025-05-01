@@ -111,8 +111,7 @@ class ParclLabsClient:
                 "service_class": ParclLabsService,
             },
             "new_listings_for_sale_rolling_counts": {
-                "url":
-                    "/v1/investor_metrics/{parcl_id}/new_listings_for_sale_rolling_counts",
+                "url": "/v1/investor_metrics/{parcl_id}/new_listings_for_sale_rolling_counts",
                 "post_url": "/v1/investor_metrics/new_listings_for_sale_rolling_counts",
                 "service_class": PropertyTypeService,
             },
@@ -159,8 +158,7 @@ class ParclLabsClient:
                 "service_class": PropertyTypeService,
             },
             "housing_event_property_attributes": {
-                "url":
-                    "/v1/market_metrics/{parcl_id}/housing_event_property_attributes",
+                "url": "/v1/market_metrics/{parcl_id}/housing_event_property_attributes",
                 "post_url": "/v1/market_metrics/housing_event_property_attributes",
                 "service_class": PropertyTypeService,
             },
@@ -189,8 +187,7 @@ class ParclLabsClient:
         group = self._create_service_group()
         services = {
             "new_listings_rolling_counts": {
-                "url":
-                    "/v1/for_sale_market_metrics/{parcl_id}/new_listings_rolling_counts",
+                "url": "/v1/for_sale_market_metrics/{parcl_id}/new_listings_rolling_counts",
                 "post_url": "/v1/for_sale_market_metrics/new_listings_rolling_counts",
                 "service_class": PropertyTypeService,
             },
@@ -200,10 +197,8 @@ class ParclLabsClient:
                 "service_class": PropertyTypeService,
             },
             "for_sale_inventory_price_changes": {
-                "url":
-                    "/v1/for_sale_market_metrics/{parcl_id}/for_sale_inventory_price_changes",
-                "post_url":
-                    "/v1/for_sale_market_metrics/for_sale_inventory_price_changes",
+                "url": "/v1/for_sale_market_metrics/{parcl_id}/for_sale_inventory_price_changes",
+                "post_url": "/v1/for_sale_market_metrics/for_sale_inventory_price_changes",
                 "service_class": PropertyTypeService,
             },
         }
@@ -214,8 +209,7 @@ class ParclLabsClient:
         group = self._create_service_group()
         services = {
             "rental_units_concentration": {
-                "url":
-                    "/v1/rental_market_metrics/{parcl_id}/rental_units_concentration",
+                "url": "/v1/rental_market_metrics/{parcl_id}/rental_units_concentration",
                 "post_url": "/v1/rental_market_metrics/rental_units_concentration",
                 "service_class": PropertyTypeService,
             },
@@ -225,10 +219,8 @@ class ParclLabsClient:
                 "service_class": PropertyTypeService,
             },
             "new_listings_for_rent_rolling_counts": {
-                "url":
-                    "/v1/rental_market_metrics/{parcl_id}/new_listings_for_rent_rolling_counts",
-                "post_url":
-                    "/v1/rental_market_metrics/new_listings_for_rent_rolling_counts",
+                "url": "/v1/rental_market_metrics/{parcl_id}/new_listings_for_rent_rolling_counts",
+                "post_url": "/v1/rental_market_metrics/new_listings_for_rent_rolling_counts",
                 "service_class": PropertyTypeService,
             },
         }
@@ -244,17 +236,13 @@ class ParclLabsClient:
                 "service_class": ParclLabsService,
             },
             "sf_new_listings_for_sale_rolling_counts": {
-                "url":
-                    "/v1/portfolio_metrics/{parcl_id}/sf_new_listings_for_sale_rolling_counts",
-                "post_url":
-                    "/v1/portfolio_metrics/sf_new_listings_for_sale_rolling_counts",
+                "url": "/v1/portfolio_metrics/{parcl_id}/sf_new_listings_for_sale_rolling_counts",
+                "post_url": "/v1/portfolio_metrics/sf_new_listings_for_sale_rolling_counts",
                 "service_class": PortfolioSizeService,
             },
             "sf_new_listings_for_rent_rolling_counts": {
-                "url":
-                    "/v1/portfolio_metrics/{parcl_id}/sf_new_listings_for_rent_rolling_counts",
-                "post_url":
-                    "/v1/portfolio_metrics/sf_new_listings_for_rent_rolling_counts",
+                "url": "/v1/portfolio_metrics/{parcl_id}/sf_new_listings_for_rent_rolling_counts",
+                "post_url": "/v1/portfolio_metrics/sf_new_listings_for_rent_rolling_counts",
                 "service_class": PortfolioSizeService,
             },
             "sf_housing_event_counts": {
