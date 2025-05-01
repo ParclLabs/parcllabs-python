@@ -42,9 +42,7 @@ class TestParclLabsService:
         assert cleaned == {"a": 1, "c": "test"}
 
     @patch("requests.request")
-    def test_make_request_get(
-        self, mock_request: Mock, service: ParclLabsService
-    ) -> None:
+    def test_make_request_get(self, mock_request: Mock, service: ParclLabsService) -> None:
         mock_response = Mock()
         mock_response.raise_for_status.return_value = None
         mock_request.return_value = mock_response
@@ -58,9 +56,7 @@ class TestParclLabsService:
         )
 
     @patch("requests.request")
-    def test_make_request_post(
-        self, mock_request: Mock, service: ParclLabsService
-    ) -> None:
+    def test_make_request_post(self, mock_request: Mock, service: ParclLabsService) -> None:
         mock_response = Mock()
         mock_response.raise_for_status.return_value = None
         mock_request.return_value = mock_response
@@ -78,9 +74,7 @@ class TestParclLabsService:
         )
 
     @patch("requests.request")
-    def test_make_request_http_error(
-        self, mock_request: Mock, service: ParclLabsService
-    ) -> None:
+    def test_make_request_http_error(self, mock_request: Mock, service: ParclLabsService) -> None:
         mock_response = Mock()
         mock_response.raise_for_status.side_effect = requests.exceptions.HTTPError()
         mock_response.status_code = 400  # Set a specific status code
@@ -92,9 +86,7 @@ class TestParclLabsService:
 
     def test_post(self, service: ParclLabsService) -> None:
         with patch.object(service, "_make_request") as mock_make_request:
-            service._post(
-                "https://api.example.com/test", params={}, data={"data": "test"}
-            )
+            service._post("https://api.example.com/test", params={}, data={"data": "test"})
             mock_make_request.assert_called_once_with(
                 POST_METHOD,
                 "https://api.example.com/test",
@@ -147,13 +139,9 @@ class TestParclLabsService:
 
         mock_post.return_value = mock_next_response
 
-        result = service._process_and_paginate_response(
-            mock_response, True, {}, {}, "post"
-        )
+        result = service._process_and_paginate_response(mock_response, True, {}, {}, "post")
         assert result["items"] == [1, 2, 3, 4]
-        mock_post.assert_called_once_with(
-            "https://api.example.com/next", data={}, params={}
-        )
+        mock_post.assert_called_once_with("https://api.example.com/next", data={}, params={})
 
     @patch("parcllabs.services.parcllabs_service.ParclLabsService._get")
     def test_process_and_paginate_response_get(
@@ -185,9 +173,7 @@ class TestParclLabsService:
 
     def test_sanitize_output(self, service: ParclLabsService) -> None:
         data = {"keep": "value", "delete": "value"}
-        with patch(
-            "parcllabs.services.parcllabs_service.DELETE_FROM_OUTPUT", ["delete"]
-        ):
+        with patch("parcllabs.services.parcllabs_service.DELETE_FROM_OUTPUT", ["delete"]):
             result = service.sanitize_output(data)
             assert "keep" in result
             assert "delete" not in result

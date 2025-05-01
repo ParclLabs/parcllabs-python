@@ -235,9 +235,7 @@ class ParclLabsService:
             referring_method="post",
         )
 
-    def _fetch_get(
-        self, url: str, params: dict[str, Any], auto_paginate: bool
-    ) -> object:
+    def _fetch_get(self, url: str, params: dict[str, Any], auto_paginate: bool) -> object:
         response = self._get(url, params=params)
         return self._process_and_paginate_response(
             response, auto_paginate, original_params=params, referring_method="get"
@@ -256,18 +254,12 @@ class ParclLabsService:
         response.raise_for_status()
         result = response.json()
 
-        if (
-            auto_paginate
-            and "links" in result
-            and result["links"].get("next") is not None
-        ):
+        if auto_paginate and "links" in result and result["links"].get("next") is not None:
             all_items = result["items"]
             while result["links"].get("next") is not None:
                 next_url = result["links"]["next"]
                 if referring_method == "post":
-                    next_response = self._post(
-                        next_url, data=data, params=original_params
-                    )
+                    next_response = self._post(next_url, data=data, params=original_params)
                 else:
                     next_response = self._get(next_url, params=original_params)
                 next_response.raise_for_status()
@@ -305,9 +297,7 @@ class ParclLabsService:
             try:
                 chunk = parcl_ids[i : i + max_parcl_ids]
                 results = self._fetch(chunk, params, auto_paginate=auto_paginate)
-                data_container.extend(
-                    results if isinstance(results, list) else [results]
-                )
+                data_container.extend(results if isinstance(results, list) else [results])
             except NotFoundError:
                 # we don't want to kill the entire process if one of the chunks fails
                 # due to no data. sparse parcl_ids can result in no data found.
@@ -348,9 +338,7 @@ class ParclLabsService:
             normalized_df = pd.json_normalize(
                 sanitized_results, record_path="items", meta=meta_fields
             )
-            updated_cols_names = [
-                c.replace(".", "_") for c in normalized_df.columns.tolist()
-            ]
+            updated_cols_names = [c.replace(".", "_") for c in normalized_df.columns.tolist()]
             normalized_df.columns = updated_cols_names
             data_container.append(normalized_df)
             self._update_account_info(account_info)
@@ -374,8 +362,7 @@ class ParclLabsService:
                 error_message = error_details.get("error", "Rate Limit Exceeded")
             elif response.status_code == ResponseCodes.NOT_FOUND.value:
                 raise NotFoundError(
-                    "No data found matching search criteria."
-                    "Try a different set of parameters."
+                    "No data found matching search criteria.Try a different set of parameters."
                 )
 
         except json.JSONDecodeError:

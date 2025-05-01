@@ -10,9 +10,7 @@ def safe_concat_and_format_dtypes(data_container: list) -> pd.DataFrame:  # noqa
 
     # Check if there are any DataFrames left to concatenate
     if not non_empty_dfs:
-        return (
-            pd.DataFrame()
-        )  # Return an empty DataFrame if no non-empty DataFrames are found
+        return pd.DataFrame()  # Return an empty DataFrame if no non-empty DataFrames are found
 
     # Get the column order from the first non-empty DataFrame
     original_columns = non_empty_dfs[0].columns.tolist()
@@ -48,9 +46,7 @@ def safe_concat_and_format_dtypes(data_container: list) -> pd.DataFrame:  # noqa
     if processed_dfs:
         output = pd.concat(processed_dfs, axis=0, ignore_index=True)
     else:
-        return (
-            pd.DataFrame()
-        )  # Return an empty DataFrame if all processed DataFrames are empty
+        return pd.DataFrame()  # Return an empty DataFrame if all processed DataFrames are empty
 
     # Cast date columns to datetime
     for col in DATE_COLUMNS:

@@ -24,9 +24,7 @@ def client() -> ParclLabsClient:
 def test_rental_market_metrics_rental_units_concentration_retrieve(
     client: ParclLabsClient,
 ) -> None:
-    result = client.rental_market_metrics.rental_units_concentration.retrieve(
-        parcl_ids=[1]
-    )
+    result = client.rental_market_metrics.rental_units_concentration.retrieve(parcl_ids=[1])
     assert not result.empty
     assert "parcl_id" in result.columns
     assert "metric" in result.columns

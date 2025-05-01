@@ -67,9 +67,7 @@ class PropertyEventsService(ParclLabsService):
             params["end_date"] = end_date
 
         if record_updated_date_start:
-            record_updated_date_start = Validators.validate_date(
-                record_updated_date_start
-            )
+            record_updated_date_start = Validators.validate_date(record_updated_date_start)
             params["record_updated_date_start"] = record_updated_date_start
 
         if record_updated_date_end:
@@ -97,9 +95,9 @@ class PropertyEventsService(ParclLabsService):
         with ThreadPoolExecutor(max_workers=self.client.num_workers) as executor:
             max_post_limit = RequestLimits.MAX_POST.value
             futures = {
-                executor.submit(
-                    process_batch, parcl_property_ids[i : i + max_post_limit]
-                ): len(parcl_property_ids[i : i + max_post_limit])
+                executor.submit(process_batch, parcl_property_ids[i : i + max_post_limit]): len(
+                    parcl_property_ids[i : i + max_post_limit]
+                )
                 for i in range(0, total_properties, max_post_limit)
             }
 

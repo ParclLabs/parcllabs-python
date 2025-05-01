@@ -14,16 +14,12 @@ def test_validate_date() -> None:
     # Test invalid date format
     with pytest.raises(ValueError) as excinfo:
         Validators.validate_date("18-06-2023")
-    assert (
-        str(excinfo.value) == "Date 18-06-2023 is not in the correct format YYYY-MM-DD."
-    )
+    assert str(excinfo.value) == "Date 18-06-2023 is not in the correct format YYYY-MM-DD."
 
     # Test invalid date
     with pytest.raises(ValueError) as excinfo:
         Validators.validate_date("2023-02-30")
-    assert (
-        str(excinfo.value) == "Date 2023-02-30 is not in the correct format YYYY-MM-DD."
-    )
+    assert str(excinfo.value) == "Date 2023-02-30 is not in the correct format YYYY-MM-DD."
 
 
 def test_validate_property_type() -> None:
@@ -43,17 +39,13 @@ def test_validate_property_type() -> None:
 def test_validate_portfolio_size() -> None:
     # Test valid portfolio size
     valid_portfolio_size = "portfolio_1000_plus"
-    assert (
-        Validators.validate_portfolio_size(valid_portfolio_size)
-        == "PORTFOLIO_1000_PLUS"
-    )
+    assert Validators.validate_portfolio_size(valid_portfolio_size) == "PORTFOLIO_1000_PLUS"
 
     # Test invalid portfolio size
     with pytest.raises(ValueError) as excinfo:
         Validators.validate_portfolio_size("extra-large")
     assert (
-        str(excinfo.value)
-        == f"Portfolio size EXTRA-LARGE is not valid. Must be one of "
+        str(excinfo.value) == f"Portfolio size EXTRA-LARGE is not valid. Must be one of "
         f"{', '.join(VALID_PORTFOLIO_SIZES)}."
     )
 
@@ -64,14 +56,9 @@ def test_validate_from_list() -> None:
 
     # Test valid value
     valid_value = "one"
-    assert (
-        Validators._validate_from_list(valid_value, valid_list, "Test value") == "ONE"
-    )
+    assert Validators._validate_from_list(valid_value, valid_list, "Test value") == "ONE"
 
     # Test invalid value
     with pytest.raises(ValueError) as excinfo:
         Validators._validate_from_list("four", valid_list, "Test value")
-    assert (
-        str(excinfo.value)
-        == "Test value FOUR is not valid. Must be one of ONE, TWO, THREE."
-    )
+    assert str(excinfo.value) == "Test value FOUR is not valid. Must be one of ONE, TWO, THREE."

@@ -52,8 +52,7 @@ def profile_api_call(
     url = client_method.url if hasattr(client_method, "url") else "Unknown URL"
     logger.info(f"{section_name} - Time taken: {elapsed_time:.4f} seconds")
     logger.info(
-        f"{section_name} - Response size: {result_size_mb:.4f} MB "
-        f"({result_size_kb:.2f} KB)"
+        f"{section_name} - Response size: {result_size_mb:.4f} MB ({result_size_kb:.2f} KB)"
     )
     logger.info(f"{section_name} - API Endpoint: {url}")
 
@@ -97,9 +96,7 @@ def main() -> None:
         default=DEFAULT_OUTPUT_FILE,
         help="File to save the API call results.",
     )
-    parser.add_argument(
-        "--env", type=str, default=ENV, help="Environment to use for the API calls"
-    )
+    parser.add_argument("--env", type=str, default=ENV, help="Environment to use for the API calls")
 
     args = parser.parse_args()
 

@@ -70,12 +70,8 @@ def property_events_service() -> PropertyEventsService:
     return PropertyEventsService(client=client_mock, url="/v1/property_events")
 
 
-@patch(
-    "parcllabs.services.properties.property_events_service.PropertyEventsService._post"
-)
-def test_retrieve_success(
-    mock_post: Mock, property_events_service: PropertyEventsService
-) -> None:
+@patch("parcllabs.services.properties.property_events_service.PropertyEventsService._post")
+def test_retrieve_success(mock_post: Mock, property_events_service: PropertyEventsService) -> None:
     mock_response = MagicMock()
     mock_response.json.return_value = json.loads(sample_events_response)
     mock_post.return_value = mock_response
@@ -93,9 +89,7 @@ def test_retrieve_invalid_event_type(
     property_events_service: PropertyEventsService,
 ) -> None:
     with pytest.raises(ValueError):
-        property_events_service.retrieve(
-            parcl_property_ids=[123456], event_type="INVALID_EVENT"
-        )
+        property_events_service.retrieve(parcl_property_ids=[123456], event_type="INVALID_EVENT")
 
 
 def test_retrieve_invalid_entity_owner_name(
@@ -107,9 +101,7 @@ def test_retrieve_invalid_entity_owner_name(
         )
 
 
-@patch(
-    "parcllabs.services.properties.property_events_service.PropertyEventsService._post"
-)
+@patch("parcllabs.services.properties.property_events_service.PropertyEventsService._post")
 def test_retrieve_not_found_error(
     mock_post: Mock, property_events_service: PropertyEventsService
 ) -> None:
@@ -121,9 +113,7 @@ def test_retrieve_not_found_error(
     assert result.empty
 
 
-@patch(
-    "parcllabs.services.properties.property_events_service.PropertyEventsService._post"
-)
+@patch("parcllabs.services.properties.property_events_service.PropertyEventsService._post")
 def test_retrieve_general_exception(
     mock_post: Mock, property_events_service: PropertyEventsService
 ) -> None:

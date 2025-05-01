@@ -17,23 +17,17 @@ class Validators:
         if date_str:
             try:
                 formatted_date = (
-                    datetime.strptime(date_str, "%Y-%m-%d")
-                    .replace(tzinfo=UTC)
-                    .strftime("%Y-%m-%d")
+                    datetime.strptime(date_str, "%Y-%m-%d").replace(tzinfo=UTC).strftime("%Y-%m-%d")
                 )
             except ValueError as e:
-                raise ValueError(
-                    f"Date {date_str} is not in the correct format YYYY-MM-DD."
-                ) from e
+                raise ValueError(f"Date {date_str} is not in the correct format YYYY-MM-DD.") from e
             else:
                 return formatted_date
         return None
 
     @staticmethod
     def validate_property_type(property_type: str) -> str:
-        return Validators._validate_from_list(
-            property_type, VALID_PROPERTY_TYPES, "Property type"
-        )
+        return Validators._validate_from_list(property_type, VALID_PROPERTY_TYPES, "Property type")
 
     @staticmethod
     def validate_portfolio_size(portfolio_size: str) -> str:
@@ -51,8 +45,7 @@ class Validators:
             value = value.strip().upper()
             if value.lower() not in [v.lower() for v in valid_list]:
                 raise ValueError(
-                    f"{value_type} {value} is not valid. "
-                    f"Must be one of {', '.join(valid_list)}."
+                    f"{value_type} {value} is not valid. Must be one of {', '.join(valid_list)}."
                 )
         return value
 
@@ -69,8 +62,7 @@ class Validators:
 
             if param not in valid_values:
                 raise ValueError(
-                    f"{param_name} value error. Valid values are: {valid_values}. "
-                    f"Received: {param}"
+                    f"{param_name} value error. Valid values are: {valid_values}. Received: {param}"
                 )
 
         return params_dict
@@ -85,9 +77,7 @@ class Validators:
             return params_dict
 
         if not isinstance(param, bool):
-            raise TypeError(
-                f"{param_name} value error. Expected boolean. Received: {param}"
-            )
+            raise TypeError(f"{param_name} value error. Expected boolean. Received: {param}")
 
         params_dict[param_name] = "true" if param else "false"
         return params_dict
@@ -111,14 +101,11 @@ class Validators:
         missing_fields = [field for field in fields if field not in data.keys()]
         if missing_fields:
             raise ValueError(
-                f"Missing required fields: {', '.join(missing_fields)}. "
-                f"Provided request: {data}"
+                f"Missing required fields: {', '.join(missing_fields)}. Provided request: {data}"
             )
 
     @staticmethod
-    def validate_integer_list(
-        value: object, param_name: str = "Parameter"
-    ) -> list[int]:
+    def validate_integer_list(value: object, param_name: str = "Parameter") -> list[int]:
         """
         Validates that the input is a list of integers.
         """

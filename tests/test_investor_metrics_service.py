@@ -12,21 +12,13 @@ mock_response = {"parcl_id": 1, "items": [{"metric": 10}, {"metric": 20}], "link
 @pytest.fixture
 def client() -> ParclLabsClient:
     client = ParclLabsClient(api_key="test_api_key")
-    client.investor_metrics.housing_stock_ownership._fetch = Mock(
-        return_value=mock_response
-    )
+    client.investor_metrics.housing_stock_ownership._fetch = Mock(return_value=mock_response)
     client.investor_metrics.new_listings_for_sale_rolling_counts._fetch = Mock(
         return_value=mock_response
     )
-    client.investor_metrics.purchase_to_sale_ratio._fetch = Mock(
-        return_value=mock_response
-    )
-    client.investor_metrics.housing_event_counts._fetch = Mock(
-        return_value=mock_response
-    )
-    client.investor_metrics.housing_event_prices._fetch = Mock(
-        return_value=mock_response
-    )
+    client.investor_metrics.purchase_to_sale_ratio._fetch = Mock(return_value=mock_response)
+    client.investor_metrics.housing_event_counts._fetch = Mock(return_value=mock_response)
+    client.investor_metrics.housing_event_prices._fetch = Mock(return_value=mock_response)
     return client
 
 
@@ -45,9 +37,7 @@ def test_investor_metrics_housing_stock_ownership_retrieve(
 def test_investor_metrics_new_listings_for_sale_rolling_counts_retrieve(
     client: ParclLabsClient,
 ) -> None:
-    result = client.investor_metrics.new_listings_for_sale_rolling_counts.retrieve(
-        parcl_ids=[1]
-    )
+    result = client.investor_metrics.new_listings_for_sale_rolling_counts.retrieve(parcl_ids=[1])
     assert not result.empty
     assert "parcl_id" in result.columns
     assert "metric" in result.columns

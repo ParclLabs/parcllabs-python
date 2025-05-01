@@ -11,18 +11,14 @@ mock_response = {"parcl_id": 1, "items": [{"metric": 10}, {"metric": 20}], "link
 @pytest.fixture
 def client() -> ParclLabsClient:
     client = ParclLabsClient(api_key="test_api_key")
-    client.portfolio_metrics.sf_housing_stock_ownership._fetch = Mock(
-        return_value=mock_response
-    )
+    client.portfolio_metrics.sf_housing_stock_ownership._fetch = Mock(return_value=mock_response)
     client.portfolio_metrics.sf_new_listings_for_sale_rolling_counts._fetch = Mock(
         return_value=mock_response
     )
     client.portfolio_metrics.sf_new_listings_for_rent_rolling_counts._fetch = Mock(
         return_value=mock_response
     )
-    client.portfolio_metrics.sf_housing_event_counts._fetch = Mock(
-        return_value=mock_response
-    )
+    client.portfolio_metrics.sf_housing_event_counts._fetch = Mock(return_value=mock_response)
     return client
 
 

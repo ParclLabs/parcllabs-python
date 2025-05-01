@@ -66,9 +66,7 @@ def test_market_metrics_housing_event_counts_retrieve(client: ParclLabsClient) -
 def test_market_metrics_housing_event_property_attributes_retrieve(
     client: ParclLabsClient,
 ) -> None:
-    result = client.market_metrics.housing_event_property_attributes.retrieve(
-        parcl_ids=[1]
-    )
+    result = client.market_metrics.housing_event_property_attributes.retrieve(parcl_ids=[1])
     assert not result.empty
     assert "parcl_id" in result.columns
     assert "metric" in result.columns

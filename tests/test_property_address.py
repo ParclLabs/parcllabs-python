@@ -56,9 +56,7 @@ def property_events_service() -> PropertyAddressSearch:
 
 
 @patch("parcllabs.services.properties.property_address.PropertyAddressSearch._post")
-def test_retrieve_success(
-    mock_post: Mock, property_events_service: PropertyAddressSearch
-) -> None:
+def test_retrieve_success(mock_post: Mock, property_events_service: PropertyAddressSearch) -> None:
     mock_response = MagicMock()
     mock_response.json.return_value = json.loads(SAMPLE_RESPONSE)
     mock_post.return_value = mock_response

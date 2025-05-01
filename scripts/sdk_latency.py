@@ -51,8 +51,7 @@ def profile_api_call(
     url = client_method.url if hasattr(client_method, "url") else "Unknown URL"
     logger.info(f"{section_name} - Time taken: {elapsed_time:.4f} seconds")
     logger.info(
-        f"{section_name} - Response size: {result_size_mb:.4f} MB "
-        f"({result_size_kb:.2f} KB)"
+        f"{section_name} - Response size: {result_size_mb:.4f} MB ({result_size_kb:.2f} KB)"
     )
     logger.info(f"{section_name} - API Endpoint: {url}")
 
@@ -96,13 +95,9 @@ def main() -> None:
         default=DEFAULT_OUTPUT_FILE,
         help="File to save the API call results.",
     )
-    parser.add_argument(
-        "--env", type=str, default=ENV, help="Environment to use for the API calls"
-    )
+    parser.add_argument("--env", type=str, default=ENV, help="Environment to use for the API calls")
 
-    parser.add_argument(
-        "--num_workers", type=int, default=10, help="Number of workers to use"
-    )
+    parser.add_argument("--num_workers", type=int, default=10, help="Number of workers to use")
 
     args = parser.parse_args()
 
@@ -117,9 +112,7 @@ def main() -> None:
             num_workers=args.num_workers,
         )
     else:
-        client = ParclLabsClient(
-            api_key=api_key, limit=100, num_workers=args.num_workers
-        )
+        client = ParclLabsClient(api_key=api_key, limit=100, num_workers=args.num_workers)
 
     logger.info(f"Parcl Labs Client Version: {parcllabs.__version__}")
 

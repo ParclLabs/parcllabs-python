@@ -127,9 +127,7 @@ class SearchMarkets(ParclLabsService):
         elif self.client.limit:
             params["limit"] = self._validate_limit(GET_METHOD, self.client.limit)
 
-        results = self._fetch_get(
-            url=self.full_url, params=params, auto_paginate=auto_paginate
-        )
+        results = self._fetch_get(url=self.full_url, params=params, auto_paginate=auto_paginate)
         data = self._as_pd_dataframe(results.get("items"))
         self._update_account_info(results.get("account"))
         self.markets = data

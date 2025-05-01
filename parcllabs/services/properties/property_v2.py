@@ -36,9 +36,7 @@ class PropertyV2Service(ParclLabsService):
             urls = []
             current_offset = offset + limit
             for _ in range(remaining_pages):
-                urls.append(
-                    f"{self.full_post_url}?limit={limit}&offset={current_offset}"
-                )
+                urls.append(f"{self.full_post_url}?limit={limit}&offset={current_offset}")
                 current_offset += limit
 
             # Use ThreadPoolExecutor to make concurrent requests
@@ -78,9 +76,7 @@ class PropertyV2Service(ParclLabsService):
                 events = property_data.get("events", [])
 
                 # Create a property record without events
-                property_record = {
-                    k: v for k, v in property_data.items() if k != "events"
-                }
+                property_record = {k: v for k, v in property_data.items() if k != "events"}
 
                 if not events:
                     # If no events, add the property as is
@@ -196,9 +192,7 @@ class PropertyV2Service(ParclLabsService):
 
         for param_key, filter_key in date_filters:
             if kwargs.get(param_key):
-                property_filters[filter_key] = Validators.validate_date(
-                    kwargs[param_key]
-                )
+                property_filters[filter_key] = Validators.validate_date(kwargs[param_key])
 
         # Handle boolean parameters
         if "include_property_details" in kwargs:
