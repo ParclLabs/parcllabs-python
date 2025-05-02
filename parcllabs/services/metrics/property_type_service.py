@@ -4,7 +4,6 @@ from typing import Any
 import pandas as pd
 
 from parcllabs.services.parcllabs_service import ParclLabsService
-from parcllabs.services.validators import Validators
 
 
 class PropertyTypeService(ParclLabsService):
@@ -18,8 +17,6 @@ class PropertyTypeService(ParclLabsService):
         params: Mapping[str, Any] | None = {},
         auto_paginate: bool = False,
     ) -> pd.DataFrame:
-        property_type = Validators.validate_property_type(property_type)
-        parcl_ids = Validators.validate_integer_list(parcl_ids, "parcl_ids")
 
         if property_type:
             params["property_type"] = property_type

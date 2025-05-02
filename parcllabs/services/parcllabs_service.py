@@ -278,7 +278,7 @@ class ParclLabsService:
         params: Mapping[str, Any] | None = None,
         auto_paginate: bool = False,
     ) -> pd.DataFrame:
-        parcl_ids = Validators.validate_integer_list(parcl_ids, "parcl_ids")
+
         start_date = Validators.validate_date(start_date)
         end_date = Validators.validate_date(end_date)
 

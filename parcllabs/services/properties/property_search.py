@@ -2,7 +2,6 @@ from collections import deque
 
 import pandas as pd
 
-from parcllabs.common import VALID_ENTITY_NAMES, VALID_PROPERTY_TYPES_UNIT_SEARCH
 from parcllabs.exceptions import NotFoundError
 from parcllabs.services.parcllabs_service import ParclLabsService
 from parcllabs.services.validators import Validators
@@ -86,21 +85,12 @@ class PropertySearch(ParclLabsService):
         """
         params = {}
 
-        parcl_ids = Validators.validate_integer_list(parcl_ids, "parcl_ids")
+        if property_type:
+            params["property_type"] = property_type
 
-        params = Validators.validate_input_str_param(
-            param=property_type,
-            param_name="property_type",
-            valid_values=VALID_PROPERTY_TYPES_UNIT_SEARCH,
-            params_dict=params,
-        )
 
-        params = Validators.validate_input_str_param(
-            param=current_entity_owner_name,
-            param_name="current_entity_owner_name",
-            valid_values=VALID_ENTITY_NAMES,
-            params_dict=params,
-        )
+        if current_entity_owner_name:
+            params["current_entity_owner_name"] = current_entity_owner_name
 
         params = Validators.validate_input_bool_param(
             param=event_history_sale_flag,

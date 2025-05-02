@@ -2,7 +2,7 @@
 line-length = 100
 indent-width = 4
 
-target-version = "py312"
+target-version = "py311"
 
 [lint]
 select = ["E", "F", "B", "I", "W", "C", "B", "UP", "N", "ANN", "S", "A", "COM", "DTZ", "T10", "RET", "SLF", "ARG", "PD", "PL", "RUF", "PTH", "PLR", "TRY"]

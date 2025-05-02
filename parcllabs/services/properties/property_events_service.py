@@ -5,10 +5,6 @@ from typing import Any
 
 import pandas as pd
 
-from parcllabs.common import (
-    VALID_ENTITY_NAMES,
-    VALID_EVENT_TYPES,
-)
 from parcllabs.enums import RequestLimits
 from parcllabs.exceptions import (
     NotFoundError,
@@ -28,7 +24,7 @@ class PropertyEventsService(ParclLabsService):
     def __init__(self, *args: object, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
 
-    def retrieve(
+    def retrieve(  # noqa: C901
         self,
         parcl_property_ids: list[int],
         event_type: str | None = None,
@@ -43,28 +39,17 @@ class PropertyEventsService(ParclLabsService):
         Retrieve property events for given parameters.
         """
         params = {}
-        params = Validators.validate_input_str_param(
-            param=event_type,
-            param_name="event_type",
-            valid_values=VALID_EVENT_TYPES,
-            params_dict=params,
-        )
+        if event_type:
+            params["event_type"] = event_type
 
-        params = Validators.validate_input_str_param(
-            param=entity_owner_name,
-            param_name="entity_owner_name",
-            valid_values=VALID_ENTITY_NAMES,
-            params_dict=params,
-        )
-        parcl_property_ids = Validators.validate_integer_list(
-            parcl_property_ids, "parcl_property_ids"
-        )
+        if entity_owner_name:
+            params["entity_owner_name"] = entity_owner_name
 
         if start_date:
-            params["start_date"] = start_date
+            params["start_date"] = Validators.validate_date(start_date)
 
         if end_date:
-            params["end_date"] = end_date
+            params["end_date"] = Validators.validate_date(end_date)
 
         if record_updated_date_start:
             record_updated_date_start = Validators.validate_date(record_updated_date_start)
