@@ -17,7 +17,6 @@ class PropertyTypeService(ParclLabsService):
         params: Mapping[str, Any] | None = {},
         auto_paginate: bool = False,
     ) -> pd.DataFrame:
-
         if property_type:
             params["property_type"] = property_type
 

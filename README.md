@@ -107,7 +107,6 @@ Gets the number of rental units, total units, and percent rental unit concentrat
 ##### New Listings for Rent Rolling Counts
 Gets weekly updated rolling counts of newly listed for rent properties, segmented into 7, 30, 60, and 90 day periods ending on a specified date, based on a given `parcl_id`.
 
-###### Get all rental market metrics
 ```python
 start_date = '2024-04-01'
 end_date = '2024-04-01'
@@ -140,7 +139,6 @@ Gets the weekly updated current count of total inventory listed on market for sa
 ##### For Sale Inventory Price Changes
 Gets weekly updated metrics on the price behavior of current for sale inventory, based on a specified `parcl_id`. Available metrics include the count of price changes, count of price drops, median days between price changes, median price change, and the percentage of inventory with price changes. The data series for the for sale inventory metrics begins on September 1, 2022 (2022-09-01).
 
-###### Get all for sale market metrics
 ```python
 start_date = '2024-04-01'
 end_date = '2024-04-01'
@@ -183,7 +181,6 @@ Gets monthly statistics on the physical attributes of properties involved in hou
 ##### All Cash
 Gets monthly counts of all cash transactions and their percentage share of total sales, based on a specified `parcl_id`.
 
-###### Get all market metrics
 ```python
 start_date = '2024-01-01'
 end_date = '2024-04-01'
@@ -227,7 +224,6 @@ Gets monthly counts of new construction housing events, including sales, new for
 ##### Housing Event Prices
 Gets monthly median prices for new construction housing events, including sales, new for sale listings, and new rental listings, based on a specified `parcl_id`.
 
-###### Get all new construction metrics
 ```python
 start_date = '2024-01-01'
 end_date = '2024-04-01'
@@ -262,7 +258,6 @@ Gets counts of investor-owned properties and their corresponding percentage owne
 ##### Housing Event Prices
 Gets monthly median prices for investor housing events, including acquisitions, dispositions, new sale listings, and new rental listings, based on a specified `parcl_id`.
 
-###### Get all investor metrics
 ```python
 start_date = '2024-01-01'
 end_date = '2024-04-01'
@@ -515,10 +510,6 @@ results, filter_data = client.property_v2.search.retrieve(
 ```
 
 ### Account Info <a id="account-info"></a>
-
-This will enable turbo mode for all subsequent API calls which is a smart switch to route API calls through more efficient, premium endpoints designed for bulk data retrieval.
-
-### Account Info
 
 Monitor your API usage and quota limits by calling the `account()` method in the `ParclLabsClient` class.
 ```python

@@ -17,7 +17,6 @@ class PortfolioSizeService(ParclLabsService):
         params: Mapping[str, Any] | None = {},
         auto_paginate: bool = False,
     ) -> pd.DataFrame:
-
         if portfolio_size:
             params["portfolio_size"] = portfolio_size
 

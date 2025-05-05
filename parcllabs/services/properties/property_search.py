@@ -88,7 +88,6 @@ class PropertySearch(ParclLabsService):
         if property_type:
             params["property_type"] = property_type
 
-
         if current_entity_owner_name:
             params["current_entity_owner_name"] = current_entity_owner_name
 
