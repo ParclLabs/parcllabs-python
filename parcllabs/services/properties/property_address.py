@@ -23,6 +23,11 @@ class PropertyAddressSearch(ParclLabsService):
         Args:
 
             addresses (list): A list of dictionaries containing address information.
+            Each dictionary should contain the following keys:
+            - address: The street address
+            - city: The city
+            - state_abbreviation: The state abbreviation
+            - zip_code: The zip code
 
         Returns:
 

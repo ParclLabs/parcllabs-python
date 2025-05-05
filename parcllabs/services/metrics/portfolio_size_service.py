@@ -17,8 +17,11 @@ class PortfolioSizeService(ParclLabsService):
         params: Mapping[str, Any] | None = {},
         auto_paginate: bool = False,
     ) -> pd.DataFrame:
+        """
+        Retrieve portfolio size metrics for given parameters.
+        """
         if portfolio_size:
-            params["portfolio_size"] = portfolio_size
+            params["portfolio_size"] = portfolio_size.upper()
 
         return super().retrieve(
             parcl_ids=parcl_ids,

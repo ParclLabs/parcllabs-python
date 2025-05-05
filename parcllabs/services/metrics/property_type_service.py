@@ -17,8 +17,11 @@ class PropertyTypeService(ParclLabsService):
         params: Mapping[str, Any] | None = {},
         auto_paginate: bool = False,
     ) -> pd.DataFrame:
+        """
+        Retrieve property type metrics for given parameters.
+        """
         if property_type:
-            params["property_type"] = property_type
+            params["property_type"] = property_type.upper()
 
         return super().retrieve(
             parcl_ids=parcl_ids,

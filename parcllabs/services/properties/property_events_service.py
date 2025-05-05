@@ -24,26 +24,23 @@ class PropertyEventsService(ParclLabsService):
     def __init__(self, *args: object, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
 
-    def retrieve(  # noqa: C901
+    def _prepare_params(
         self,
-        parcl_property_ids: list[int],
         event_type: str | None = None,
         start_date: str | None = None,
         end_date: str | None = None,
         entity_owner_name: str | None = None,
         record_updated_date_start: str | None = None,
         record_updated_date_end: str | None = None,
-        params: Mapping[str, Any] | None = {},
-    ) -> pd.DataFrame:
-        """
-        Retrieve property events for given parameters.
-        """
+    ) -> dict:
+        """Prepare parameters for property events retrieval."""
         params = {}
+
         if event_type:
-            params["event_type"] = event_type
+            params["event_type"] = event_type.upper()
 
         if entity_owner_name:
-            params["entity_owner_name"] = entity_owner_name
+            params["entity_owner_name"] = entity_owner_name.upper()
 
         if start_date:
             params["start_date"] = Validators.validate_date(start_date)
@@ -58,6 +55,31 @@ class PropertyEventsService(ParclLabsService):
         if record_updated_date_end:
             record_updated_date_end = Validators.validate_date(record_updated_date_end)
             params["record_updated_date_end"] = record_updated_date_end
+
+        return params
+
+    def retrieve(
+        self,
+        parcl_property_ids: list[int],
+        event_type: str | None = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        entity_owner_name: str | None = None,
+        record_updated_date_start: str | None = None,
+        record_updated_date_end: str | None = None,
+        params: Mapping[str, Any] | None = {},
+    ) -> pd.DataFrame:
+        """
+        Retrieve property events for given parameters.
+        """
+        params = self._prepare_params(
+            event_type=event_type,
+            start_date=start_date,
+            end_date=end_date,
+            entity_owner_name=entity_owner_name,
+            record_updated_date_start=record_updated_date_start,
+            record_updated_date_end=record_updated_date_end,
+        )
 
         parcl_property_ids = [str(i) for i in parcl_property_ids]
         total_properties = len(parcl_property_ids)

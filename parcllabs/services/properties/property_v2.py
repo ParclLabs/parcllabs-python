@@ -292,12 +292,42 @@ class PropertyV2Service(ParclLabsService):
         owner_name: list[str] | None = None,
         is_investor_owned: bool | None = None,
         is_owner_occupied: bool | None = None,
-        limit: int | None = None,
         params: Mapping[str, Any] | None = None,
     ) -> tuple[pd.DataFrame, dict[str, Any]]:
         """
         Retrieve property data based on search criteria and filters.
 
+        Args:
+            parcl_ids: List of parcl_ids to filter by.
+            parcl_property_ids: List of parcl_property_ids to filter by.
+            latitude: Latitude to filter by.
+            longitude: Longitude to filter by.
+            radius: Radius to filter by.
+            property_types: List of property types to filter by.
+            min_beds: Minimum number of bedrooms to filter by.
+            max_beds: Maximum number of bedrooms to filter by.
+            min_baths: Minimum number of bathrooms to filter by.
+            max_baths: Maximum number of bathrooms to filter by.
+            min_sqft: Minimum square footage to filter by.
+            max_sqft: Maximum square footage to filter by.
+            min_year_built: Minimum year built to filter by.
+            max_year_built: Maximum year built to filter by.
+            include_property_details: Whether to include property details.
+            min_record_added_date: Minimum record added date to filter by.
+            max_record_added_date: Maximum record added date to filter by.
+            event_names: List of event names to filter by.
+            min_event_date: Minimum event date to filter by.
+            max_event_date: Maximum event date to filter by.
+            min_price: Minimum price to filter by.
+            max_price: Maximum price to filter by.
+            is_new_construction: Whether to filter by new construction.
+            min_record_updated_date: Minimum record updated date to filter by.
+            max_record_updated_date: Maximum record updated date to filter by.
+            is_current_owner: Whether to filter by current owner.
+            owner_name: List of owner names to filter by.
+            is_investor_owned: Whether to filter by investor owned.
+            is_owner_occupied: Whether to filter by owner occupied.
+            params: Additional parameters to pass to the request.
         Returns:
             A pandas DataFrame containing the property data.
         """
@@ -323,7 +353,6 @@ class PropertyV2Service(ParclLabsService):
             "latitude",
             "longitude",
             "radius",
-            "limit",
             "params",
             "data",
             "location",

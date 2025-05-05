@@ -1,34 +1,13 @@
 from parcllabs.enums import (
-    EntityNames,
-    EventTypes,
-    LocationTypes,
-    PortfolioSizes,
-    PropertyTypes,
-    PropertyTypesUnit,
     RequestMethods,
     ResponseColumns,
-    SortByParams,
-    SortOrder,
-    USRegions,
     USStateAbbreviations,
-    USStateFIPSCodes,
     get_enum_values,
 )
 
-VALID_US_REGIONS = get_enum_values(USRegions)
 VALID_US_STATE_ABBREV = get_enum_values(USStateAbbreviations)
-VALID_US_STATE_FIPS_CODES = get_enum_values(USStateFIPSCodes)
-VALID_SORT_BY = get_enum_values(SortByParams)
-VALID_SORT_ORDER = get_enum_values(SortOrder)
-VALID_EVENT_TYPES = get_enum_values(EventTypes)
-VALID_ENTITY_NAMES = get_enum_values(EntityNames)
-VALID_PROPERTY_TYPES = get_enum_values(PropertyTypes)
-VALID_PORTFOLIO_SIZES = get_enum_values(PortfolioSizes)
-VALID_LOCATION_TYPES = get_enum_values(LocationTypes)
-VALID_PROPERTY_TYPES_UNIT_SEARCH = get_enum_values(PropertyTypesUnit)
 
 ID_COLUMNS = [ResponseColumns.PARCL_ID.value, ResponseColumns.PARCL_PROPERTY_ID.value]
-
 DATE_COLUMNS = [ResponseColumns.DATE.value, ResponseColumns.EVENT_DATE.value]
 
 DELETE_FROM_OUTPUT = [

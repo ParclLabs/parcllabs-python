@@ -35,33 +35,3 @@ def test_retrieve(mock_sync_request: Mock, search_service: SearchMarkets) -> Non
     assert len(result) == 2
     assert result.iloc[0]["parcl_id"] == 1
     assert result.iloc[1]["parcl_id"] == 2
-
-
-def test_validate_location_type(search_service: SearchMarkets) -> None:
-    with pytest.raises(ValueError):
-        search_service.retrieve(location_type="invalid_type")
-
-
-def test_validate_region(search_service: SearchMarkets) -> None:
-    with pytest.raises(ValueError):
-        search_service.retrieve(region="invalid_region")
-
-
-def test_validate_state_abbreviation(search_service: SearchMarkets) -> None:
-    with pytest.raises(ValueError):
-        search_service.retrieve(state_abbreviation="invalid_abbrev")
-
-
-def test_validate_state_fips_code(search_service: SearchMarkets) -> None:
-    with pytest.raises(ValueError):
-        search_service.retrieve(state_fips_code="invalid_fips")
-
-
-def test_validate_sort_by(search_service: SearchMarkets) -> None:
-    with pytest.raises(ValueError):
-        search_service.retrieve(sort_by="invalid_sort_by")
-
-
-def test_validate_sort_order(search_service: SearchMarkets) -> None:
-    with pytest.raises(ValueError):
-        search_service.retrieve(sort_order="invalid_sort_order")
