@@ -74,6 +74,14 @@ api_key = os.getenv('PARCL_LABS_API_KEY')
 client = ParclLabsClient(api_key)
 ```
 
+#### Num Workers
+
+The `num_workers` parameter is used to specify the number of workers to use for parallel requests. The default is None, which translates to `min(32, (os.cpu_count() or 1) + 4)`. See [docs](https://github.com/python/cpython/blob/dcc3eaef98cd94d6cb6cb0f44bd1c903d04f33b1/Lib/concurrent/futures/thread.py#L137) for more details. 
+
+```python
+client = ParclLabsClient(api_key, num_workers=20)
+```
+
 ## Services <a id="services"></a>
 
 ### Search <a id="search"></a>
