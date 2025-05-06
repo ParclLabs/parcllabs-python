@@ -379,11 +379,6 @@ price_feed_volatility = client.price_feed.volatility.retrieve(
     start_date=start_date,
     end_date=end_date
 )
-
-# want to save to csv? Use .to_csv method as follow:
-# price_feeds.to_csv('price_feeds.csv', index=False)
-# rental_price_feeds.to_csv('rental_price_feeds.csv', index=False)
-# price_feed_volatility.to_csv('price_feed_volatility.csv', index=False)
 ```
 
 ### Property <a id="property"></a>
