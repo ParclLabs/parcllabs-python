@@ -150,12 +150,10 @@ class PropertyV2Service(ParclLabsService):
         data = {}
 
         if parcl_ids:
-            data["parcl_ids"] = Validators.validate_integer_list(parcl_ids, "parcl_ids")
+            data["parcl_ids"] = parcl_ids
 
         if parcl_property_ids:
-            data["parcl_property_ids"] = Validators.validate_integer_list(
-                parcl_property_ids, "parcl_property_ids"
-            )
+            data["parcl_property_ids"] = parcl_property_ids
 
         if location and all(k in location for k in ["latitude", "longitude", "radius"]):
             data.update(location)
@@ -182,7 +180,9 @@ class PropertyV2Service(ParclLabsService):
 
         # Handle property types
         if kwargs.get("property_types"):
-            property_filters["property_types"] = kwargs["property_types"]
+            property_filters["property_types"] = [
+                property_type.upper() for property_type in kwargs["property_types"]
+            ]
 
         # Handle date filters
         date_filters = [
@@ -210,7 +210,7 @@ class PropertyV2Service(ParclLabsService):
 
         # Handle event names
         if kwargs.get("event_names"):
-            event_filters["event_names"] = kwargs["event_names"]
+            event_filters["event_names"] = [name.upper() for name in kwargs["event_names"]]
 
         # Handle date filters
         date_filters = [
@@ -246,7 +246,7 @@ class PropertyV2Service(ParclLabsService):
 
         # Handle owner names
         if kwargs.get("owner_name"):
-            owner_filters["owner_name"] = kwargs["owner_name"]
+            owner_filters["owner_name"] = [name.upper() for name in kwargs["owner_name"]]
 
         # Handle boolean parameters
         bool_params = ["is_current_owner", "is_investor_owned", "is_owner_occupied"]
