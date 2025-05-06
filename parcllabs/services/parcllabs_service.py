@@ -166,7 +166,7 @@ class ParclLabsService:
         if "limit" not in params or params["limit"] is None:
             params["limit"] = self.client.limit
 
-        if self.client.turbo_mode and self.full_post_url:
+        if self.full_post_url:
             # convert the list of parcl_ids into post body params, formatted
             # as strings
             if params.get("limit"):
@@ -278,7 +278,6 @@ class ParclLabsService:
         params: Mapping[str, Any] | None = None,
         auto_paginate: bool = False,
     ) -> pd.DataFrame:
-        parcl_ids = Validators.validate_integer_list(parcl_ids, "parcl_ids")
         start_date = Validators.validate_date(start_date)
         end_date = Validators.validate_date(end_date)
 

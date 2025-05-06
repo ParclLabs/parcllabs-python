@@ -85,22 +85,6 @@ def test_retrieve_success(mock_post: Mock, property_events_service: PropertyEven
     assert "price" in result.columns
 
 
-def test_retrieve_invalid_event_type(
-    property_events_service: PropertyEventsService,
-) -> None:
-    with pytest.raises(ValueError):
-        property_events_service.retrieve(parcl_property_ids=[123456], event_type="INVALID_EVENT")
-
-
-def test_retrieve_invalid_entity_owner_name(
-    property_events_service: PropertyEventsService,
-) -> None:
-    with pytest.raises(ValueError):
-        property_events_service.retrieve(
-            parcl_property_ids=[123456], entity_owner_name="INVALID_ENTITY"
-        )
-
-
 @patch("parcllabs.services.properties.property_events_service.PropertyEventsService._post")
 def test_retrieve_not_found_error(
     mock_post: Mock, property_events_service: PropertyEventsService

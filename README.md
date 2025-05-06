@@ -3,18 +3,35 @@
 ![GitHub Tag](https://img.shields.io/github/v/tag/ParclLabs/parcllabs-python)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/parcllabs)
 <!-- readme header end -->
-## **Welcome to the Parcl Labs Python SDK**
+
+# Parcl Labs Python SDK
 
 **We're on a mission to create the world's best API developer experience and community for housing data.**
 
 Our SDK is designed to supercharge your API experience and accelerate your time to insight. It enables you to efficiently pull the data you need, analyze it, and visualize your findings.
 
+## Table of Contents
+- [Data Overview](#parcl-labs-data-overview)
+- [Getting Started](#getting-started)
+- [Services](#services)
+  - [Search](#search)
+  - [Rental Market Metrics](#rental-market-metrics)
+  - [For Sale Market Metrics](#for-sale-market-metrics)
+  - [Market Metrics](#market-metrics)
+  - [New Construction Metrics](#new-construction-metrics)
+  - [Investor Metrics](#investor-metrics)
+  - [Portfolio Metrics](#portfolio-metrics)
+  - [Price Feeds](#price-feeds)
+  - [Property](#property)
+  - [Property Address Search](#property-address-search)
+  - [Property Search V2](#property-search-v2)
+  - [Account Info](#account-info)
+- [Cookbook](#cookbook)
+
 <!-- readme header split -->
-## Parcl Labs Data Overview
+## Parcl Labs Data Overview <a id="parcl-labs-data-overview"></a>
 
-The Parcl Labs API provides **instant insights into the U.S. housing market**, delivering data on housing supply, sales, listings, rentals, investor activities, and market trends.
-
-
+The Parcl Labs API provides **instant insights into the U.S. housing market**, delivering data on housing supply, sales, listings, rentals, investor activities, and market trends.
 
 _The most complete picture of US residential real estate_
 
@@ -23,25 +40,17 @@ _The most complete picture of US residential real estate_
 | **Property Types** | **🏘️ All Residential Assets:**<br>✅ Single Family<br>✅ Townhouses<br>✅ Condos<br>✅ Other                                                                      |
 | **Markets**        | **🇺🇸 Complete National Coverage, 70k+ Unique Markets at Any Level of Granularity:**<br>✅ Regions<br>✅ States<br>✅ Metros<br>✅ Cities<br>✅ Counties<br>✅ Towns<br>✅ Zips<br>✅ Census Places |
 | **Housing Events** | **🔄 The Full Property Lifecycle:**<br>✅ Sales<br>✅ For Sale Listings<br>✅ Rentals                                                                              |
-
 <!-- readme header end -->
-### Cookbook
+
+## Cookbook <a id="cookbook"></a>
 
 We maintain a repository of examples that demonstrate how to use the Parcl Labs API for analysis. You can find the examples in the [Parcl Labs Cookbook](https://github.com/parcllabs/parcllabs-cookbook)
 
-## Premium Users
-Are you a premium user? See the [premium features](#premium-features) section for more information on how to access premium features including:
-- Access all homes for Invitation Homes, American Homes 4 Rent, and other large investors
-- Access national, unit level data with full event cycles (rentals, listings, sales)
-- Access `turbo_mode` for faster data retrieval
-
-## Getting Started
+## Getting Started <a id="getting-started"></a>
 
 ### Step 1. Sign Up for an API Key
 
 To use the Parcl Labs API, you need an API key. To get an API key, sign up at [ParclLabs](https://dashboard.parcllabs.com/signup). In the subsequent examples, the API key is stored in the `PARCLLABS_API_KEY` environment variable.
-
-
 
 ### Step 2. Installation
 
@@ -65,7 +74,18 @@ api_key = os.getenv('PARCL_LABS_API_KEY')
 client = ParclLabsClient(api_key)
 ```
 
-#### Search
+#### Num Workers
+
+The `num_workers` parameter is used to specify the number of workers to use for parallel requests. The default is None, which translates to `min(32, (os.cpu_count() or 1) + 4)`. See [docs](https://github.com/python/cpython/blob/dcc3eaef98cd94d6cb6cb0f44bd1c903d04f33b1/Lib/concurrent/futures/thread.py#L137) for more details. 
+
+```python
+client = ParclLabsClient(api_key, num_workers=20)
+```
+
+## Services <a id="services"></a>
+
+### Search <a id="search"></a>
+
 Search is your entry point into finding one or many of over 70,000 markets in the United States. You can search for markets by `name`, `state`, `region`, `fips`, or `zip code`. You can also search for markets by their unique `parcl_id`.
 
 ##### Search Markets
@@ -84,11 +104,7 @@ top_market_parcl_ids = markets['parcl_id'].tolist()
 #  2900078     USA  31080            None     Los Angeles-Long Beach-Anaheim, Ca               None   None          CBSA          13111917          89105                      0                 1                       1                       1
 ```
 
-#### Services
-
-Services are the core of the Parcl Labs API. They provide access to a wide range of data and analytics on the housing market. The services are divided into the following categories: `Price Feeds`, `Rental Market Metrics`, `For Sale Market Metrics`, `Market Metrics`, `Investor Metrics`, `Portfolio Metrics` and `Property`.
-
-#### Rental Market Metrics
+### Rental Market Metrics <a id="rental-market-metrics"></a>
 
 ##### Gross Yield
 Gets the percent gross yield for a specified `parcl_id`. At the market level, identified by `parcl_id`, gross yield is calculated by dividing the annual median rental income—derived from multiplying the monthly median new rental listing price by 12—by its median new listings for sale price.
@@ -99,7 +115,6 @@ Gets the number of rental units, total units, and percent rental unit concentrat
 ##### New Listings for Rent Rolling Counts
 Gets weekly updated rolling counts of newly listed for rent properties, segmented into 7, 30, 60, and 90 day periods ending on a specified date, based on a given `parcl_id`.
 
-###### Get all rental market metrics
 ```python
 start_date = '2024-04-01'
 end_date = '2024-04-01'
@@ -121,7 +136,7 @@ rentals_new_listings_rolling_counts = client.rental_market_metrics.new_listings_
 )
 ```
 
-#### For Sale Market Metrics
+### For Sale Market Metrics <a id="for-sale-market-metrics"></a>
 
 ##### New Listings Rolling Counts
 Gets weekly updated rolling counts of newly listed for sale properties, segmented into 7, 30, 60, and 90 day periods ending on a specified date, based on a given `parcl_id`.
@@ -132,7 +147,6 @@ Gets the weekly updated current count of total inventory listed on market for sa
 ##### For Sale Inventory Price Changes
 Gets weekly updated metrics on the price behavior of current for sale inventory, based on a specified `parcl_id`. Available metrics include the count of price changes, count of price drops, median days between price changes, median price change, and the percentage of inventory with price changes. The data series for the for sale inventory metrics begins on September 1, 2022 (2022-09-01).
 
-###### Get all for sale market metrics
 ```python
 start_date = '2024-04-01'
 end_date = '2024-04-01'
@@ -158,7 +172,7 @@ for_sale_inventory_price_changes = client.for_sale_market_metrics.for_sale_inven
 )
 ```
 
-#### Market Metrics
+### Market Metrics <a id="market-metrics"></a>
 
 ##### Housing Event Counts
 Gets monthly counts of housing events, including sales, new sale listings, and new rental listings, based on a specified `parcl_id`.
@@ -175,8 +189,6 @@ Gets monthly statistics on the physical attributes of properties involved in hou
 ##### All Cash
 Gets monthly counts of all cash transactions and their percentage share of total sales, based on a specified `parcl_id`.
 
-
-###### Get all market metrics
 ```python
 start_date = '2024-01-01'
 end_date = '2024-04-01'
@@ -212,7 +224,7 @@ results_all_cash = client.market_metrics.all_cash.retrieve(
 )
 ```
 
-#### New Construction Metrics
+### New Construction Metrics <a id="new-construction-metrics"></a>
 
 ##### Housing Event Counts
 Gets monthly counts of new construction housing events, including sales, new for sale listings, and new rental listings, based on a specified `parcl_id`.
@@ -220,7 +232,6 @@ Gets monthly counts of new construction housing events, including sales, new for
 ##### Housing Event Prices
 Gets monthly median prices for new construction housing events, including sales, new for sale listings, and new rental listings, based on a specified `parcl_id`.
 
-###### Get all new construction metrics
 ```python
 start_date = '2024-01-01'
 end_date = '2024-04-01'
@@ -238,7 +249,7 @@ results_new_construction_housing_event_counts = client.new_construction_metrics.
 )
 ```
 
-#### Investor Metrics
+### Investor Metrics <a id="investor-metrics"></a>
 
 ##### Housing Event Counts
 Gets monthly counts of investor housing events, including acquisitions, dispositions, new sale listings, and new rental listings, based on a specified `parcl_id`.
@@ -255,7 +266,6 @@ Gets counts of investor-owned properties and their corresponding percentage owne
 ##### Housing Event Prices
 Gets monthly median prices for investor housing events, including acquisitions, dispositions, new sale listings, and new rental listings, based on a specified `parcl_id`.
 
-###### Get all investor metrics
 ```python
 start_date = '2024-01-01'
 end_date = '2024-04-01'
@@ -291,22 +301,18 @@ results = client.investor_metrics.housing_event_prices.retrieve(
 )
 ```
 
-#### Portfolio Metrics
+### Portfolio Metrics <a id="portfolio-metrics"></a>
 
 ##### Single Family Housing Event Counts
-
 Gets monthly counts of investor-owned single family property housing events, segmented by portfolio size, for a specified `parcl_id`. Housing events include acquisitions, dispositions, new for sale listings, and new rental listings.
 
 ##### Single Family Housing Stock Ownership
-
 Gets counts of investor-owned single family properties and their corresponding percentage of the total single family housing stock, segmented by portfolio size, for a specified `parcl_id`. The data series for portfolio metrics begins on March 1, 2024 (2024-03-01).
 
 ##### New Listings for Sale Rolling Counts
-
 Gets counts of investor-owned single family properties and their corresponding percentage of the total single family housing stock, segmented by portfolio size, for a specified `parcl_id`. The data series for portfolio metrics begins on April 15, 2024 (2024-04-15).
 
 ##### New Listings for Rent Rolling Counts
-
 Gets weekly updated rolling counts of investor-owned single family properties newly listed for rent, segmented by portfolio size, and their corresponding percentage share of the total single family for rent listings market. These metrics are divided into 7, 30, 60, and 90 day periods ending on a specified date, based on a given `parcl_id`. The data series for portfolio metrics begins on April 22, 2024 (2024-04-22).
 
 ```python
@@ -331,7 +337,8 @@ results = client.portfolio_metrics.sf_new_listings_for_rent_rolling_counts.retri
 )
 ```
 
-#### Price Feeds
+### Price Feeds <a id="price-feeds"></a>
+
 The Parcl Labs Price Feed (PLPF) is a daily-updated, real-time indicator of residential real estate prices, measured by price per square foot, across select US markets.
 
 The Price Feeds category allows you to access our daily-updated PLPF and derivative metrics, such as volatility.
@@ -372,21 +379,9 @@ price_feed_volatility = client.price_feed.volatility.retrieve(
     start_date=start_date,
     end_date=end_date
 )
-
-# want to save to csv? Use .to_csv method as follow:
-# price_feeds.to_csv('price_feeds.csv', index=False)
-# rental_price_feeds.to_csv('rental_price_feeds.csv', index=False)
-# price_feed_volatility.to_csv('price_feed_volatility.csv', index=False)
 ```
 
-### Premium Features
-A premium Parcl Labs API key unlocks several critical features. This includes:
-- Access to our unit level, full event lifecycle data
-- Access to `turbo_mode` for faster data retrieval
-
-You can register for a premium Parcl Labs API key through your [account dashboard](https://dashboard.parcllabs.com/).
-
-#### Property
+### Property <a id="property"></a>
 
 ##### Property Search Markets
 Gets a list of unique identifiers (parcl_property_id) for units that correspond to specific markets or parameters defined by the user. The parcl_property_id is key to navigating the Parcl Labs API, serving as the core mechanism for retrieving unit-level information.
@@ -459,8 +454,8 @@ rental_events = client.property.events.retrieve(
 )
 ```
 
+### Property Address Search <a id="property-address-search"></a>
 
-#### Property Address Search 
 Pass in a list of addresses -- `address, unit, city, state_abbreviation, zip_code, source_id` -- and receive the associated `parcl_property_id`, if there is a match. `unit` and `source_id` are optional fields.
 
 ```python
@@ -485,8 +480,8 @@ addresses = client.property_address.search.retrieve(
 )
 ```
 
+### Property Search V2 <a id="property-search-v2"></a>
 
-#### Property Search V2
 Gets a list of unique properties and their associated metadata and events based on a set of filters. Use one of three search methods:
 1. `parcl_ids`
 2. `parcl_property_ids`
@@ -517,18 +512,8 @@ results, filter_data = client.property_v2.search.retrieve(
 )
 ```
 
+### Account Info <a id="account-info"></a>
 
-##### Turbo Mode
-Turbo mode is a premium feature that allows you to retrieve data faster. To enable turbo mode, set the `turbo_mode` parameter to `True` when creating an instance of the `ParclLabsClient` class.
-
-```python
-client = ParclLabsClient(api_key, turbo_mode=True)
-```
-
-This will enable turbo mode for all subsequent API calls which is a smart switch to route API calls through more efficient, premium endpoints designed for bulk data retrieval.
-
-
-##### Account Info
 Monitor your API usage and quota limits by calling the `account()` method in the `ParclLabsClient` class.
 ```python
 client = ParclLabsClient(api_key)

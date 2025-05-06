@@ -43,7 +43,6 @@ class ParclLabsClient:
         api_key: str,
         api_url: str = api_base,
         limit: int | None = None,
-        turbo_mode: bool = False,
         num_workers: int | None = None,
     ) -> None:
         if not api_key:
@@ -54,7 +53,6 @@ class ParclLabsClient:
         self.account_info = {"est_session_credits_used": 0}
         self.num_workers = num_workers
         self.limit = limit
-        self.turbo_mode = turbo_mode
 
         self._initialize_services()
 

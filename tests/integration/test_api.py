@@ -28,11 +28,6 @@ def client() -> ParclLabsClient:
     return ParclLabsClient(api_key=API_KEY)
 
 
-@pytest.fixture
-def turbo_client() -> ParclLabsClient:
-    return ParclLabsClient(api_key=API_KEY, turbo_mode=True)
-
-
 def test_singular_get_request_with_limit(client: ParclLabsClient) -> None:
     singular_pid = [5821868]
     test_limit = 12
@@ -87,7 +82,7 @@ def test_multiple_get_requests(client: ParclLabsClient) -> None:
         end_date=end_date,
     )
 
-    assert results.shape[0] == len(test_pricefeed_markets) * limit
+    assert results.shape[0] == limit
 
 
 def test_multiple_get_requests_with_bad_parcl_id(client: ParclLabsClient) -> None:
@@ -103,7 +98,7 @@ def test_multiple_get_requests_with_bad_parcl_id(client: ParclLabsClient) -> Non
         end_date=end_date,
     )
 
-    assert results.shape[0] == (len(test_pricefeed_markets) - 1) * limit
+    assert results.shape[0] == limit
 
 
 def test_multiple_get_requests_with_bad_parcl_id_and_auto_pagination(
@@ -125,8 +120,8 @@ def test_multiple_get_requests_with_bad_parcl_id_and_auto_pagination(
     assert results.shape[0] == (len(test_pricefeed_markets) - 1) * days
 
 
-def test_singular_post_request(turbo_client: ParclLabsClient) -> None:
-    results = turbo_client.rental_market_metrics.gross_yield.retrieve(
+def test_singular_post_request(client: ParclLabsClient) -> None:
+    results = client.rental_market_metrics.gross_yield.retrieve(
         parcl_ids=[TEST_PIDS[100]],
         start_date="2023-01-01",
         end_date="2023-12-31",
@@ -137,8 +132,8 @@ def test_singular_post_request(turbo_client: ParclLabsClient) -> None:
     assert results.shape[0] == 12  # 12 months in a year
 
 
-def test_multiple_post_requests(turbo_client: ParclLabsClient) -> None:
-    results = turbo_client.rental_market_metrics.gross_yield.retrieve(
+def test_multiple_post_requests(client: ParclLabsClient) -> None:
+    results = client.rental_market_metrics.gross_yield.retrieve(
         parcl_ids=TEST_PIDS,
         start_date="2023-01-01",
         end_date="2023-12-31",
@@ -149,11 +144,9 @@ def test_multiple_post_requests(turbo_client: ParclLabsClient) -> None:
     assert results.groupby("parcl_id").size().unique() == 12
 
 
-def test_multiple_post_requests_with_bad_parcl_ids(
-    turbo_client: ParclLabsClient,
-) -> None:
+def test_multiple_post_requests_with_bad_parcl_ids(client: ParclLabsClient) -> None:
     bad_pids = list(range(1, 1001))
-    results = turbo_client.rental_market_metrics.gross_yield.retrieve(
+    results = client.rental_market_metrics.gross_yield.retrieve(
         parcl_ids=TEST_PIDS + bad_pids,
         start_date="2023-01-01",
         end_date="2023-12-31",

@@ -11,10 +11,7 @@ numpy = "*"
 [dev-packages]
 parcllabs = {path = ".", editable = true}
 pytest = ">=8"
-requests-mock = ">=1"
-asynctest = ">=0.13"
-pytest_asyncio = ">=0.15"
 ruff = "*"
 
 [requires]
-python_version = "==3.12"
+python_version = "3.11.11"

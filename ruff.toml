@@ -2,11 +2,11 @@
 line-length = 100
 indent-width = 4
 
-target-version = "py312"
+target-version = "py311"
 
 [lint]
 select = ["E", "F", "B", "I", "W", "C", "B", "UP", "N", "ANN", "S", "A", "COM", "DTZ", "T10", "RET", "SLF", "ARG", "PD", "PL", "RUF", "PTH", "PLR", "TRY"]
-ignore = ["COM812", "S101", "PLR0913", "TRY003", "SLF001", "PLR2004"]
+ignore = ["COM812", "S101", "PLR0913", "TRY003", "SLF001", "PLR2004", "RET504"]
 
 [format]
 quote-style = "double"

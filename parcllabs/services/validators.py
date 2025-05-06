@@ -1,8 +1,6 @@
 from datetime import UTC, datetime
 
 from parcllabs.common import (
-    VALID_PORTFOLIO_SIZES,
-    VALID_PROPERTY_TYPES,
     ZIP_CODE_LENGTH,
 )
 
@@ -24,30 +22,6 @@ class Validators:
             else:
                 return formatted_date
         return None
-
-    @staticmethod
-    def validate_property_type(property_type: str) -> str:
-        return Validators._validate_from_list(property_type, VALID_PROPERTY_TYPES, "Property type")
-
-    @staticmethod
-    def validate_portfolio_size(portfolio_size: str) -> str:
-        """
-        Validates the portfolio size string and returns it in the expected format.
-        Raises ValueError if the portfolio size is invalid or not in the expected format
-        """
-        return Validators._validate_from_list(
-            portfolio_size, VALID_PORTFOLIO_SIZES, "Portfolio size"
-        )
-
-    @staticmethod
-    def _validate_from_list(value: str, valid_list: list[str], value_type: str) -> str:
-        if value:
-            value = value.strip().upper()
-            if value.lower() not in [v.lower() for v in valid_list]:
-                raise ValueError(
-                    f"{value_type} {value} is not valid. Must be one of {', '.join(valid_list)}."
-                )
-        return value
 
     @staticmethod
     def validate_input_str_param(
@@ -103,16 +77,3 @@ class Validators:
             raise ValueError(
                 f"Missing required fields: {', '.join(missing_fields)}. Provided request: {data}"
             )
-
-    @staticmethod
-    def validate_integer_list(value: object, param_name: str = "Parameter") -> list[int]:
-        """
-        Validates that the input is a list of integers.
-        """
-        if not isinstance(value, list):
-            raise TypeError(f"{param_name} must be a list. Received: {type(value)}")
-
-        if not all(isinstance(item, int) for item in value):
-            raise ValueError(f"{param_name} must contain only integers")
-
-        return value

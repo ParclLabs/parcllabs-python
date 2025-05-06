@@ -2,7 +2,6 @@ from collections import deque
 
 import pandas as pd
 
-from parcllabs.common import VALID_ENTITY_NAMES, VALID_PROPERTY_TYPES_UNIT_SEARCH
 from parcllabs.exceptions import NotFoundError
 from parcllabs.services.parcllabs_service import ParclLabsService
 from parcllabs.services.validators import Validators
@@ -16,7 +15,110 @@ class PropertySearch(ParclLabsService):
     def __init__(self, *args: object, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
 
-    def retrieve(  # noqa: C901, PLR0912, PLR0915
+    def _handle_numeric_params(self, params: dict, **kwargs: object) -> dict:
+        """Handle numeric parameters for property search."""
+        numeric_params = [
+            "bedrooms_max",
+            "bedrooms_min",
+            "bathrooms_max",
+            "bathrooms_min",
+            "year_built_max",
+            "year_built_min",
+            "square_footage_max",
+            "square_footage_min",
+        ]
+
+        for param in numeric_params:
+            if kwargs.get(param) is not None:
+                params[param] = kwargs[param]
+
+        return params
+
+    def _handle_date_params(
+        self,
+        params: dict,
+        record_added_date_start: str | None = None,
+        record_added_date_end: str | None = None,
+    ) -> dict:
+        """Handle date parameters for property search."""
+        if record_added_date_start:
+            record_added_date_start = Validators.validate_date(record_added_date_start)
+            params["record_added_date_start"] = record_added_date_start
+        if record_added_date_end:
+            record_added_date_end = Validators.validate_date(record_added_date_end)
+            params["record_added_date_end"] = record_added_date_end
+
+        return params
+
+    def _prepare_params(
+        self,
+        property_type: str,
+        square_footage_min: int | None = None,
+        square_footage_max: int | None = None,
+        bedrooms_min: int | None = None,
+        bedrooms_max: int | None = None,
+        bathrooms_min: int | None = None,
+        bathrooms_max: int | None = None,
+        year_built_min: int | None = None,
+        year_built_max: int | None = None,
+        current_entity_owner_name: str | None = None,
+        event_history_sale_flag: bool | None = None,
+        event_history_rental_flag: bool | None = None,
+        event_history_listing_flag: bool | None = None,
+        current_new_construction_flag: bool | None = None,
+        current_owner_occupied_flag: bool | None = None,
+        current_investor_owned_flag: bool | None = None,
+        record_added_date_start: str | None = None,
+        record_added_date_end: str | None = None,
+        current_on_market_flag: bool | None = None,
+    ) -> dict:
+        params = {}
+
+        if property_type:
+            params["property_type"] = property_type.upper()
+
+        if current_entity_owner_name:
+            params["current_entity_owner_name"] = current_entity_owner_name.upper()
+
+        # Handle boolean flags
+        bool_flags = {
+            "event_history_sale_flag": event_history_sale_flag,
+            "event_history_rental_flag": event_history_rental_flag,
+            "event_history_listing_flag": event_history_listing_flag,
+            "current_new_construction_flag": current_new_construction_flag,
+            "current_owner_occupied_flag": current_owner_occupied_flag,
+            "current_investor_owned_flag": current_investor_owned_flag,
+            "current_on_market_flag": current_on_market_flag,
+        }
+
+        for param_name, param_value in bool_flags.items():
+            params = Validators.validate_input_bool_param(
+                param=param_value,
+                param_name=param_name,
+                params_dict=params,
+            )
+
+        # Handle numeric parameters
+        params = self._handle_numeric_params(
+            params,
+            bedrooms_max=bedrooms_max,
+            bedrooms_min=bedrooms_min,
+            bathrooms_max=bathrooms_max,
+            bathrooms_min=bathrooms_min,
+            year_built_max=year_built_max,
+            year_built_min=year_built_min,
+            square_footage_max=square_footage_max,
+            square_footage_min=square_footage_min,
+        )
+
+        # Handle date parameters
+        return self._handle_date_params(
+            params,
+            record_added_date_start=record_added_date_start,
+            record_added_date_end=record_added_date_end,
+        )
+
+    def retrieve(
         self,
         parcl_ids: list[int],
         property_type: str,
@@ -84,97 +186,27 @@ class PropertySearch(ParclLabsService):
             for matching properties. Returns an empty DataFrame if no data is found for
             any market.
         """
-        params = {}
-
-        parcl_ids = Validators.validate_integer_list(parcl_ids, "parcl_ids")
-
-        params = Validators.validate_input_str_param(
-            param=property_type,
-            param_name="property_type",
-            valid_values=VALID_PROPERTY_TYPES_UNIT_SEARCH,
-            params_dict=params,
+        params = self._prepare_params(
+            property_type=property_type,
+            square_footage_min=square_footage_min,
+            square_footage_max=square_footage_max,
+            bedrooms_min=bedrooms_min,
+            bedrooms_max=bedrooms_max,
+            bathrooms_min=bathrooms_min,
+            bathrooms_max=bathrooms_max,
+            year_built_min=year_built_min,
+            year_built_max=year_built_max,
+            current_entity_owner_name=current_entity_owner_name,
+            event_history_sale_flag=event_history_sale_flag,
+            event_history_rental_flag=event_history_rental_flag,
+            event_history_listing_flag=event_history_listing_flag,
+            current_new_construction_flag=current_new_construction_flag,
+            current_owner_occupied_flag=current_owner_occupied_flag,
+            current_investor_owned_flag=current_investor_owned_flag,
+            record_added_date_start=record_added_date_start,
+            record_added_date_end=record_added_date_end,
+            current_on_market_flag=current_on_market_flag,
         )
-
-        params = Validators.validate_input_str_param(
-            param=current_entity_owner_name,
-            param_name="current_entity_owner_name",
-            valid_values=VALID_ENTITY_NAMES,
-            params_dict=params,
-        )
-
-        params = Validators.validate_input_bool_param(
-            param=event_history_sale_flag,
-            param_name="event_history_sale_flag",
-            params_dict=params,
-        )
-
-        params = Validators.validate_input_bool_param(
-            param=event_history_rental_flag,
-            param_name="event_history_rental_flag",
-            params_dict=params,
-        )
-
-        params = Validators.validate_input_bool_param(
-            param=event_history_listing_flag,
-            param_name="event_history_listing_flag",
-            params_dict=params,
-        )
-
-        params = Validators.validate_input_bool_param(
-            param=current_new_construction_flag,
-            param_name="current_new_construction_flag",
-            params_dict=params,
-        )
-
-        params = Validators.validate_input_bool_param(
-            param=current_owner_occupied_flag,
-            param_name="current_owner_occupied_flag",
-            params_dict=params,
-        )
-
-        params = Validators.validate_input_bool_param(
-            param=current_investor_owned_flag,
-            param_name="current_investor_owned_flag",
-            params_dict=params,
-        )
-
-        params = Validators.validate_input_bool_param(
-            param=current_on_market_flag,
-            param_name="current_on_market_flag",
-            params_dict=params,
-        )
-
-        if bedrooms_max:
-            params["bedrooms_max"] = bedrooms_max
-
-        if bedrooms_min:
-            params["bedrooms_min"] = bedrooms_min
-
-        if bathrooms_max:
-            params["bathrooms_max"] = bathrooms_max
-
-        if bathrooms_min:
-            params["bathrooms_min"] = bathrooms_min
-
-        if year_built_max:
-            params["year_built_max"] = year_built_max
-
-        if year_built_min:
-            params["year_built_min"] = year_built_min
-
-        if square_footage_max:
-            params["square_footage_max"] = square_footage_max
-
-        if square_footage_min:
-            params["square_footage_min"] = square_footage_min
-
-        if record_added_date_start:
-            record_added_date_start = Validators.validate_date(record_added_date_start)
-            params["record_added_date_start"] = record_added_date_start
-
-        if record_added_date_end:
-            record_added_date_end = Validators.validate_date(record_added_date_end)
-            params["record_added_date_end"] = record_added_date_end
 
         output_data = deque()
         markets_with_no_data = []
@@ -192,7 +224,7 @@ class PropertySearch(ParclLabsService):
                 markets_with_no_data.append(parcl_id)
                 continue
             except Exception:
-                # For other exceptions, we'll still raise them
+                # For other exceptions, simply re-raise without specifying
                 raise
 
         if not output_data:

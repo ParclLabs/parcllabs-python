@@ -5,10 +5,6 @@ from typing import Any
 
 import pandas as pd
 
-from parcllabs.common import (
-    VALID_ENTITY_NAMES,
-    VALID_EVENT_TYPES,
-)
 from parcllabs.enums import RequestLimits
 from parcllabs.exceptions import (
     NotFoundError,
@@ -28,6 +24,40 @@ class PropertyEventsService(ParclLabsService):
     def __init__(self, *args: object, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
 
+    def _prepare_params(
+        self,
+        event_type: str | None = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        entity_owner_name: str | None = None,
+        record_updated_date_start: str | None = None,
+        record_updated_date_end: str | None = None,
+    ) -> dict:
+        """Prepare parameters for property events retrieval."""
+        params = {}
+
+        if event_type:
+            params["event_type"] = event_type.upper()
+
+        if entity_owner_name:
+            params["entity_owner_name"] = entity_owner_name.upper()
+
+        if start_date:
+            params["start_date"] = Validators.validate_date(start_date)
+
+        if end_date:
+            params["end_date"] = Validators.validate_date(end_date)
+
+        if record_updated_date_start:
+            record_updated_date_start = Validators.validate_date(record_updated_date_start)
+            params["record_updated_date_start"] = record_updated_date_start
+
+        if record_updated_date_end:
+            record_updated_date_end = Validators.validate_date(record_updated_date_end)
+            params["record_updated_date_end"] = record_updated_date_end
+
+        return params
+
     def retrieve(
         self,
         parcl_property_ids: list[int],
@@ -42,37 +72,14 @@ class PropertyEventsService(ParclLabsService):
         """
         Retrieve property events for given parameters.
         """
-        params = {}
-        params = Validators.validate_input_str_param(
-            param=event_type,
-            param_name="event_type",
-            valid_values=VALID_EVENT_TYPES,
-            params_dict=params,
+        params = self._prepare_params(
+            event_type=event_type,
+            start_date=start_date,
+            end_date=end_date,
+            entity_owner_name=entity_owner_name,
+            record_updated_date_start=record_updated_date_start,
+            record_updated_date_end=record_updated_date_end,
         )
-
-        params = Validators.validate_input_str_param(
-            param=entity_owner_name,
-            param_name="entity_owner_name",
-            valid_values=VALID_ENTITY_NAMES,
-            params_dict=params,
-        )
-        parcl_property_ids = Validators.validate_integer_list(
-            parcl_property_ids, "parcl_property_ids"
-        )
-
-        if start_date:
-            params["start_date"] = start_date
-
-        if end_date:
-            params["end_date"] = end_date
-
-        if record_updated_date_start:
-            record_updated_date_start = Validators.validate_date(record_updated_date_start)
-            params["record_updated_date_start"] = record_updated_date_start
-
-        if record_updated_date_end:
-            record_updated_date_end = Validators.validate_date(record_updated_date_end)
-            params["record_updated_date_end"] = record_updated_date_end
 
         parcl_property_ids = [str(i) for i in parcl_property_ids]
         total_properties = len(parcl_property_ids)

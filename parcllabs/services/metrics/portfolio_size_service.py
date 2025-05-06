@@ -4,7 +4,6 @@ from typing import Any
 import pandas as pd
 
 from parcllabs.services.parcllabs_service import ParclLabsService
-from parcllabs.services.validators import Validators
 
 
 class PortfolioSizeService(ParclLabsService):
@@ -18,11 +17,11 @@ class PortfolioSizeService(ParclLabsService):
         params: Mapping[str, Any] | None = {},
         auto_paginate: bool = False,
     ) -> pd.DataFrame:
-        portfolio_size = Validators.validate_portfolio_size(portfolio_size)
-        parcl_ids = Validators.validate_integer_list(parcl_ids, "parcl_ids")
-
+        """
+        Retrieve portfolio size metrics for given parameters.
+        """
         if portfolio_size:
-            params["portfolio_size"] = portfolio_size
+            params["portfolio_size"] = portfolio_size.upper()
 
         return super().retrieve(
             parcl_ids=parcl_ids,
