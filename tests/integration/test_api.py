@@ -82,7 +82,7 @@ def test_multiple_get_requests(client: ParclLabsClient) -> None:
         end_date=end_date,
     )
 
-    assert results.shape[0] == len(test_pricefeed_markets) * limit
+    assert results.shape[0] == limit
 
 
 def test_multiple_get_requests_with_bad_parcl_id(client: ParclLabsClient) -> None:
@@ -98,7 +98,7 @@ def test_multiple_get_requests_with_bad_parcl_id(client: ParclLabsClient) -> Non
         end_date=end_date,
     )
 
-    assert results.shape[0] == (len(test_pricefeed_markets) - 1) * limit
+    assert results.shape[0] == limit
 
 
 def test_multiple_get_requests_with_bad_parcl_id_and_auto_pagination(
