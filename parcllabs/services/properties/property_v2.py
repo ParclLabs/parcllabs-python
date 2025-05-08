@@ -298,7 +298,8 @@ class PropertyV2Service(ParclLabsService):
         Args:
             parcl_ids: List of parcl_ids to filter by.
             parcl_property_ids: List of parcl_property_ids to filter by.
-            geo_coordinates: Dictionary containing latitude, longitude, and radius to filter by.
+            geo_coordinates: Dictionary containing latitude, longitude, and radius (in miles)
+            to filter by.
             property_types: List of property types to filter by.
             min_beds: Minimum number of bedrooms to filter by.
             max_beds: Maximum number of bedrooms to filter by.
