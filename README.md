@@ -485,11 +485,13 @@ addresses = client.property_address.search.retrieve(
 Gets a list of unique properties and their associated metadata and events based on a set of filters. Use one of three search methods:
 1. `parcl_ids`
 2. `parcl_property_ids`
-3. `location` (must provide latitude, longitude, and radius)
+3. `geo_coordinates` (must provide latitude, longitude, and radius)
 
 ```python
 results, filter_data = client.property_v2.search.retrieve(
+    # parcl_ids=[5495449],
     parcl_property_ids=[78353317, 135921544],
+    # geo_coordinates= {"latitude": 36.159445, "longitude": -86.483244, radius: 1},
     event_names=["LISTED_RENT"],
     is_new_construction=False,
     max_event_date="2024-12-31",

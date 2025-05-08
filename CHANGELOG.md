@@ -1,3 +1,6 @@
+### v1.14.1
+- Update `property_v2.search` endpoint params.
+
 ### v1.13.0
 - Add support for `property_v2.search` endpoint.
 
