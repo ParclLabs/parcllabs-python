@@ -355,7 +355,7 @@ class PropertyV2Service(ParclLabsService):
             "radius",
             "params",
             "data",
-            "geo_coordinates"
+            "geo_coordinates",
         ]:
             kwargs.pop(key, None)
 
