@@ -144,7 +144,7 @@ class PropertyV2Service(ParclLabsService):
         self,
         parcl_ids: list[int] | None = None,
         parcl_property_ids: list[int] | None = None,
-        location: dict[str, float] | None = None,
+        geo_coordinates: dict[str, float] | None = None,
     ) -> dict[str, Any]:
         """Build and validate search criteria."""
         data = {}
@@ -155,8 +155,8 @@ class PropertyV2Service(ParclLabsService):
         if parcl_property_ids:
             data["parcl_property_ids"] = parcl_property_ids
 
-        if location and all(k in location for k in ["latitude", "longitude", "radius"]):
-            data.update(location)
+        if geo_coordinates:
+            data["geo_coordinates"] = geo_coordinates
 
         return data
 
@@ -340,7 +340,7 @@ class PropertyV2Service(ParclLabsService):
         data = self._build_search_criteria(
             parcl_ids=parcl_ids,
             parcl_property_ids=parcl_property_ids,
-            location=location,
+            geo_coordinates=location,
         )
 
         # Build filters using all provided parameters
@@ -356,6 +356,7 @@ class PropertyV2Service(ParclLabsService):
             "params",
             "data",
             "location",
+            "geo_coordinates"
         ]:
             kwargs.pop(key, None)
 
