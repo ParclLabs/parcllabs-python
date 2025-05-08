@@ -53,12 +53,12 @@ def test_build_search_criteria(property_v2_service: PropertyV2Service) -> None:
 
     # Test with location
     location = {"latitude": 37.7749, "longitude": -122.4194, "radius": 5.0}
-    criteria = property_v2_service._build_search_criteria(location=location)
+    criteria = property_v2_service._build_search_criteria(geo_coordinates=location)
     assert criteria == location
 
     # Test with all parameters
     criteria = property_v2_service._build_search_criteria(
-        parcl_ids=[123], parcl_property_ids=[456], location=location
+        parcl_ids=[123], parcl_property_ids=[456], geo_coordinates=location
     )
     assert criteria == {
         "parcl_ids": [123],
