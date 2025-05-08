@@ -485,7 +485,7 @@ addresses = client.property_address.search.retrieve(
 Gets a list of unique properties and their associated metadata and events based on a set of filters. Use one of three search methods:
 1. `parcl_ids`
 2. `parcl_property_ids`
-3. `location` (must provide latitude, longitude, and radius)
+3. `geo_coordinates` (must provide latitude, longitude, and radius)
 
 ```python
 results, filter_data = client.property_v2.search.retrieve(

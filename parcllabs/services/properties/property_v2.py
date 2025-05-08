@@ -265,9 +265,7 @@ class PropertyV2Service(ParclLabsService):
         self,
         parcl_ids: list[int] | None = None,
         parcl_property_ids: list[int] | None = None,
-        latitude: float | None = None,
-        longitude: float | None = None,
-        radius: float | None = None,
+        geo_coordinates: dict[str, float] | None = None,
         property_types: list[str] | None = None,
         min_beds: int | None = None,
         max_beds: int | None = None,
@@ -300,9 +298,7 @@ class PropertyV2Service(ParclLabsService):
         Args:
             parcl_ids: List of parcl_ids to filter by.
             parcl_property_ids: List of parcl_property_ids to filter by.
-            latitude: Latitude to filter by.
-            longitude: Longitude to filter by.
-            radius: Radius to filter by.
+            geo_coordinates: Dictionary containing latitude, longitude, and radius to filter by.
             property_types: List of property types to filter by.
             min_beds: Minimum number of bedrooms to filter by.
             max_beds: Maximum number of bedrooms to filter by.
@@ -331,16 +327,11 @@ class PropertyV2Service(ParclLabsService):
         Returns:
             A pandas DataFrame containing the property data.
         """
-        # Build location dict if latitude, longitude and radius are provided
-        location = None
-        if all(v is not None for v in [latitude, longitude, radius]):
-            location = {"latitude": latitude, "longitude": longitude, "radius": radius}
-
         # Build search criteria
         data = self._build_search_criteria(
             parcl_ids=parcl_ids,
             parcl_property_ids=parcl_property_ids,
-            geo_coordinates=location,
+            geo_coordinates=geo_coordinates,
         )
 
         # Build filters using all provided parameters
@@ -350,9 +341,6 @@ class PropertyV2Service(ParclLabsService):
             "self",
             "parcl_ids",
             "parcl_property_ids",
-            "latitude",
-            "longitude",
-            "radius",
             "params",
             "data",
             "geo_coordinates",
