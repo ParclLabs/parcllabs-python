@@ -4,6 +4,7 @@ from typing import Any
 
 import pandas as pd
 
+from parcllabs.enums import RequestLimits
 from parcllabs.services.parcllabs_service import ParclLabsService
 from parcllabs.services.validators import Validators
 
@@ -12,7 +13,9 @@ class PropertyV2Service(ParclLabsService):
     def __init__(self, *args: object, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
 
-    def _fetch_post(self, params: dict[str, Any], data: dict[str, Any]) -> list[dict]:
+    def _fetch_post(
+        self, params: dict[str, Any], data: dict[str, Any], auto_paginate: bool
+    ) -> list[dict]:
         """Fetch data using POST request with pagination support."""
         response = self._post(url=self.full_post_url, data=data, params=params)
         result = response.json()
@@ -22,7 +25,7 @@ class PropertyV2Service(ParclLabsService):
         all_data = [result]
 
         # If we need to paginate, use concurrent requests
-        if pagination and pagination.get("has_more"):
+        if auto_paginate and pagination and pagination.get("has_more"):
             limit = pagination.get("limit")
             offset = pagination.get("offset")
             total_count = metadata.get("results", {}).get("total_available", 0)
@@ -261,6 +264,26 @@ class PropertyV2Service(ParclLabsService):
 
         return owner_filters
 
+    def _validate_limit(self, limit: int | None, auto_paginate: bool) -> int:
+        """Validate limit parameter."""
+        max_limit = RequestLimits.PROPERTY_V2_MAX.value
+
+        # If auto-paginate is enabled or no limit is provided, use maximum limit
+        if auto_paginate or limit is None:
+            if auto_paginate and limit is not None:
+                print(f"Auto-paginate is enabled. Setting limit to maximum value of {max_limit}.")
+            return max_limit
+
+        # If limit exceeds maximum, cap it
+        if limit > max_limit:
+            print(
+                f"Supplied limit value is too large for requested endpoint."
+                f"Setting limit to maximum value of {max_limit}."
+            )
+            return max_limit
+
+        return limit
+
     def retrieve(
         self,
         parcl_ids: list[int] | None = None,
@@ -290,7 +313,9 @@ class PropertyV2Service(ParclLabsService):
         owner_name: list[str] | None = None,
         is_investor_owned: bool | None = None,
         is_owner_occupied: bool | None = None,
-        params: Mapping[str, Any] | None = None,
+        limit: int | None = None,
+        params: Mapping[str, Any] | None = {},
+        auto_paginate: bool = False,
     ) -> tuple[pd.DataFrame, dict[str, Any]]:
         """
         Retrieve property data based on search criteria and filters.
@@ -353,8 +378,10 @@ class PropertyV2Service(ParclLabsService):
         data["event_filters"] = self._build_event_filters(**kwargs)
         data["owner_filters"] = self._build_owner_filters(**kwargs)
 
+        params["limit"] = self._validate_limit(limit, auto_paginate)
+
         # Make request with pagination
-        results = self._fetch_post(params=params or {}, data=data)
+        results = self._fetch_post(params=params, data=data, auto_paginate=auto_paginate)
 
         # Get metadata from results
         metadata = self._get_metadata(results)

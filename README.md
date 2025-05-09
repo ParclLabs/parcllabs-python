@@ -482,10 +482,12 @@ addresses = client.property_address.search.retrieve(
 
 ### Property Search V2 <a id="property-search-v2"></a>
 
-Gets a list of unique properties and their associated metadata and events based on a set of filters. Use one of three search methods:
+Gets a list of unique properties and their associated metadata and events based on a set of property, event, and owner filters. Use one of three search methods:
 1. `parcl_ids`
 2. `parcl_property_ids`
 3. `geo_coordinates` (must provide latitude, longitude, and radius)
+
+Use limit to specify the number of matched properties to return. Set auto_paginate to `True` to retrieve all results, this will override the limit.
 
 ```python
 results, filter_data = client.property_v2.search.retrieve(
@@ -511,6 +513,8 @@ results, filter_data = client.property_v2.search.retrieve(
     max_record_added_date="2024-12-31",
     min_record_added_date="2024-12-13",
     property_types=["SINGLE_FAMILY", "CONDO", "TOWNHOUSE"],
+    limit=10,
+    # auto_paginate=True,
 )
 ```
 
