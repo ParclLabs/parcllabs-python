@@ -2,6 +2,7 @@ from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
+from parcllabs.enums import RequestLimits
 from parcllabs.services.properties.property_v2 import PropertyV2Service
 
 
@@ -139,12 +140,32 @@ def test_build_owner_filters(property_v2_service: PropertyV2Service) -> None:
     }
 
 
+def test_validate_limit(property_v2_service: PropertyV2Service) -> None:
+    assert (
+        property_v2_service._validate_limit(limit=None, auto_paginate=True)
+        == RequestLimits.PROPERTY_V2_MAX.value
+    )
+    assert (
+        property_v2_service._validate_limit(limit=None, auto_paginate=False)
+        == RequestLimits.PROPERTY_V2_MAX.value
+    )
+    assert (
+        property_v2_service._validate_limit(limit=100, auto_paginate=True)
+        == RequestLimits.PROPERTY_V2_MAX.value
+    )
+    assert property_v2_service._validate_limit(limit=100, auto_paginate=False) == 100
+    assert (
+        property_v2_service._validate_limit(limit=1000000000, auto_paginate=True)
+        == RequestLimits.PROPERTY_V2_MAX.value
+    )
+
+
 @patch.object(PropertyV2Service, "_post")
 def test_fetch_post_single_page(
     mock_post: Mock, property_v2_service: PropertyV2Service, mock_response: Mock
 ) -> None:
     mock_post.return_value = mock_response
-    result = property_v2_service._fetch_post(params={}, data={})
+    result = property_v2_service._fetch_post(params={}, data={}, auto_paginate=False)
 
     assert len(result) == 1
     assert result[0] == mock_response.json()
@@ -174,7 +195,7 @@ def test_fetch_post_pagination(mock_post: Mock, property_v2_service: PropertyV2S
     # Set up the mock to return different responses
     mock_post.side_effect = [first_response, second_response]
 
-    result = property_v2_service._fetch_post(params={}, data={})
+    result = property_v2_service._fetch_post(params={"limit": 1}, data={}, auto_paginate=True)
 
     assert len(result) == 2
     assert result[0]["data"][0]["parcl_id"] == 123
@@ -224,6 +245,7 @@ def test_retrieve(
         min_beds=2,
         max_beds=4,
         event_names=["LISTING"],
+        limit=10,
     )
     # check that the dataframe has the expected data
     assert len(df) == 1
@@ -234,7 +256,7 @@ def test_retrieve(
 
     # check that the correct data was passed to _fetch_post
     call_args = mock_fetch_post.call_args[1]
-    assert call_args["params"] == {}
+    assert call_args["params"] == {"limit": 10}
 
     data = call_args["data"]
     assert data["parcl_ids"] == [123]

@@ -12,6 +12,7 @@ class RequestLimits(Enum):
     MAX_POST = 1000
     DEFAULT_SMALL = 1000
     DEFAULT_LARGE = 10000
+    PROPERTY_V2_MAX = 100000
 
 
 class ResponseCodes(Enum):

@@ -1,5 +1,11 @@
+### v1.14.2
+- Add autopaginate support for `property_v2.search` endpoint, increase default limit to 100,000.
+
 ### v1.14.1
 - Update `property_v2.search` endpoint params.
+
+### v1.14.0
+- Simplification of parameter validation, reduce complexity of code.
 
 ### v1.13.0
 - Add support for `property_v2.search` endpoint.
