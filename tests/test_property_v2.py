@@ -141,22 +141,11 @@ def test_build_owner_filters(property_v2_service: PropertyV2Service) -> None:
 
 
 def test_validate_limit(property_v2_service: PropertyV2Service) -> None:
+    assert property_v2_service._validate_limit(limit=None) == RequestLimits.PROPERTY_V2_MAX.value
+    assert property_v2_service._validate_limit(limit=None) == RequestLimits.PROPERTY_V2_MAX.value
+    assert property_v2_service._validate_limit(limit=100) == 100
     assert (
-        property_v2_service._validate_limit(limit=None, auto_paginate=True)
-        == RequestLimits.PROPERTY_V2_MAX.value
-    )
-    assert (
-        property_v2_service._validate_limit(limit=None, auto_paginate=False)
-        == RequestLimits.PROPERTY_V2_MAX.value
-    )
-    assert (
-        property_v2_service._validate_limit(limit=100, auto_paginate=True)
-        == RequestLimits.PROPERTY_V2_MAX.value
-    )
-    assert property_v2_service._validate_limit(limit=100, auto_paginate=False) == 100
-    assert (
-        property_v2_service._validate_limit(limit=1000000000, auto_paginate=True)
-        == RequestLimits.PROPERTY_V2_MAX.value
+        property_v2_service._validate_limit(limit=1000000000) == RequestLimits.PROPERTY_V2_MAX.value
     )
 
 
@@ -165,7 +154,7 @@ def test_fetch_post_single_page(
     mock_post: Mock, property_v2_service: PropertyV2Service, mock_response: Mock
 ) -> None:
     mock_post.return_value = mock_response
-    result = property_v2_service._fetch_post(params={}, data={}, auto_paginate=False)
+    result = property_v2_service._fetch_post(params={}, data={})
 
     assert len(result) == 1
     assert result[0] == mock_response.json()
@@ -195,12 +184,11 @@ def test_fetch_post_pagination(mock_post: Mock, property_v2_service: PropertyV2S
     # Set up the mock to return different responses
     mock_post.side_effect = [first_response, second_response]
 
-    result = property_v2_service._fetch_post(params={"limit": 1}, data={}, auto_paginate=True)
+    result = property_v2_service._fetch_post(params={"limit": 1}, data={})
 
-    assert len(result) == 2
+    assert len(result) == 1
     assert result[0]["data"][0]["parcl_id"] == 123
-    assert result[1]["data"][0]["parcl_id"] == 456
-    assert mock_post.call_count == 2
+    assert mock_post.call_count == 1
 
 
 def test_as_pd_dataframe(property_v2_service: PropertyV2Service, mock_response: Mock) -> None:

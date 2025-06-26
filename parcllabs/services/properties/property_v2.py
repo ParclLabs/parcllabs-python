@@ -13,9 +13,7 @@ class PropertyV2Service(ParclLabsService):
     def __init__(self, *args: object, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
 
-    def _fetch_post(
-        self, params: dict[str, Any], data: dict[str, Any], auto_paginate: bool
-    ) -> list[dict]:
+    def _fetch_post(self, params: dict[str, Any], data: dict[str, Any]) -> list[dict]:
         """Fetch data using POST request with pagination support."""
         response = self._post(url=self.full_post_url, data=data, params=params)
         result = response.json()
@@ -24,38 +22,45 @@ class PropertyV2Service(ParclLabsService):
         metadata = result.get("metadata")
         all_data = [result]
 
-        # If we need to paginate, use concurrent requests
-        if auto_paginate and pagination and pagination.get("has_more"):
+        returned_count = metadata.get("results", {}).get("returned_count", 0)
+
+        if pagination:
             limit = pagination.get("limit")
-            offset = pagination.get("offset")
-            total_count = metadata.get("results", {}).get("total_available", 0)
+            if returned_count == limit:
+                return all_data
 
-            # Calculate how many more pages we need
-            remaining_pages = (total_count - limit) // limit
-            if (total_count - limit) % limit > 0:
-                remaining_pages += 1
+            # If we need to paginate, use concurrent requests
+            if pagination.get("has_more"):
+                print("More pages to fetch, paginating additional pages...")
+                offset = pagination.get("offset")
+                total_count = metadata.get("results", {}).get("total_available", 0)
 
-            # Generate all the URLs we need to fetch
-            urls = []
-            current_offset = offset + limit
-            for _ in range(remaining_pages):
-                urls.append(f"{self.full_post_url}?limit={limit}&offset={current_offset}")
-                current_offset += limit
+                # Calculate how many more pages we need
+                remaining_pages = (total_count - limit) // limit
+                if (total_count - limit) % limit > 0:
+                    remaining_pages += 1
 
-            # Use ThreadPoolExecutor to make concurrent requests
-            with ThreadPoolExecutor(max_workers=self.client.num_workers) as executor:
-                future_to_url = {
-                    executor.submit(self._post, url=url, data=data, params=params): url
-                    for url in urls
-                }
+                # Generate all the URLs we need to fetch
+                urls = []
+                current_offset = offset + limit
+                for _ in range(remaining_pages):
+                    urls.append(f"{self.full_post_url}?limit={limit}&offset={current_offset}")
+                    current_offset += limit
 
-                for future in as_completed(future_to_url):
-                    try:
-                        response = future.result()
-                        page_result = response.json()
-                        all_data.append(page_result)
-                    except Exception as exc:
-                        print(f"Request failed: {exc}")
+                # Use ThreadPoolExecutor to make concurrent requests
+                with ThreadPoolExecutor(max_workers=self.client.num_workers) as executor:
+                    future_to_url = {
+                        executor.submit(self._post, url=url, data=data, params=params): url
+                        for url in urls
+                    }
+
+                    for future in as_completed(future_to_url):
+                        try:
+                            response = future.result()
+                            page_result = response.json()
+                            all_data.append(page_result)
+                        except Exception as exc:
+                            print(f"Request failed: {exc}")
 
         return all_data
 
@@ -264,14 +269,13 @@ class PropertyV2Service(ParclLabsService):
 
         return owner_filters
 
-    def _validate_limit(self, limit: int | None, auto_paginate: bool) -> int:
+    def _validate_limit(self, limit: int | None) -> int:
         """Validate limit parameter."""
         max_limit = RequestLimits.PROPERTY_V2_MAX.value
 
         # If auto-paginate is enabled or no limit is provided, use maximum limit
-        if auto_paginate or limit is None:
-            if auto_paginate and limit is not None:
-                print(f"Auto-paginate is enabled. Setting limit to maximum value of {max_limit}.")
+        if limit in (None, 0):
+            print(f"No limit provided. Setting limit to maximum value of {max_limit}.")
             return max_limit
 
         # If limit exceeds maximum, cap it
@@ -315,7 +319,6 @@ class PropertyV2Service(ParclLabsService):
         is_owner_occupied: bool | None = None,
         limit: int | None = None,
         params: Mapping[str, Any] | None = {},
-        auto_paginate: bool = False,
     ) -> tuple[pd.DataFrame, dict[str, Any]]:
         """
         Retrieve property data based on search criteria and filters.
@@ -353,6 +356,8 @@ class PropertyV2Service(ParclLabsService):
         Returns:
             A pandas DataFrame containing the property data.
         """
+        print("Processing property search request...")
+
         # Build search criteria
         data = self._build_search_criteria(
             parcl_ids=parcl_ids,
@@ -378,10 +383,10 @@ class PropertyV2Service(ParclLabsService):
         data["event_filters"] = self._build_event_filters(**kwargs)
         data["owner_filters"] = self._build_owner_filters(**kwargs)
 
-        params["limit"] = self._validate_limit(limit, auto_paginate)
+        params["limit"] = self._validate_limit(limit)
 
-        # Make request with pagination
-        results = self._fetch_post(params=params, data=data, auto_paginate=auto_paginate)
+        # Make request with params
+        results = self._fetch_post(params=params, data=data)
 
         # Get metadata from results
         metadata = self._get_metadata(results)
