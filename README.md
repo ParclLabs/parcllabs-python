@@ -487,7 +487,10 @@ Gets a list of unique properties and their associated metadata and events based 
 2. `parcl_property_ids`
 3. `geo_coordinates` (must provide latitude, longitude, and radius)
 
-Use limit to specify the number of matched properties to return. Set auto_paginate to `True` to retrieve all results, this will override the limit.
+**NOTE:** Use the `limit` parameter to specify the number of matched properties to return. If `limit` is not provided, all matched properties will be returned. Conceptually, you should set the `limit` to retrieve a sample of properties, and then if you want to retrieve all properties, make the same request again without the `limit` parameter.
+
+
+Example request, note that only one of `parcl_ids`, `parcl_property_ids`, or `geo_coordinates` can be provided per request:
 
 ```python
 results, filter_data = client.property_v2.search.retrieve(
@@ -498,8 +501,8 @@ results, filter_data = client.property_v2.search.retrieve(
     is_new_construction=False,
     max_event_date="2024-12-31",
     min_event_date="2023-01-01",
-    max_price=3000,
-    min_price=100,
+    max_price=500000,
+    min_price=100000,
     is_investor_owned=True,
     is_owner_occupied=False,
     owner_name=["BLACKSTONE"],
@@ -513,8 +516,7 @@ results, filter_data = client.property_v2.search.retrieve(
     max_record_added_date="2024-12-31",
     min_record_added_date="2024-12-13",
     property_types=["SINGLE_FAMILY", "CONDO", "TOWNHOUSE"],
-    limit=10,
-    # auto_paginate=True,
+    limit=100,
 )
 ```
 
