@@ -141,18 +141,11 @@ def test_build_owner_filters(property_v2_service: PropertyV2Service) -> None:
 
 
 def test_validate_limit(property_v2_service: PropertyV2Service) -> None:
-    assert (
-        property_v2_service._validate_limit(limit=None)
-        == RequestLimits.PROPERTY_V2_MAX.value
-    )
-    assert (
-        property_v2_service._validate_limit(limit=None)
-        == RequestLimits.PROPERTY_V2_MAX.value
-    )
+    assert property_v2_service._validate_limit(limit=None) == RequestLimits.PROPERTY_V2_MAX.value
+    assert property_v2_service._validate_limit(limit=None) == RequestLimits.PROPERTY_V2_MAX.value
     assert property_v2_service._validate_limit(limit=100) == 100
     assert (
-        property_v2_service._validate_limit(limit=1000000000)
-        == RequestLimits.PROPERTY_V2_MAX.value
+        property_v2_service._validate_limit(limit=1000000000) == RequestLimits.PROPERTY_V2_MAX.value
     )
 
 

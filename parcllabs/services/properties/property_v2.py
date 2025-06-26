@@ -13,9 +13,7 @@ class PropertyV2Service(ParclLabsService):
     def __init__(self, *args: object, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
 
-    def _fetch_post(
-        self, params: dict[str, Any], data: dict[str, Any]
-    ) -> list[dict]:
+    def _fetch_post(self, params: dict[str, Any], data: dict[str, Any]) -> list[dict]:
         """Fetch data using POST request with pagination support."""
         response = self._post(url=self.full_post_url, data=data, params=params)
         result = response.json()
@@ -320,7 +318,7 @@ class PropertyV2Service(ParclLabsService):
         is_investor_owned: bool | None = None,
         is_owner_occupied: bool | None = None,
         limit: int | None = None,
-        params: Mapping[str, Any] | None = {}
+        params: Mapping[str, Any] | None = {},
     ) -> tuple[pd.DataFrame, dict[str, Any]]:
         """
         Retrieve property data based on search criteria and filters.
