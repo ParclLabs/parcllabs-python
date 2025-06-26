@@ -387,7 +387,7 @@ class PropertyV2Service(ParclLabsService):
 
         params["limit"] = self._validate_limit(limit)
 
-        # Make request with pagination
+        # Make request with params
         results = self._fetch_post(params=params, data=data)
 
         # Get metadata from results
