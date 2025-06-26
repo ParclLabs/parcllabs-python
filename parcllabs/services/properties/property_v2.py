@@ -25,43 +25,44 @@ class PropertyV2Service(ParclLabsService):
         all_data = [result]
 
         returned_count = metadata.get("results", {}).get("returned_count", 0)
-        limit = pagination.get("limit")
 
-        if returned_count == limit:
-            return all_data
+        if pagination:
+            limit = pagination.get("limit")
+            if returned_count == limit:
+                return all_data
 
-        # If we need to paginate, use concurrent requests
-        if pagination and pagination.get("has_more"):
-            print("More pages to fetch, paginating additional pages...")
-            offset = pagination.get("offset")
-            total_count = metadata.get("results", {}).get("total_available", 0)
+            # If we need to paginate, use concurrent requests
+            if pagination.get("has_more"):
+                print("More pages to fetch, paginating additional pages...")
+                offset = pagination.get("offset")
+                total_count = metadata.get("results", {}).get("total_available", 0)
 
-            # Calculate how many more pages we need
-            remaining_pages = (total_count - limit) // limit
-            if (total_count - limit) % limit > 0:
-                remaining_pages += 1
+                # Calculate how many more pages we need
+                remaining_pages = (total_count - limit) // limit
+                if (total_count - limit) % limit > 0:
+                    remaining_pages += 1
 
-            # Generate all the URLs we need to fetch
-            urls = []
-            current_offset = offset + limit
-            for _ in range(remaining_pages):
-                urls.append(f"{self.full_post_url}?limit={limit}&offset={current_offset}")
-                current_offset += limit
+                # Generate all the URLs we need to fetch
+                urls = []
+                current_offset = offset + limit
+                for _ in range(remaining_pages):
+                    urls.append(f"{self.full_post_url}?limit={limit}&offset={current_offset}")
+                    current_offset += limit
 
-            # Use ThreadPoolExecutor to make concurrent requests
-            with ThreadPoolExecutor(max_workers=self.client.num_workers) as executor:
-                future_to_url = {
-                    executor.submit(self._post, url=url, data=data, params=params): url
-                    for url in urls
-                }
+                # Use ThreadPoolExecutor to make concurrent requests
+                with ThreadPoolExecutor(max_workers=self.client.num_workers) as executor:
+                    future_to_url = {
+                        executor.submit(self._post, url=url, data=data, params=params): url
+                        for url in urls
+                    }
 
-                for future in as_completed(future_to_url):
-                    try:
-                        response = future.result()
-                        page_result = response.json()
-                        all_data.append(page_result)
-                    except Exception as exc:
-                        print(f"Request failed: {exc}")
+                    for future in as_completed(future_to_url):
+                        try:
+                            response = future.result()
+                            page_result = response.json()
+                            all_data.append(page_result)
+                        except Exception as exc:
+                            print(f"Request failed: {exc}")
 
         return all_data
 
