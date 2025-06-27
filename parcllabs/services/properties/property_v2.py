@@ -5,7 +5,7 @@ from typing import Any
 import pandas as pd
 
 from parcllabs.enums import RequestLimits
-from parcllabs.schemas.schemas import PropertyV2RetrieveParams
+from parcllabs.schemas.schemas import PropertyV2RetrieveParamCategories, PropertyV2RetrieveParams
 from parcllabs.services.parcllabs_service import ParclLabsService
 from parcllabs.services.validators import Validators
 
@@ -315,6 +315,16 @@ class PropertyV2Service(ParclLabsService):
 
         return limit
 
+    def _build_param_categories(
+        self, params: PropertyV2RetrieveParams
+    ) -> PropertyV2RetrieveParamCategories:
+        """Build parameter categories from validated Pydantic schema."""
+        return PropertyV2RetrieveParamCategories(
+            property_filters=self._build_property_filters(params),
+            event_filters=self._build_event_filters(params),
+            owner_filters=self._build_owner_filters(params),
+        )
+
     def retrieve(
         self,
         parcl_ids: list[int] | None = None,
@@ -434,10 +444,11 @@ class PropertyV2Service(ParclLabsService):
             ),
         )
 
-        # Build filters using validated parameters
-        data["property_filters"] = self._build_property_filters(input_params)
-        data["event_filters"] = self._build_event_filters(input_params)
-        data["owner_filters"] = self._build_owner_filters(input_params)
+        # Build parameter categories using validated parameters
+        param_categories = self._build_param_categories(input_params)
+
+        # Update data with categories
+        data.update(param_categories.model_dump(exclude_none=True))
 
         # Set limit
         request_params = input_params.params.copy()

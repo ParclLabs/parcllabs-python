@@ -291,6 +291,6 @@ class PropertyV2RetrieveParams(BaseModel):
 class PropertyV2RetrieveParamCategories(BaseModel):
     """High level categories for PropertyV2RetrieveParams."""
 
-    property_filters: PropertyV2RetrieveParams = Field(default=None, description="Property filters")
-    event_filters: PropertyV2RetrieveParams = Field(default=None, description="Event filters")
-    owner_filters: PropertyV2RetrieveParams = Field(default=None, description="Owner filters")
+    property_filters: dict[str, Any] = Field(default_factory=dict, description="Property filters")
+    event_filters: dict[str, Any] = Field(default_factory=dict, description="Event filters")
+    owner_filters: dict[str, Any] = Field(default_factory=dict, description="Owner filters")

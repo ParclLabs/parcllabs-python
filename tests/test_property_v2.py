@@ -349,8 +349,8 @@ def test_retrieve_with_geo_coordinates(
 
 @patch.object(PropertyV2Service, "_fetch_post")
 def test_retrieve_with_schema_validation_errors(
-    mock_fetch_post: Mock,
-    property_v2_service: PropertyV2Service,  # noqa: ARG001
+    mock_fetch_post: Mock,  # noqa: ARG001
+    property_v2_service: PropertyV2Service,
 ) -> None:
     """Test that retrieve method properly validates input using schema."""
     # This should raise a validation error due to invalid property type
