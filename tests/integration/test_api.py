@@ -89,7 +89,7 @@ def test_multiple_get_requests_with_bad_parcl_id(client: ParclLabsClient) -> Non
     start_date = "2010-01-01"
     end_date = "2023-12-31"
     limit = 1000
-    test_pricefeed_markets = PRICEFEED_MARKETS[0:3] + [123]
+    test_pricefeed_markets = [*PRICEFEED_MARKETS[0:3], 123]
 
     results = client.price_feed.price_feed.retrieve(
         parcl_ids=test_pricefeed_markets,
@@ -107,7 +107,7 @@ def test_multiple_get_requests_with_bad_parcl_id_and_auto_pagination(
     start_date = "2010-01-01"
     end_date = "2023-12-31"
     days = (pd.to_datetime(end_date) - pd.to_datetime(start_date)).days + 1
-    test_pricefeed_markets = PRICEFEED_MARKETS[0:3] + [123]
+    test_pricefeed_markets = [*PRICEFEED_MARKETS[0:3], 123]
 
     results = client.price_feed.price_feed.retrieve(
         parcl_ids=test_pricefeed_markets,
