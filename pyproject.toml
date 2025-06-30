@@ -29,6 +29,7 @@ classifiers = [
 dependencies = [
     "numpy",
     "pandas",
+    "pydantic>=2.0.0",
     "requests",
 ]
 

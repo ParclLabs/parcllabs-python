@@ -57,6 +57,13 @@ class Validators:
         return params_dict
 
     @staticmethod
+    def validate_input_bool_param_simple(param: bool | None) -> str:
+        if not isinstance(param, bool):
+            raise TypeError(f"Expected boolean. Received: {param}")
+
+        return "true" if param else "false"
+
+    @staticmethod
     def validate_us_zip_code(zip_code: str) -> str:
         """
         Validates the US zip code string and returns it in the expected format.

@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, Mock, patch
 import pytest
 
 from parcllabs.enums import RequestLimits
+from parcllabs.schemas.schemas import GeoCoordinates, PropertyV2RetrieveParams
 from parcllabs.services.properties.property_v2 import PropertyV2Service
 
 
@@ -68,12 +69,13 @@ def test_build_search_criteria(property_v2_service: PropertyV2Service) -> None:
     }
 
 
-def test_build_property_filters(property_v2_service: PropertyV2Service) -> None:
-    filters = property_v2_service._build_property_filters(
+def test_build_property_filters_from_schema(property_v2_service: PropertyV2Service) -> None:
+    """Test building property filters from Pydantic schema."""
+    params = PropertyV2RetrieveParams(
         min_beds=2,
         max_beds=4,
         min_baths=1.5,
-        max_baths=3,
+        max_baths=3.0,
         min_sqft=1000,
         max_sqft=2000,
         min_year_built=1980,
@@ -84,11 +86,13 @@ def test_build_property_filters(property_v2_service: PropertyV2Service) -> None:
         max_record_added_date="2023-12-31",
     )
 
+    filters = property_v2_service._build_property_filters(params)
+
     assert filters == {
         "min_beds": 2,
         "max_beds": 4,
         "min_baths": 1.5,
-        "max_baths": 3,
+        "max_baths": 3.0,
         "min_sqft": 1000,
         "max_sqft": 2000,
         "min_year_built": 1980,
@@ -100,8 +104,9 @@ def test_build_property_filters(property_v2_service: PropertyV2Service) -> None:
     }
 
 
-def test_build_event_filters(property_v2_service: PropertyV2Service) -> None:
-    filters = property_v2_service._build_event_filters(
+def test_build_event_filters_from_schema(property_v2_service: PropertyV2Service) -> None:
+    """Test building event filters from Pydantic schema."""
+    params = PropertyV2RetrieveParams(
         event_names=["LISTING", "SALE"],
         min_event_date="2023-01-01",
         max_event_date="2023-12-31",
@@ -111,6 +116,8 @@ def test_build_event_filters(property_v2_service: PropertyV2Service) -> None:
         min_record_updated_date="2023-01-01",
         max_record_updated_date="2023-12-31",
     )
+
+    filters = property_v2_service._build_event_filters(params)
 
     assert filters == {
         "event_names": ["LISTING", "SALE"],
@@ -124,13 +131,16 @@ def test_build_event_filters(property_v2_service: PropertyV2Service) -> None:
     }
 
 
-def test_build_owner_filters(property_v2_service: PropertyV2Service) -> None:
-    filters = property_v2_service._build_owner_filters(
+def test_build_owner_filters_from_schema(property_v2_service: PropertyV2Service) -> None:
+    """Test building owner filters from Pydantic schema."""
+    params = PropertyV2RetrieveParams(
         owner_name=["Blackstone", "Amherst"],
         is_current_owner=True,
         is_investor_owned=False,
         is_owner_occupied=True,
     )
+
+    filters = property_v2_service._build_owner_filters(params)
 
     assert filters == {
         "owner_name": ["BLACKSTONE", "AMHERST"],
@@ -138,6 +148,62 @@ def test_build_owner_filters(property_v2_service: PropertyV2Service) -> None:
         "is_investor_owned": "false",
         "is_owner_occupied": "true",
     }
+
+
+def test_schema_validation() -> None:
+    """Test Pydantic schema validation."""
+    # Test valid parameters
+    params = PropertyV2RetrieveParams(
+        parcl_ids=[123, 456],
+        property_types=["SINGLE_FAMILY"],
+        min_beds=2,
+        max_beds=4,
+        min_price=500000,
+        max_price=1000000,
+    )
+    assert params.parcl_ids == [123, 456]
+    assert params.property_types == ["SINGLE_FAMILY"]
+    assert params.min_beds == 2
+    assert params.max_beds == 4
+
+    # Test geo coordinates
+    geo = GeoCoordinates(latitude=40.7128, longitude=-74.0060, radius=10.0)
+    params_with_geo = PropertyV2RetrieveParams(geo_coordinates=geo)
+    assert params_with_geo.geo_coordinates == geo
+
+
+def test_schema_validation_errors() -> None:
+    """Test Pydantic schema validation errors."""
+    # Test invalid property type
+    with pytest.raises(ValueError, match="Invalid property type"):
+        PropertyV2RetrieveParams(property_types=["INVALID_TYPE"])
+
+    # Test invalid geo coordinates
+    with pytest.raises(ValueError, match="Input should be less than or equal to 90"):
+        GeoCoordinates(latitude=100, longitude=-74.0060, radius=10.0)
+
+    # Test invalid date format
+    with pytest.raises(ValueError, match="Date must be in YYYY-MM-DD format"):
+        PropertyV2RetrieveParams(min_event_date="2023/01/01")
+
+    # Test invalid range (min > max)
+    with pytest.raises(ValueError, match="max_beds cannot be less than min_beds"):
+        PropertyV2RetrieveParams(min_beds=5, max_beds=3)
+
+    # Test invalid price range
+    with pytest.raises(ValueError, match="max_price cannot be less than min_price"):
+        PropertyV2RetrieveParams(min_price=1000000, max_price=500000)
+
+
+def test_schema_with_none_values() -> None:
+    """Test schema handles None values correctly."""
+    params = PropertyV2RetrieveParams()
+    assert params.parcl_ids is None
+    assert params.property_types is None
+    assert params.min_beds is None
+    assert params.max_beds is None
+    assert params.geo_coordinates is None
+    assert params.params == {}
 
 
 def test_validate_limit(property_v2_service: PropertyV2Service) -> None:
@@ -252,3 +318,59 @@ def test_retrieve(
     assert data["property_filters"]["min_beds"] == 2
     assert data["property_filters"]["max_beds"] == 4
     assert data["event_filters"]["event_names"] == ["LISTING"]
+
+
+@patch.object(PropertyV2Service, "_fetch_post")
+def test_retrieve_with_geo_coordinates(
+    mock_fetch_post: Mock, property_v2_service: PropertyV2Service, mock_response: Mock
+) -> None:
+    """Test retrieve method with geo coordinates."""
+    mock_fetch_post.return_value = [mock_response.json()]
+
+    df, metadata = property_v2_service.retrieve(
+        geo_coordinates={"latitude": 40.7128, "longitude": -74.0060, "radius": 10.0},
+        property_types=["CONDO"],
+        min_price=500000,
+        max_price=1000000,
+    )
+
+    # check that the dataframe has the expected data
+    assert len(df) == 1
+    assert df.iloc[0]["parcl_id"] == 123
+
+    # check that the correct data was passed to _fetch_post
+    call_args = mock_fetch_post.call_args[1]
+    data = call_args["data"]
+    assert data["geo_coordinates"] == {"latitude": 40.7128, "longitude": -74.0060, "radius": 10.0}
+    assert data["property_filters"]["property_types"] == ["CONDO"]
+    assert data["event_filters"]["min_price"] == 500000
+    assert data["event_filters"]["max_price"] == 1000000
+
+
+@patch.object(PropertyV2Service, "_fetch_post")
+def test_retrieve_with_schema_validation_errors(
+    mock_fetch_post: Mock,  # noqa: ARG001
+    property_v2_service: PropertyV2Service,
+) -> None:
+    """Test that retrieve method properly validates input using schema."""
+    # This should raise a validation error due to invalid property type
+    with pytest.raises(ValueError, match="Invalid property type"):
+        property_v2_service.retrieve(
+            parcl_ids=[123],
+            property_types=["INVALID_TYPE"],
+        )
+
+    # This should raise a validation error due to invalid range
+    with pytest.raises(ValueError, match="max_beds cannot be less than min_beds"):
+        property_v2_service.retrieve(
+            parcl_ids=[123],
+            min_beds=5,
+            max_beds=3,
+        )
+
+    # This should raise a validation error due to invalid date format
+    with pytest.raises(ValueError, match="Date must be in YYYY-MM-DD format"):
+        property_v2_service.retrieve(
+            parcl_ids=[123],
+            min_event_date="2023/01/01",
+        )
