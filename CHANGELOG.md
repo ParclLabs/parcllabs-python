@@ -1,3 +1,6 @@
+### v1.14.5
+- Update `property_v2.search` to fix pagination logic bug.
+
 ### v1.14.4
 - Internal code improvements.
 
