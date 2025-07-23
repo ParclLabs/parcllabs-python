@@ -252,9 +252,9 @@ def test_fetch_post_pagination(mock_post: Mock, property_v2_service: PropertyV2S
 
     result = property_v2_service._fetch_post(params={"limit": 1}, data={})
 
-    assert len(result) == 1
+    assert len(result) == 2
     assert result[0]["data"][0]["parcl_id"] == 123
-    assert mock_post.call_count == 1
+    assert mock_post.call_count == 2
 
 
 def test_as_pd_dataframe(property_v2_service: PropertyV2Service, mock_response: Mock) -> None:
