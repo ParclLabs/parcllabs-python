@@ -28,7 +28,7 @@ class PropertyV2Service(ParclLabsService):
 
         if pagination:
             limit = pagination.get("limit")
-            if returned_count == limit:
+            if returned_count < limit:  # if we got fewer results than requested, don't paginate
                 return all_data
 
             # If we need to paginate, use concurrent requests
