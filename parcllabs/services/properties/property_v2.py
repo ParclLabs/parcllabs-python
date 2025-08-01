@@ -1,3 +1,4 @@
+import time
 from collections.abc import Mapping
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any
@@ -89,8 +90,8 @@ class PropertyV2Service(ParclLabsService):
 
         print(f"Fetching {num_chunks} chunks...")
 
-        all_data = []
-        with ThreadPoolExecutor(max_workers=self.client.num_workers) as executor:
+        all_data = []  
+        with ThreadPoolExecutor(max_workers=3) as executor:
             # Create a copy of data for each chunk to avoid race conditions
             future_to_chunk = {}
             for idx, chunk in enumerate(parcl_property_ids_chunks):
@@ -101,18 +102,47 @@ class PropertyV2Service(ParclLabsService):
                 # Submit the task
                 future = executor.submit(self._post, url=self.full_post_url, data=chunk_data, params=params)
                 future_to_chunk[future] = idx + 1
+                
+                # Small delay between submissions to avoid rate limiting
+                if idx < len(parcl_property_ids_chunks) - 1:  # Don't delay after the last one
+                    time.sleep(0.1)
 
             # Collect results as they complete
             for future in as_completed(future_to_chunk):
                 chunk_num = future_to_chunk[future]
                 try:
                     result = future.result()
-                    response = result.json()
-                    all_data.append(response)
-                    print(f"Completed chunk {chunk_num} of {num_chunks}")
+                    
+                    # Check HTTP status code
+                    if result.status_code != 200:
+                        error_msg = f"Chunk {chunk_num} failed: HTTP {result.status_code}"
+                        response_preview = result.text[:200] if result.text else "No response content"
+                        raise RuntimeError(f"{error_msg}\nResponse content: {response_preview}...")
+                    
+                    # Check if response has content
+                    if not result.text.strip():
+                        raise RuntimeError(f"Chunk {chunk_num} failed: Empty response from API")
+                    
+                    # Try to parse JSON
+                    try:
+                        response = result.json()
+                        all_data.append(response)
+                        print(f"Completed chunk {chunk_num} of {num_chunks}")
+                    except ValueError as json_exc:
+                        response_preview = result.text[:200] if result.text else "No response content"
+                        raise RuntimeError(f"Chunk {chunk_num} failed: Invalid JSON - {json_exc}\n"
+                                         f"Response content: {response_preview}...")
+                        
                 except Exception as exc:
-                    print(f"Chunk {chunk_num} failed: {exc}")
+                    # If it's already a RuntimeError from above, re-raise it
+                    if isinstance(exc, RuntimeError):
+                        raise
+                    
+                    # For any other unexpected errors, wrap and raise
+                    raise RuntimeError(f"Chunk {chunk_num} failed with unexpected error: {exc} "
+                                     f"(Exception type: {type(exc).__name__})")
 
+        print(f"All {num_chunks} chunks completed successfully.")
         return all_data
 
     def _as_pd_dataframe(self, data: list[Mapping[str, Any]]) -> pd.DataFrame:
