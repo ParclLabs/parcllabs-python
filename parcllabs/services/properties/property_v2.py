@@ -98,11 +98,11 @@ class PropertyV2Service(ParclLabsService):
                 # Create a copy of data with the specific chunk
                 chunk_data = data.copy()
                 chunk_data[PARCL_PROPERTY_IDS] = chunk
-                
+
                 # Submit the task
                 future = executor.submit(self._post, url=self.full_post_url, data=chunk_data, params=params)
                 future_to_chunk[future] = idx + 1
-                
+
                 # Small delay between submissions to avoid rate limiting
                 if idx < len(parcl_property_ids_chunks) - 1:  # Don't delay after the last one
                     time.sleep(0.1)
@@ -112,17 +112,17 @@ class PropertyV2Service(ParclLabsService):
                 chunk_num = future_to_chunk[future]
                 try:
                     result = future.result()
-                    
+
                     # Check HTTP status code
                     if result.status_code != 200:
                         error_msg = f"Chunk {chunk_num} failed: HTTP {result.status_code}"
                         response_preview = result.text[:200] if result.text else "No response content"
                         raise RuntimeError(f"{error_msg}\nResponse content: {response_preview}...")
-                    
+
                     # Check if response has content
                     if not result.text.strip():
                         raise RuntimeError(f"Chunk {chunk_num} failed: Empty response from API")
-                    
+
                     # Try to parse JSON
                     try:
                         response = result.json()
@@ -137,7 +137,7 @@ class PropertyV2Service(ParclLabsService):
                     # If it's already a RuntimeError from above, re-raise it
                     if isinstance(exc, RuntimeError):
                         raise
-                    
+
                     # For any other unexpected errors, wrap and raise
                     raise RuntimeError(f"Chunk {chunk_num} failed with unexpected error: {exc} "
                                      f"(Exception type: {type(exc).__name__})")
@@ -571,12 +571,13 @@ class PropertyV2Service(ParclLabsService):
 
         # Set limit
         request_params = input_params.params.copy()
-        request_params["limit"] = self._validate_limit(input_params.limit)
 
         # Make request with params
         if data.get(PARCL_PROPERTY_IDS):
+            request_params["limit"] = PARCL_PROPERTY_IDS_LIMIT
             results = self._fetch_post_parcl_property_ids(params=request_params, data=data)
         else:
+            request_params["limit"] = self._validate_limit(input_params.limit)
             results = self._fetch_post(params=request_params, data=data)
 
         # Get metadata from results
