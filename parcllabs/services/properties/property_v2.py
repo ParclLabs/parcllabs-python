@@ -4,6 +4,7 @@ from typing import Any
 
 import pandas as pd
 
+from parcllabs.common import PARCL_PROPERTY_IDS_LIMIT
 from parcllabs.enums import RequestLimits
 from parcllabs.schemas.schemas import PropertyV2RetrieveParamCategories, PropertyV2RetrieveParams
 from parcllabs.services.parcllabs_service import ParclLabsService
@@ -20,14 +21,13 @@ class PropertyV2Service(ParclLabsService):
         response = self._post(url=self.full_post_url, data=data, params=params)
         result = response.json()
 
+        all_data = [result]
         pagination = result.get("pagination")
         metadata = result.get("metadata")
-        all_data = [result]
-
-        returned_count = metadata.get("results", {}).get("returned_count", 0)
 
         if pagination:
             limit = pagination.get("limit")
+            returned_count = metadata.get("results", {}).get("returned_count", 0)
             if returned_count < limit:  # if we got fewer results than requested, don't paginate
                 return all_data
 
@@ -35,11 +35,11 @@ class PropertyV2Service(ParclLabsService):
             if pagination.get("has_more"):
                 print("More pages to fetch, paginating additional pages...")
                 offset = pagination.get("offset")
-                total_count = metadata.get("results", {}).get("total_available", 0)
+                total_available = metadata.get("results", {}).get("total_available", 0)
 
                 # Calculate how many more pages we need
-                remaining_pages = (total_count - limit) // limit
-                if (total_count - limit) % limit > 0:
+                remaining_pages = (total_available - limit) // limit
+                if (total_available - limit) % limit > 0:
                     remaining_pages += 1
 
                 # Generate all the URLs we need to fetch
@@ -63,6 +63,53 @@ class PropertyV2Service(ParclLabsService):
                             all_data.append(page_result)
                         except Exception as exc:
                             print(f"Request failed: {exc}")
+
+        return all_data
+
+    def _fetch_post_parcl_property_ids(self, params: dict[str, Any], data: dict[str, Any]) -> list[dict]:
+        """Fetch data using POST request with parcl_property_ids, chunking the request
+
+        Args:
+            params: Dictionary of parameters to pass to the request.
+            data: Dictionary of data to pass to the request.
+
+        Returns:
+            List of dictionaries containing the data from the request.
+        """
+        parcl_property_ids = data.get("parcl_property_ids")
+        num_ids = len(parcl_property_ids)
+        if num_ids <= PARCL_PROPERTY_IDS_LIMIT:
+            return self._fetch_post(params=params, data=data)
+
+        # If we have more than PARCL_PROPERTY_IDS_LIMIT parcl_property_ids, chunk the request
+        parcl_property_ids_chunks = [parcl_property_ids[i:i + PARCL_PROPERTY_IDS_LIMIT] for i in range(0, num_ids, PARCL_PROPERTY_IDS_LIMIT)]
+        num_chunks = len(parcl_property_ids_chunks)
+
+        print(f"Fetching {num_chunks} chunks...")
+
+        all_data = []
+        with ThreadPoolExecutor(max_workers=self.client.num_workers) as executor:
+            # Create a copy of data for each chunk to avoid race conditions
+            future_to_chunk = {}
+            for idx, chunk in enumerate(parcl_property_ids_chunks):
+                # Create a copy of data with the specific chunk
+                chunk_data = data.copy()
+                chunk_data["parcl_property_ids"] = chunk
+                
+                # Submit the task
+                future = executor.submit(self._post, url=self.full_post_url, data=chunk_data, params=params)
+                future_to_chunk[future] = idx + 1
+
+            # Collect results as they complete
+            for future in as_completed(future_to_chunk):
+                chunk_num = future_to_chunk[future]
+                try:
+                    result = future.result()
+                    response = result.json()
+                    all_data.append(response)
+                    print(f"Completed chunk {chunk_num} of {num_chunks}")
+                except Exception as exc:
+                    print(f"Chunk {chunk_num} failed: {exc}")
 
         return all_data
 
@@ -208,6 +255,10 @@ class PropertyV2Service(ParclLabsService):
         """Build boolean property filters."""
         filters = {}
 
+        if params.include_property_details is not None:
+            filters["include_property_details"] = self.simple_bool_validator(
+                params.include_property_details
+            )
         if params.current_on_market_flag is not None:
             filters["current_on_market_flag"] = self.simple_bool_validator(
                 params.current_on_market_flag
@@ -216,9 +267,17 @@ class PropertyV2Service(ParclLabsService):
             filters["current_on_market_rental_flag"] = self.simple_bool_validator(
                 params.current_on_market_rental_flag
             )
-        if params.include_property_details is not None:
-            filters["include_property_details"] = self.simple_bool_validator(
-                params.include_property_details
+        if params.current_new_construction_flag is not None:
+            filters["current_new_construction_flag"] = self.simple_bool_validator(
+                params.current_new_construction_flag
+            )
+        if params.current_owner_occupied_flag is not None:
+            filters["current_owner_occupied_flag"] = self.simple_bool_validator(
+                params.current_owner_occupied_flag
+            )
+        if params.current_investor_owned_flag is not None:
+            filters["current_investor_owned_flag"] = self.simple_bool_validator(
+                params.current_investor_owned_flag
             )
 
         return filters
@@ -241,6 +300,10 @@ class PropertyV2Service(ParclLabsService):
             property_filters["property_types"] = [
                 property_type.upper() for property_type in params.property_types
             ]
+
+        # Handle current entity owner name
+        if params.current_entity_owner_name is not None:
+            property_filters["current_entity_owner_name"] = params.current_entity_owner_name
 
         return property_filters
 
@@ -270,6 +333,12 @@ class PropertyV2Service(ParclLabsService):
         if params.is_new_construction is not None:
             event_filters["is_new_construction"] = self.simple_bool_validator(
                 params.is_new_construction
+            )
+        if params.include_events is not None:
+            event_filters["include_events"] = self.simple_bool_validator(params.include_events)
+        if params.include_full_event_history is not None:
+            event_filters["include_full_event_history"] = self.simple_bool_validator(
+                params.include_full_event_history
             )
 
         return event_filters
@@ -356,6 +425,12 @@ class PropertyV2Service(ParclLabsService):
         is_owner_occupied: bool | None = None,
         current_on_market_flag: bool | None = None,
         current_on_market_rental_flag: bool | None = None,
+        current_new_construction_flag: bool | None = None,
+        current_owner_occupied_flag: bool | None = None,
+        current_investor_owned_flag: bool | None = None,
+        current_entity_owner_name: str | None = None,
+        include_events: bool | None = None,
+        include_full_event_history: bool | None = None,
         limit: int | None = None,
         params: Mapping[str, Any] | None = None,
     ) -> tuple[pd.DataFrame, dict[str, Any]]:
@@ -393,6 +468,12 @@ class PropertyV2Service(ParclLabsService):
             is_owner_occupied: Whether to filter by owner occupied.
             current_on_market_flag: Whether to filter by current_on_market flag.
             current_on_market_rental_flag: Whether to filter by current_on_market_rental flag.
+            current_new_construction_flag: Whether to filter by current_new_construction flag.
+            current_owner_occupied_flag: Whether to filter by current_owner_occupied flag.
+            current_investor_owned_flag: Whether to filter by current_investor_owned flag.
+            current_entity_owner_name: Current entity owner name to filter by.
+            include_events: Whether to include events in the response.
+            include_full_event_history: Whether to include full event history in the response.
             limit: Number of results to return.
             params: Additional parameters to pass to the request.
         Returns:
@@ -431,6 +512,12 @@ class PropertyV2Service(ParclLabsService):
             is_owner_occupied=is_owner_occupied,
             current_on_market_flag=current_on_market_flag,
             current_on_market_rental_flag=current_on_market_rental_flag,
+            current_new_construction_flag=current_new_construction_flag,
+            current_owner_occupied_flag=current_owner_occupied_flag,
+            current_investor_owned_flag=current_investor_owned_flag,
+            current_entity_owner_name=current_entity_owner_name,
+            include_events=include_events,
+            include_full_event_history=include_full_event_history,
             limit=limit,
             params=params or {},
         )
@@ -455,7 +542,10 @@ class PropertyV2Service(ParclLabsService):
         request_params["limit"] = self._validate_limit(input_params.limit)
 
         # Make request with params
-        results = self._fetch_post(params=request_params, data=data)
+        if data.get("parcl_property_ids"):
+            results = self._fetch_post_parcl_property_ids(params=request_params, data=data)
+        else:
+            results = self._fetch_post(params=request_params, data=data)
 
         # Get metadata from results
         metadata = self._get_metadata(results)

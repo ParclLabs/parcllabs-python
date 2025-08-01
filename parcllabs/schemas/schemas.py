@@ -35,7 +35,6 @@ class PropertyV2RetrieveParams(BaseModel):
         default=None, description="Geographic coordinates with radius to filter by"
     )
 
-    # Property filters
     property_types: list[str] | None = Field(
         default=None, description="List of property types to filter by"
     )
@@ -62,6 +61,18 @@ class PropertyV2RetrieveParams(BaseModel):
     )
 
     # Event filters
+    include_events: bool | None = Field(
+        default=None,
+        description="""Boolean flag indicating if event data is included in the response. 
+            0 signifies that no event data is returned. 
+            1 signifies that event data is included, scoped to events that match the event filters supplied in the request""",
+    )
+    include_full_event_history: bool | None = Field(
+        default=None,
+        description="""Boolean flag indicating if the full event history is returned for each property (effective only when include_events is 1). 
+            0 signifies that only events matching the event filters are returned. 
+            1 signifies that the property's entire event history is returned""",
+    )
     event_names: list[str] | None = Field(
         default=None, description="List of event names to filter by"
     )
@@ -99,6 +110,18 @@ class PropertyV2RetrieveParams(BaseModel):
     )
     current_on_market_rental_flag: bool | None = Field(
         default=None, description="Whether to filter by current on market rental flag"
+    )
+    current_new_construction_flag: bool | None = Field(
+        default=None, description="Whether to filter by current new construction flag"
+    )
+    current_owner_occupied_flag: bool | None = Field(
+        default=None, description="Whether to filter by current owner occupied flag"
+    )
+    current_investor_owned_flag: bool | None = Field(
+        default=None, description="Whether to filter by current investor owned flag"
+    )
+    current_entity_owner_name: str | None = Field(
+        default=None, description="Current entity owner name to filter by"
     )
 
     # Pagination
