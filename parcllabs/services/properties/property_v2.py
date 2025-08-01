@@ -132,7 +132,7 @@ class PropertyV2Service(ParclLabsService):
                         response_preview = result.text[:200] if result.text else "No response content"
                         raise RuntimeError(f"Chunk {chunk_num} failed: Invalid JSON - {json_exc}\n"
                                          f"Response content: {response_preview}...")
-                        
+
                 except Exception as exc:
                     # If it's already a RuntimeError from above, re-raise it
                     if isinstance(exc, RuntimeError):
