@@ -4,7 +4,7 @@ from typing import Any
 
 import pandas as pd
 
-from parcllabs.common import PARCL_PROPERTY_IDS_LIMIT
+from parcllabs.common import PARCL_PROPERTY_IDS_LIMIT, PARCL_PROPERTY_IDS
 from parcllabs.enums import RequestLimits
 from parcllabs.schemas.schemas import PropertyV2RetrieveParamCategories, PropertyV2RetrieveParams
 from parcllabs.services.parcllabs_service import ParclLabsService
@@ -76,13 +76,15 @@ class PropertyV2Service(ParclLabsService):
         Returns:
             List of dictionaries containing the data from the request.
         """
-        parcl_property_ids = data.get("parcl_property_ids")
+        parcl_property_ids = data.get(PARCL_PROPERTY_IDS)
         num_ids = len(parcl_property_ids)
         if num_ids <= PARCL_PROPERTY_IDS_LIMIT:
             return self._fetch_post(params=params, data=data)
 
         # If we have more than PARCL_PROPERTY_IDS_LIMIT parcl_property_ids, chunk the request
-        parcl_property_ids_chunks = [parcl_property_ids[i:i + PARCL_PROPERTY_IDS_LIMIT] for i in range(0, num_ids, PARCL_PROPERTY_IDS_LIMIT)]
+        parcl_property_ids_chunks = [
+            parcl_property_ids[i:i + PARCL_PROPERTY_IDS_LIMIT] for i in range(0, num_ids, PARCL_PROPERTY_IDS_LIMIT)
+        ]
         num_chunks = len(parcl_property_ids_chunks)
 
         print(f"Fetching {num_chunks} chunks...")
@@ -94,7 +96,7 @@ class PropertyV2Service(ParclLabsService):
             for idx, chunk in enumerate(parcl_property_ids_chunks):
                 # Create a copy of data with the specific chunk
                 chunk_data = data.copy()
-                chunk_data["parcl_property_ids"] = chunk
+                chunk_data[PARCL_PROPERTY_IDS] = chunk
                 
                 # Submit the task
                 future = executor.submit(self._post, url=self.full_post_url, data=chunk_data, params=params)
@@ -210,7 +212,7 @@ class PropertyV2Service(ParclLabsService):
             data["parcl_ids"] = parcl_ids
 
         if parcl_property_ids:
-            data["parcl_property_ids"] = parcl_property_ids
+            data[PARCL_PROPERTY_IDS] = parcl_property_ids
 
         if geo_coordinates:
             data["geo_coordinates"] = geo_coordinates
@@ -542,7 +544,7 @@ class PropertyV2Service(ParclLabsService):
         request_params["limit"] = self._validate_limit(input_params.limit)
 
         # Make request with params
-        if data.get("parcl_property_ids"):
+        if data.get(PARCL_PROPERTY_IDS):
             results = self._fetch_post_parcl_property_ids(params=request_params, data=data)
         else:
             results = self._fetch_post(params=request_params, data=data)

@@ -29,3 +29,4 @@ POST_METHOD = RequestMethods.POST.value
 
 ZIP_CODE_LENGTH = 5
 PARCL_PROPERTY_IDS_LIMIT = 50000
+PARCL_PROPERTY_IDS = "parcl_property_ids"
