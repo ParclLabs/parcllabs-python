@@ -2,6 +2,7 @@ from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
+from parcllabs.common import PARCL_PROPERTY_IDS
 from parcllabs.enums import RequestLimits
 from parcllabs.schemas.schemas import GeoCoordinates, PropertyV2RetrieveParams
 from parcllabs.services.properties.property_v2 import PropertyV2Service
@@ -51,7 +52,7 @@ def test_build_search_criteria(property_v2_service: PropertyV2Service) -> None:
 
     # Test with parcl_property_ids
     criteria = property_v2_service._build_search_criteria(parcl_property_ids=[789, 101])
-    assert criteria == {"parcl_property_ids": [789, 101]}
+    assert criteria == {PARCL_PROPERTY_IDS: [789, 101]}
 
     # Test with location
     geo_coordinates = {"latitude": 37.7749, "longitude": -122.4194, "radius": 5.0}
@@ -64,7 +65,7 @@ def test_build_search_criteria(property_v2_service: PropertyV2Service) -> None:
     )
     assert criteria == {
         "parcl_ids": [123],
-        "parcl_property_ids": [456],
+        PARCL_PROPERTY_IDS: [456],
         "geo_coordinates": geo_coordinates,
     }
 
