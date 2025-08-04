@@ -82,7 +82,7 @@ class PropertyV2Service(ParclLabsService):
         if num_ids <= PARCL_PROPERTY_IDS_LIMIT:
             return self._fetch_post(params=params, data=data)
 
-        # If we have more than PARCL_PROPERTY_IDS_LIMIT parcl_property_ids, chunk the request
+        # If we exceed PARCL_PROPERTY_IDS_LIMIT, chunk the request
         parcl_property_ids_chunks = [
             parcl_property_ids[i:i + PARCL_PROPERTY_IDS_LIMIT] for i in range(0, num_ids, PARCL_PROPERTY_IDS_LIMIT)
         ]
