@@ -1,3 +1,7 @@
+### v1.15.0
+- Update to reflect enhanced `property_v2.search` endpoint.
+- Chunking logic for `property_v2.search` endpoint for parcl_property_id requests.
+
 ### v1.14.5
 - Update `property_v2.search` to fix pagination logic bug.
 
