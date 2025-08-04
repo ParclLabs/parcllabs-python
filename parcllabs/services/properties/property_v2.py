@@ -5,7 +5,7 @@ from typing import Any
 
 import pandas as pd
 
-from parcllabs.common import PARCL_PROPERTY_IDS_LIMIT, PARCL_PROPERTY_IDS
+from parcllabs.common import PARCL_PROPERTY_IDS, PARCL_PROPERTY_IDS_LIMIT
 from parcllabs.enums import RequestLimits
 from parcllabs.schemas.schemas import PropertyV2RetrieveParamCategories, PropertyV2RetrieveParams
 from parcllabs.services.parcllabs_service import ParclLabsService
@@ -16,6 +16,15 @@ class PropertyV2Service(ParclLabsService):
     def __init__(self, *args: object, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
         self.simple_bool_validator = Validators.validate_input_bool_param_simple
+
+    @staticmethod
+    def _raise_http_error(chunk_num: int, status_code: int, response_preview: str) -> None:
+        error_msg = f"Chunk {chunk_num} failed: HTTP {status_code}"
+        raise RuntimeError(f"{error_msg}\nResponse content: {response_preview}...")
+
+    @staticmethod
+    def _raise_empty_response_error(chunk_num: int) -> None:
+        raise RuntimeError(f"Chunk {chunk_num} failed: Empty response from API")
 
     def _fetch_post(self, params: dict[str, Any], data: dict[str, Any]) -> list[dict]:
         """Fetch data using POST request with pagination support."""
@@ -67,7 +76,11 @@ class PropertyV2Service(ParclLabsService):
 
         return all_data
 
-    def _fetch_post_parcl_property_ids(self, params: dict[str, Any], data: dict[str, Any]) -> list[dict]:
+    def _fetch_post_parcl_property_ids(
+        self,
+        params: dict[str, Any],
+        data: dict[str, Any],
+    ) -> list[dict]:
         """Fetch data using POST request with parcl_property_ids, chunking the request
 
         Args:
@@ -84,13 +97,14 @@ class PropertyV2Service(ParclLabsService):
 
         # If we exceed PARCL_PROPERTY_IDS_LIMIT, chunk the request
         parcl_property_ids_chunks = [
-            parcl_property_ids[i:i + PARCL_PROPERTY_IDS_LIMIT] for i in range(0, num_ids, PARCL_PROPERTY_IDS_LIMIT)
+            parcl_property_ids[i : i + PARCL_PROPERTY_IDS_LIMIT]
+            for i in range(0, num_ids, PARCL_PROPERTY_IDS_LIMIT)
         ]
         num_chunks = len(parcl_property_ids_chunks)
 
         print(f"Fetching {num_chunks} chunks...")
 
-        all_data = []  
+        all_data = []
         with ThreadPoolExecutor(max_workers=3) as executor:
             # Create a copy of data for each chunk to avoid race conditions
             future_to_chunk = {}
@@ -100,12 +114,19 @@ class PropertyV2Service(ParclLabsService):
                 chunk_data[PARCL_PROPERTY_IDS] = chunk
 
                 # Submit the task
-                future = executor.submit(self._post, url=self.full_post_url, data=chunk_data, params=params)
+                future = executor.submit(
+                    self._post,
+                    url=self.full_post_url,
+                    data=chunk_data,
+                    params=params,
+                )
                 future_to_chunk[future] = idx + 1
 
                 # Small delay between submissions to avoid rate limiting
                 if idx < len(parcl_property_ids_chunks) - 1:  # Don't delay after the last one
                     time.sleep(0.1)
+
+            # Helper functions to abstract raise statements
 
             # Collect results as they complete
             for future in as_completed(future_to_chunk):
@@ -115,13 +136,14 @@ class PropertyV2Service(ParclLabsService):
 
                     # Check HTTP status code
                     if result.status_code != 200:
-                        error_msg = f"Chunk {chunk_num} failed: HTTP {result.status_code}"
-                        response_preview = result.text[:200] if result.text else "No response content"
-                        raise RuntimeError(f"{error_msg}\nResponse content: {response_preview}...")
+                        response_preview = (
+                            result.text[:200] if result.text else "No response content"
+                        )
+                        self._raise_http_error(chunk_num, result.status_code, response_preview)
 
                     # Check if response has content
                     if not result.text.strip():
-                        raise RuntimeError(f"Chunk {chunk_num} failed: Empty response from API")
+                        self._raise_empty_response_error(chunk_num)
 
                     # Try to parse JSON
                     try:
@@ -129,9 +151,13 @@ class PropertyV2Service(ParclLabsService):
                         all_data.append(response)
                         print(f"Completed chunk {chunk_num} of {num_chunks}")
                     except ValueError as json_exc:
-                        response_preview = result.text[:200] if result.text else "No response content"
-                        raise RuntimeError(f"Chunk {chunk_num} failed: Invalid JSON - {json_exc}\n"
-                                         f"Response content: {response_preview}...")
+                        response_preview = (
+                            result.text[:200] if result.text else "No response content"
+                        )
+                        raise RuntimeError(
+                            f"Chunk {chunk_num} failed: Invalid JSON - {json_exc}\n"
+                            f"Response content: {response_preview}..."
+                        ) from json_exc
 
                 except Exception as exc:
                     # If it's already a RuntimeError from above, re-raise it
@@ -139,8 +165,10 @@ class PropertyV2Service(ParclLabsService):
                         raise
 
                     # For any other unexpected errors, wrap and raise
-                    raise RuntimeError(f"Chunk {chunk_num} failed with unexpected error: {exc} "
-                                     f"(Exception type: {type(exc).__name__})")
+                    raise RuntimeError(
+                        f"Chunk {chunk_num} failed with unexpected error: {exc} "
+                        f"(Exception type: {type(exc).__name__})"
+                    ) from exc
 
         print(f"All {num_chunks} chunks completed successfully.")
         return all_data
@@ -339,7 +367,7 @@ class PropertyV2Service(ParclLabsService):
 
         return property_filters
 
-    def _build_event_filters(self, params: PropertyV2RetrieveParams) -> dict[str, Any]:
+    def _build_event_filters(self, params: PropertyV2RetrieveParams) -> dict[str, Any]:  # noqa: C901
         """Build event filters from validated Pydantic schema."""
         event_filters = {}
 

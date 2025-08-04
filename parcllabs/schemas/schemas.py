@@ -63,15 +63,19 @@ class PropertyV2RetrieveParams(BaseModel):
     # Event filters
     include_events: bool | None = Field(
         default=None,
-        description="""Boolean flag indicating if event data is included in the response. 
-            0 signifies that no event data is returned. 
-            1 signifies that event data is included, scoped to events that match the event filters supplied in the request""",
+        description="""Boolean flag indicating if event data is included in the response.
+            0 signifies that no event data is returned.
+            1 signifies that event data is included, scoped
+            to events that match the event filters supplied in the request
+        """,
     )
     include_full_event_history: bool | None = Field(
         default=None,
-        description="""Boolean flag indicating if the full event history is returned for each property (effective only when include_events is 1). 
-            0 signifies that only events matching the event filters are returned. 
-            1 signifies that the property's entire event history is returned""",
+        description="""Boolean flag indicating if the full event history is returned for
+            each property (effective only when include_events is 1).
+            0 signifies that only events matching the event filters are returned.
+            1 signifies that the property's entire event history is returned
+        """,
     )
     event_names: list[str] | None = Field(
         default=None, description="List of event names to filter by"
