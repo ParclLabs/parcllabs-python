@@ -1,3 +1,6 @@
+### v1.15.1
+- Fix bug where `OTHER` property type was not being allowed in the `property_types` parameter in the `property_v2.search` endpoint. 
+
 ### v1.15.0
 - Update to reflect enhanced `property_v2.search` endpoint.
 - Chunking logic for `property_v2.search` endpoint for parcl_property_id requests.

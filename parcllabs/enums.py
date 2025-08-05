@@ -29,6 +29,7 @@ class PropertyTypes(Enum):
     SINGLE_FAMILY = "SINGLE_FAMILY"
     CONDO = "CONDO"
     TOWNHOUSE = "TOWNHOUSE"
+    OTHER = "OTHER"
     ALL_PROPERTIES = "ALL_PROPERTIES"
 
 

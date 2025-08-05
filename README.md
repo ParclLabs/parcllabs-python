@@ -515,7 +515,7 @@ results, filter_data = client.property_v2.search.retrieve(
     min_sqft=500,
     max_record_added_date="2024-12-31",
     min_record_added_date="2024-12-13",
-    property_types=["SINGLE_FAMILY", "CONDO", "TOWNHOUSE"],
+    property_types=["SINGLE_FAMILY", "CONDO", "TOWNHOUSE", "OTHER"],
     limit=100,
 )
 ```
