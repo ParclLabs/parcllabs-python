@@ -5,7 +5,7 @@ Pydantic schemas for PropertyV2Service input parameters.
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, Field, ValidationInfo, field_validator
+from pydantic import BaseModel, Field, ValidationInfo, field_validator, model_validator
 
 from parcllabs.enums import PropertyTypes, RequestLimits
 
@@ -101,6 +101,9 @@ class PropertyV2RetrieveParams(BaseModel):
     owner_name: list[str] | None = Field(
         default=None, description="List of owner names to filter by"
     )
+    entity_seller_name: list[str] | None = Field(
+        default=None, description="List of entity seller names to filter by"
+    )
     is_investor_owned: bool | None = Field(
         default=None, description="Whether to filter by investor owned"
     )
@@ -165,6 +168,14 @@ class PropertyV2RetrieveParams(BaseModel):
     @classmethod
     def validate_owner_names(cls, v: list[str] | None) -> list[str] | None:
         """Validate owner names and convert to uppercase."""
+        if v is not None:
+            return [name.upper() for name in v]
+        return v
+
+    @field_validator("entity_seller_name")
+    @classmethod
+    def validate_entity_seller_names(cls, v: list[str] | None) -> list[str] | None:
+        """Validate entity seller names and convert to uppercase."""
         if v is not None:
             return [name.upper() for name in v]
         return v
@@ -306,6 +317,26 @@ class PropertyV2RetrieveParams(BaseModel):
                         "min_record_updated_date cannot be after max_record_updated_date"
                     )
         return v
+
+    @model_validator(mode="after")
+    def validate_usa_parcl_id_requirements(self) -> "PropertyV2RetrieveParams":
+        """Validate that USA parcl_id requires at least one owner-related filter."""
+        # Check if USA parcl_id is being used (USA parcl_id is 1)
+        if self.parcl_ids and 1 in self.parcl_ids:
+            # Check if any owner-related filters are provided
+            has_owner_filter = (
+                self.owner_name is not None
+                or self.entity_seller_name is not None
+                or self.current_entity_owner_name is not None
+            )
+            
+            if not has_owner_filter:
+                raise ValueError(
+                    "USA parcl_id requires at least one owner-related filter: "
+                    "owner_name, entity_seller_name, or current_entity_owner_name"
+                )
+        
+        return self
 
     class Config:
         """Pydantic configuration."""

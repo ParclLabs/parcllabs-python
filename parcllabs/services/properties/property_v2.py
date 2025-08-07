@@ -411,6 +411,12 @@ class PropertyV2Service(ParclLabsService):
         if params.owner_name:
             owner_filters["owner_name"] = [owner_name.upper() for owner_name in params.owner_name]
 
+        # Handle entity seller names
+        if params.entity_seller_name:
+            owner_filters["entity_seller_name"] = [
+                entity_seller_name.upper() for entity_seller_name in params.entity_seller_name
+            ]
+
         # Handle boolean parameters
         if params.is_current_owner is not None:
             owner_filters["is_current_owner"] = self.simple_bool_validator(params.is_current_owner)
@@ -481,6 +487,7 @@ class PropertyV2Service(ParclLabsService):
         max_record_updated_date: str | None = None,
         is_current_owner: bool | None = None,
         owner_name: list[str] | None = None,
+        entity_seller_name: list[str] | None = None,
         is_investor_owned: bool | None = None,
         is_owner_occupied: bool | None = None,
         current_on_market_flag: bool | None = None,
@@ -524,6 +531,7 @@ class PropertyV2Service(ParclLabsService):
             max_record_updated_date: Maximum record updated date to filter by.
             is_current_owner: Whether to filter by current owner.
             owner_name: List of owner names to filter by.
+            entity_seller_name: List of entity seller names to filter by.
             is_investor_owned: Whether to filter by investor owned.
             is_owner_occupied: Whether to filter by owner occupied.
             current_on_market_flag: Whether to filter by current_on_market flag.
@@ -542,45 +550,59 @@ class PropertyV2Service(ParclLabsService):
         print("Processing property search request...")
 
         # Validate and process input parameters using Pydantic schema
-        input_params = PropertyV2RetrieveParams(
-            parcl_ids=parcl_ids,
-            parcl_property_ids=parcl_property_ids,
-            geo_coordinates=geo_coordinates,
-            property_types=property_types,
-            min_beds=min_beds,
-            max_beds=max_beds,
-            min_baths=min_baths,
-            max_baths=max_baths,
-            min_sqft=min_sqft,
-            max_sqft=max_sqft,
-            min_year_built=min_year_built,
-            max_year_built=max_year_built,
-            include_property_details=include_property_details,
-            min_record_added_date=min_record_added_date,
-            max_record_added_date=max_record_added_date,
-            event_names=event_names,
-            min_event_date=min_event_date,
-            max_event_date=max_event_date,
-            min_price=min_price,
-            max_price=max_price,
-            is_new_construction=is_new_construction,
-            min_record_updated_date=min_record_updated_date,
-            max_record_updated_date=max_record_updated_date,
-            is_current_owner=is_current_owner,
-            owner_name=owner_name,
-            is_investor_owned=is_investor_owned,
-            is_owner_occupied=is_owner_occupied,
-            current_on_market_flag=current_on_market_flag,
-            current_on_market_rental_flag=current_on_market_rental_flag,
-            current_new_construction_flag=current_new_construction_flag,
-            current_owner_occupied_flag=current_owner_occupied_flag,
-            current_investor_owned_flag=current_investor_owned_flag,
-            current_entity_owner_name=current_entity_owner_name,
-            include_events=include_events,
-            include_full_event_history=include_full_event_history,
-            limit=limit,
-            params=params or {},
-        )
+        try:
+            input_params = PropertyV2RetrieveParams(
+                parcl_ids=parcl_ids,
+                parcl_property_ids=parcl_property_ids,
+                geo_coordinates=geo_coordinates,
+                property_types=property_types,
+                min_beds=min_beds,
+                max_beds=max_beds,
+                min_baths=min_baths,
+                max_baths=max_baths,
+                min_sqft=min_sqft,
+                max_sqft=max_sqft,
+                min_year_built=min_year_built,
+                max_year_built=max_year_built,
+                include_property_details=include_property_details,
+                min_record_added_date=min_record_added_date,
+                max_record_added_date=max_record_added_date,
+                event_names=event_names,
+                min_event_date=min_event_date,
+                max_event_date=max_event_date,
+                min_price=min_price,
+                max_price=max_price,
+                is_new_construction=is_new_construction,
+                min_record_updated_date=min_record_updated_date,
+                max_record_updated_date=max_record_updated_date,
+                is_current_owner=is_current_owner,
+                owner_name=owner_name,
+                entity_seller_name=entity_seller_name,
+                is_investor_owned=is_investor_owned,
+                is_owner_occupied=is_owner_occupied,
+                current_on_market_flag=current_on_market_flag,
+                current_on_market_rental_flag=current_on_market_rental_flag,
+                current_new_construction_flag=current_new_construction_flag,
+                current_owner_occupied_flag=current_owner_occupied_flag,
+                current_investor_owned_flag=current_investor_owned_flag,
+                current_entity_owner_name=current_entity_owner_name,
+                include_events=include_events,
+                include_full_event_history=include_full_event_history,
+                limit=limit,
+                params=params or {},
+            )
+        except ValueError as e:
+            # Provide a more helpful error message for USA parcl_id validation
+            if "USA parcl_id requires" in str(e):
+                raise ValueError(
+                    f"Validation Error: {str(e)}\n"
+                    "When using USA parcl_id (parcl_id=1), you must provide at least one of:\n"
+                    "- owner_name: List of owner names to filter by\n"
+                    "- entity_seller_name: List of entity seller names to filter by\n"
+                    "- current_entity_owner_name: Current entity owner name to filter by"
+                ) from e
+            else:
+                raise
 
         # Build search criteria
         data = self._build_search_criteria(
