@@ -101,6 +101,9 @@ class PropertyV2RetrieveParams(BaseModel):
     owner_name: list[str] | None = Field(
         default=None, description="List of owner names to filter by"
     )
+    entity_seller_name: list[str] | None = Field(
+        default=None, description="List of entity seller names to filter by"
+    )
     is_investor_owned: bool | None = Field(
         default=None, description="Whether to filter by investor owned"
     )
@@ -165,6 +168,14 @@ class PropertyV2RetrieveParams(BaseModel):
     @classmethod
     def validate_owner_names(cls, v: list[str] | None) -> list[str] | None:
         """Validate owner names and convert to uppercase."""
+        if v is not None:
+            return [name.upper() for name in v]
+        return v
+
+    @field_validator("entity_seller_name")
+    @classmethod
+    def validate_entity_seller_names(cls, v: list[str] | None) -> list[str] | None:
+        """Validate entity seller names and convert to uppercase."""
         if v is not None:
             return [name.upper() for name in v]
         return v
