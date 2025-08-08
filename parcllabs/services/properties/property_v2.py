@@ -550,59 +550,46 @@ class PropertyV2Service(ParclLabsService):
         print("Processing property search request...")
 
         # Validate and process input parameters using Pydantic schema
-        try:
-            input_params = PropertyV2RetrieveParams(
-                parcl_ids=parcl_ids,
-                parcl_property_ids=parcl_property_ids,
-                geo_coordinates=geo_coordinates,
-                property_types=property_types,
-                min_beds=min_beds,
-                max_beds=max_beds,
-                min_baths=min_baths,
-                max_baths=max_baths,
-                min_sqft=min_sqft,
-                max_sqft=max_sqft,
-                min_year_built=min_year_built,
-                max_year_built=max_year_built,
-                include_property_details=include_property_details,
-                min_record_added_date=min_record_added_date,
-                max_record_added_date=max_record_added_date,
-                event_names=event_names,
-                min_event_date=min_event_date,
-                max_event_date=max_event_date,
-                min_price=min_price,
-                max_price=max_price,
-                is_new_construction=is_new_construction,
-                min_record_updated_date=min_record_updated_date,
-                max_record_updated_date=max_record_updated_date,
-                is_current_owner=is_current_owner,
-                owner_name=owner_name,
-                entity_seller_name=entity_seller_name,
-                is_investor_owned=is_investor_owned,
-                is_owner_occupied=is_owner_occupied,
-                current_on_market_flag=current_on_market_flag,
-                current_on_market_rental_flag=current_on_market_rental_flag,
-                current_new_construction_flag=current_new_construction_flag,
-                current_owner_occupied_flag=current_owner_occupied_flag,
-                current_investor_owned_flag=current_investor_owned_flag,
-                current_entity_owner_name=current_entity_owner_name,
-                include_events=include_events,
-                include_full_event_history=include_full_event_history,
-                limit=limit,
-                params=params or {},
-            )
-        except ValueError as e:
-            # Provide a more helpful error message for USA parcl_id validation
-            if "USA parcl_id requires" in str(e):
-                raise ValueError(
-                    f"Validation Error: {str(e)}\n"
-                    "When using USA parcl_id (parcl_id=1), you must provide at least one of:\n"
-                    "- owner_name: List of owner names to filter by\n"
-                    "- entity_seller_name: List of entity seller names to filter by\n"
-                    "- current_entity_owner_name: Current entity owner name to filter by"
-                ) from e
-            else:
-                raise
+        input_params = PropertyV2RetrieveParams(
+            parcl_ids=parcl_ids,
+            parcl_property_ids=parcl_property_ids,
+            geo_coordinates=geo_coordinates,
+            property_types=property_types,
+            min_beds=min_beds,
+            max_beds=max_beds,
+            min_baths=min_baths,
+            max_baths=max_baths,
+            min_sqft=min_sqft,
+            max_sqft=max_sqft,
+            min_year_built=min_year_built,
+            max_year_built=max_year_built,
+            include_property_details=include_property_details,
+            min_record_added_date=min_record_added_date,
+            max_record_added_date=max_record_added_date,
+            event_names=event_names,
+            min_event_date=min_event_date,
+            max_event_date=max_event_date,
+            min_price=min_price,
+            max_price=max_price,
+            is_new_construction=is_new_construction,
+            min_record_updated_date=min_record_updated_date,
+            max_record_updated_date=max_record_updated_date,
+            is_current_owner=is_current_owner,
+            owner_name=owner_name,
+            entity_seller_name=entity_seller_name,
+            is_investor_owned=is_investor_owned,
+            is_owner_occupied=is_owner_occupied,
+            current_on_market_flag=current_on_market_flag,
+            current_on_market_rental_flag=current_on_market_rental_flag,
+            current_new_construction_flag=current_new_construction_flag,
+            current_owner_occupied_flag=current_owner_occupied_flag,
+            current_investor_owned_flag=current_investor_owned_flag,
+            current_entity_owner_name=current_entity_owner_name,
+            include_events=include_events,
+            include_full_event_history=include_full_event_history,
+            limit=limit,
+            params=params or {},
+        )
 
         # Build search criteria
         data = self._build_search_criteria(
