@@ -1,3 +1,6 @@
+### v1.15.2
+- Update `property_v2.search` to fix limit logic bug.
+
 ### v1.15.1
 - Fix bug where `OTHER` property type was not being allowed in the `property_types` parameter in the `property_v2.search` endpoint. 
 
