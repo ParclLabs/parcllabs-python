@@ -1,3 +1,6 @@
+### v1.16.0
+- Added the `entity_seller_name` parameter to the `property_v2.search` endpoint
+
 ### v1.15.2
 - Update `property_v2.search` to fix limit logic bug.
 
