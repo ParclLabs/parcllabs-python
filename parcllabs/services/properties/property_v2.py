@@ -601,6 +601,7 @@ class PropertyV2Service(ParclLabsService):
 
         # Set limit
         request_params = input_params.params.copy()
+        request_params["auto_paginate"] = False  # auto_paginate is False by default
 
         # Make request with params
         if data.get(PARCL_PROPERTY_IDS):
