@@ -208,12 +208,11 @@ def test_schema_with_none_values() -> None:
 
 
 def test_validate_limit(property_v2_service: PropertyV2Service) -> None:
-    assert property_v2_service._validate_limit(limit=None) == RequestLimits.PROPERTY_V2_MAX.value
-    assert property_v2_service._validate_limit(limit=None) == RequestLimits.PROPERTY_V2_MAX.value
-    assert property_v2_service._validate_limit(limit=100) == 100
-    assert (
-        property_v2_service._validate_limit(limit=1000000000) == RequestLimits.PROPERTY_V2_MAX.value
+    assert property_v2_service._set_limit_pagination(limit=None) == (
+        RequestLimits.PROPERTY_V2_MAX.value,
+        True,
     )
+    assert property_v2_service._set_limit_pagination(limit=100) == (100, False)
 
 
 @patch.object(PropertyV2Service, "_post")
@@ -221,7 +220,7 @@ def test_fetch_post_single_page(
     mock_post: Mock, property_v2_service: PropertyV2Service, mock_response: Mock
 ) -> None:
     mock_post.return_value = mock_response
-    result = property_v2_service._fetch_post(params={}, data={})
+    result = property_v2_service._fetch_post(params={"auto_paginate": False}, data={})
 
     assert len(result) == 1
     assert result[0] == mock_response.json()
@@ -251,7 +250,7 @@ def test_fetch_post_pagination(mock_post: Mock, property_v2_service: PropertyV2S
     # Set up the mock to return different responses
     mock_post.side_effect = [first_response, second_response]
 
-    result = property_v2_service._fetch_post(params={"limit": 1}, data={})
+    result = property_v2_service._fetch_post(params={"limit": 1, "auto_paginate": False}, data={})
 
     assert len(result) == 1
     assert result[0]["data"][0]["parcl_id"] == 123
@@ -311,7 +310,7 @@ def test_retrieve(
 
     # check that the correct data was passed to _fetch_post
     call_args = mock_fetch_post.call_args[1]
-    assert call_args["params"] == {"limit": 10}
+    assert call_args["params"] == {"limit": 10, "auto_paginate": False}
 
     data = call_args["data"]
     assert data["parcl_ids"] == [123]
