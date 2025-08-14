@@ -16,5 +16,6 @@ sdk-latency:
 
 test-readme:
 	python3 scripts/extract_readme_cells.py
+	cat scripts/extracted_readme_code.py
 	python3 scripts/extracted_readme_code.py  
 	rm -f scripts/extracted_readme_code.py
