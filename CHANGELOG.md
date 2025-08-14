@@ -1,3 +1,6 @@
+### v1.16.1
+- Fix bug in auto pagination logic
+
 ### v1.16.0
 - Added the `entity_seller_name` parameter to the `property_v2.search` endpoint
 

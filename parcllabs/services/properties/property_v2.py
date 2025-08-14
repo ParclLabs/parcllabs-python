@@ -32,48 +32,46 @@ class PropertyV2Service(ParclLabsService):
         result = response.json()
 
         all_data = [result]
+
+        if params["auto_paginate"] is False:
+            return all_data
+
+        # If we need to paginate, use concurrent requests
         pagination = result.get("pagination")
-        metadata = result.get("metadata")
+        if pagination.get("has_more"):
+            print("More pages to fetch, paginating additional pages...")
 
-        if pagination:
             limit = pagination.get("limit")
-            returned_count = metadata.get("results", {}).get("returned_count", 0)
-            # if we got fewer or equal results than requested, don't paginate
-            if returned_count <= limit:
-                return all_data
+            offset = pagination.get("offset")
+            metadata = result.get("metadata")
+            total_available = metadata.get("results", {}).get("total_available", 0)
 
-            # If we need to paginate, use concurrent requests
-            if pagination.get("has_more"):
-                print("More pages to fetch, paginating additional pages...")
-                offset = pagination.get("offset")
-                total_available = metadata.get("results", {}).get("total_available", 0)
+            # Calculate how many more pages we need
+            remaining_pages = (total_available - limit) // limit
+            if (total_available - limit) % limit > 0:
+                remaining_pages += 1
 
-                # Calculate how many more pages we need
-                remaining_pages = (total_available - limit) // limit
-                if (total_available - limit) % limit > 0:
-                    remaining_pages += 1
+            # Generate all the URLs we need to fetch
+            urls = []
+            current_offset = offset + limit
+            for _ in range(remaining_pages):
+                urls.append(f"{self.full_post_url}?limit={limit}&offset={current_offset}")
+                current_offset += limit
 
-                # Generate all the URLs we need to fetch
-                urls = []
-                current_offset = offset + limit
-                for _ in range(remaining_pages):
-                    urls.append(f"{self.full_post_url}?limit={limit}&offset={current_offset}")
-                    current_offset += limit
+            # Use ThreadPoolExecutor to make concurrent requests
+            with ThreadPoolExecutor(max_workers=self.client.num_workers) as executor:
+                future_to_url = {
+                    executor.submit(self._post, url=url, data=data, params=params): url
+                    for url in urls
+                }
 
-                # Use ThreadPoolExecutor to make concurrent requests
-                with ThreadPoolExecutor(max_workers=self.client.num_workers) as executor:
-                    future_to_url = {
-                        executor.submit(self._post, url=url, data=data, params=params): url
-                        for url in urls
-                    }
-
-                    for future in as_completed(future_to_url):
-                        try:
-                            response = future.result()
-                            page_result = response.json()
-                            all_data.append(page_result)
-                        except Exception as exc:
-                            print(f"Request failed: {exc}")
+                for future in as_completed(future_to_url):
+                    try:
+                        response = future.result()
+                        page_result = response.json()
+                        all_data.append(page_result)
+                    except Exception as exc:
+                        print(f"Request failed: {exc}")
 
         return all_data
 
@@ -126,8 +124,6 @@ class PropertyV2Service(ParclLabsService):
                 # Small delay between submissions to avoid rate limiting
                 if idx < len(parcl_property_ids_chunks) - 1:  # Don't delay after the last one
                     time.sleep(0.1)
-
-            # Helper functions to abstract raise statements
 
             # Collect results as they complete
             for future in as_completed(future_to_chunk):
@@ -432,24 +428,20 @@ class PropertyV2Service(ParclLabsService):
 
         return owner_filters
 
-    def _validate_limit(self, limit: int | None) -> int:
-        """Validate limit parameter."""
+    def _set_limit_pagination(self, limit: int | None) -> tuple[int, bool]:
+        """Validate and set limit and auto pagination."""
         max_limit = RequestLimits.PROPERTY_V2_MAX.value
 
-        # If auto-paginate is enabled or no limit is provided, use maximum limit
-        if limit in (None, 0):
-            print(f"No limit provided. Setting limit to maximum value of {max_limit}.")
-            return max_limit
+        # If no limit is provided, use maximum limit and auto paginate
+        if limit == 0 or limit is None:
+            auto_paginate = True
+            print(f"""No limit provided. Using max limit of {max_limit}.
+                Auto pagination is {auto_paginate}""")
+            return max_limit, auto_paginate
 
-        # If limit exceeds maximum, cap it
-        if limit > max_limit:
-            print(
-                f"Supplied limit value is too large for requested endpoint."
-                f"Setting limit to maximum value of {max_limit}."
-            )
-            return max_limit
-
-        return limit
+        auto_paginate = False
+        print(f"Limit is set at {limit}. Auto pagiation is {auto_paginate}")
+        return limit, auto_paginate
 
     def _build_param_categories(
         self, params: PropertyV2RetrieveParams
@@ -609,13 +601,16 @@ class PropertyV2Service(ParclLabsService):
 
         # Set limit
         request_params = input_params.params.copy()
+        request_params["auto_paginate"] = False  # auto_paginate is False by default
 
         # Make request with params
         if data.get(PARCL_PROPERTY_IDS):
             request_params["limit"] = PARCL_PROPERTY_IDS_LIMIT
             results = self._fetch_post_parcl_property_ids(params=request_params, data=data)
         else:
-            request_params["limit"] = self._validate_limit(input_params.limit)
+            request_params["limit"], request_params["auto_paginate"] = self._set_limit_pagination(
+                input_params.limit
+            )
             results = self._fetch_post(params=request_params, data=data)
 
         # Get metadata from results
