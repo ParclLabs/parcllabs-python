@@ -1,3 +1,6 @@
+### v1.16.2
+- Deprecate `volatility` endpoints.
+
 ### v1.16.1
 - Fix bug in auto pagination logic
 

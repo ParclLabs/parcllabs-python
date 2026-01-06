@@ -86,11 +86,6 @@ class ParclLabsClient:
                 "post_url": "/v1/price_feed/price_feed",
                 "service_class": ParclLabsService,
             },
-            "volatility": {
-                "url": "/v1/price_feed/{parcl_id}/volatility",
-                "post_url": "/v1/price_feed/volatility",
-                "service_class": ParclLabsService,
-            },
             "rental_price_feed": {
                 "url": "/v1/price_feed/{parcl_id}/rental_price_feed",
                 "post_url": "/v1/price_feed/rental_price_feed",
