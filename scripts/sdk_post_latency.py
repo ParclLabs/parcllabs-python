@@ -162,16 +162,6 @@ def main() -> None:
         auto_paginate=True,
     )
 
-    profile_api_call(
-        "Retrieve Price Feed Volatility",
-        client.price_feed.volatility,
-        output_file,
-        parcl_ids=pricefeed_ids,
-        start_date=start_date,
-        end_date=end_date,
-        auto_paginate=True,
-    )
-
     start_date = "2023-04-01"
     end_date = "2024-08-01"
     limit = 10000
