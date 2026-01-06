@@ -341,13 +341,9 @@ results = client.portfolio_metrics.sf_new_listings_for_rent_rolling_counts.retri
 
 The Parcl Labs Price Feed (PLPF) is a daily-updated, real-time indicator of residential real estate prices, measured by price per square foot, across select US markets.
 
-The Price Feeds category allows you to access our daily-updated PLPF and derivative metrics, such as volatility.
 
 ##### Price Feed
 Gets the daily price feed for a specified `parcl_id`.
-
-##### Price Feed Volatility
-Gets the daily price feed volatility for a specified `parcl_id`.
 
 ##### Rental Price Feed
 Gets the daily updated Parcl Labs Rental Price Feed for a given `parcl_id`.
@@ -370,11 +366,6 @@ price_feeds = client.price_feed.price_feed.retrieve(
     end_date=end_date
 )
 rental_price_feeds = client.price_feed.rental_price_feed.retrieve(
-    parcl_ids=pricefeed_ids,
-    start_date=start_date,
-    end_date=end_date
-)
-price_feed_volatility = client.price_feed.volatility.retrieve(
     parcl_ids=pricefeed_ids,
     start_date=start_date,
     end_date=end_date
