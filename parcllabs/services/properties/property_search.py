@@ -71,6 +71,7 @@ class PropertySearch(ParclLabsService):
         record_added_date_start: str | None = None,
         record_added_date_end: str | None = None,
         current_on_market_flag: bool | None = None,
+        has_pool: bool | None = None,
     ) -> dict:
         params = {}
 
@@ -89,6 +90,7 @@ class PropertySearch(ParclLabsService):
             "current_owner_occupied_flag": current_owner_occupied_flag,
             "current_investor_owned_flag": current_investor_owned_flag,
             "current_on_market_flag": current_on_market_flag,
+            "has_pool": has_pool,
         }
 
         for param_name, param_value in bool_flags.items():
@@ -140,6 +142,7 @@ class PropertySearch(ParclLabsService):
         record_added_date_start: str | None = None,
         record_added_date_end: str | None = None,
         current_on_market_flag: bool | None = None,
+        has_pool: bool | None = None,
     ) -> pd.DataFrame:
         """
         Retrieve parcl_property_id for geographic markets based on specified criteria.
@@ -180,6 +183,8 @@ class PropertySearch(ParclLabsService):
             this date (YYYY-MM-DD). Defaults to None.
             current_on_market_flag (bool, optional): Filter properties currently on the
             market. Defaults to None.
+            has_pool (bool, optional): Filter properties by pool availability.
+            True returns properties with a pool. Defaults to None.
 
         Returns:
             pd.DataFrame: A DataFrame containing the parcl_property_id and other detail
@@ -206,6 +211,7 @@ class PropertySearch(ParclLabsService):
             record_added_date_start=record_added_date_start,
             record_added_date_end=record_added_date_end,
             current_on_market_flag=current_on_market_flag,
+            has_pool=has_pool,
         )
 
         output_data = deque()

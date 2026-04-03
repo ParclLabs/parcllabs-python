@@ -336,6 +336,8 @@ class PropertyV2Service(ParclLabsService):
             filters["current_investor_owned_flag"] = self.simple_bool_validator(
                 params.current_investor_owned_flag
             )
+        if params.has_pool is not None:
+            filters["has_pool"] = self.simple_bool_validator(params.has_pool)
 
         return filters
 
@@ -488,6 +490,7 @@ class PropertyV2Service(ParclLabsService):
         current_new_construction_flag: bool | None = None,
         current_owner_occupied_flag: bool | None = None,
         current_investor_owned_flag: bool | None = None,
+        has_pool: bool | None = None,
         current_entity_owner_name: str | None = None,
         include_events: bool | None = None,
         include_full_event_history: bool | None = None,
@@ -532,6 +535,7 @@ class PropertyV2Service(ParclLabsService):
             current_new_construction_flag: Whether to filter by current_new_construction flag.
             current_owner_occupied_flag: Whether to filter by current_owner_occupied flag.
             current_investor_owned_flag: Whether to filter by current_investor_owned flag.
+            has_pool: Whether to filter by pool availability.
             current_entity_owner_name: Current entity owner name to filter by.
             include_events: Whether to include events in the response.
             include_full_event_history: Whether to include full event history in the response.
@@ -577,6 +581,7 @@ class PropertyV2Service(ParclLabsService):
             current_new_construction_flag=current_new_construction_flag,
             current_owner_occupied_flag=current_owner_occupied_flag,
             current_investor_owned_flag=current_investor_owned_flag,
+            has_pool=has_pool,
             current_entity_owner_name=current_entity_owner_name,
             include_events=include_events,
             include_full_event_history=include_full_event_history,

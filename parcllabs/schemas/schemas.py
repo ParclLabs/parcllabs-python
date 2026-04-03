@@ -127,6 +127,13 @@ class PropertyV2RetrieveParams(BaseModel):
     current_investor_owned_flag: bool | None = Field(
         default=None, description="Whether to filter by current investor owned flag"
     )
+
+    # Property features
+    has_pool: bool | None = Field(
+        default=None,
+        description="Whether to filter by pool. True returns properties with a pool. False returns properties where pool data is not available.",
+    )
+
     current_entity_owner_name: str | None = Field(
         default=None, description="Current entity owner name to filter by"
     )

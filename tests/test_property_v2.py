@@ -85,6 +85,7 @@ def test_build_property_filters_from_schema(property_v2_service: PropertyV2Servi
         include_property_details=True,
         min_record_added_date="2023-01-01",
         max_record_added_date="2023-12-31",
+        has_pool=True,
     )
 
     filters = property_v2_service._build_property_filters(params)
@@ -102,6 +103,7 @@ def test_build_property_filters_from_schema(property_v2_service: PropertyV2Servi
         "include_property_details": "true",
         "min_record_added_date": "2023-01-01",
         "max_record_added_date": "2023-12-31",
+        "has_pool": "true",
     }
 
 
@@ -374,3 +376,21 @@ def test_retrieve_with_schema_validation_errors(
             parcl_ids=[123],
             min_event_date="2023/01/01",
         )
+
+
+def test_build_boolean_filters_has_pool(property_v2_service: PropertyV2Service) -> None:
+    """Test has_pool boolean filter."""
+    # True
+    params = PropertyV2RetrieveParams(has_pool=True)
+    filters = property_v2_service._build_boolean_filters(params)
+    assert filters["has_pool"] == "true"
+
+    # False
+    params = PropertyV2RetrieveParams(has_pool=False)
+    filters = property_v2_service._build_boolean_filters(params)
+    assert filters["has_pool"] == "false"
+
+    # None (omitted)
+    params = PropertyV2RetrieveParams()
+    filters = property_v2_service._build_boolean_filters(params)
+    assert "has_pool" not in filters
