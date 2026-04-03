@@ -1,3 +1,6 @@
+### v1.17.0
+- Added `has_pool` parameter to `property.search.retrieve` and `property_v2.search.retrieve` to filter properties by pool availability.
+
 ### v1.16.2
 - Deprecate `volatility` endpoints.
 

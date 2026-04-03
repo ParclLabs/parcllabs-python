@@ -181,3 +181,49 @@ def test_retrieve_with_on_market_flag(
 
     # Check that .json() was called on the response mock twice
     assert mock_response.json.call_count == 2
+
+
+@patch("parcllabs.services.properties.property_search.PropertySearch._get")
+def test_retrieve_with_has_pool(mock_get: Mock, property_search_service: PropertySearch) -> None:
+    """Test retrieve method with has_pool parameter."""
+    mock_response = MagicMock()
+    mock_response.json.return_value = json.loads(sample_search_response)
+    mock_get.return_value = mock_response
+
+    parcl_ids_to_test = [5503877]
+    property_type_to_test = "single_family"
+
+    # Test with flag = True
+    property_search_service.retrieve(
+        parcl_ids=parcl_ids_to_test,
+        property_type=property_type_to_test,
+        has_pool=True,
+    )
+
+    # Test with flag = False
+    property_search_service.retrieve(
+        parcl_ids=parcl_ids_to_test,
+        property_type=property_type_to_test,
+        has_pool=False,
+    )
+
+    expected_params_on = {
+        "property_type": property_type_to_test.upper(),
+        "has_pool": "true",
+        "parcl_id": parcl_ids_to_test[0],
+    }
+    expected_params_off = {
+        "property_type": property_type_to_test.upper(),
+        "has_pool": "false",
+        "parcl_id": parcl_ids_to_test[0],
+    }
+
+    assert len(mock_get.call_args_list) == 2
+
+    # Check first call (has_pool=True)
+    _, call_on_kwargs = mock_get.call_args_list[0]
+    assert call_on_kwargs["params"] == expected_params_on
+
+    # Check second call (has_pool=False)
+    _, call_off_kwargs = mock_get.call_args_list[1]
+    assert call_off_kwargs["params"] == expected_params_off
