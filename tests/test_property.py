@@ -184,9 +184,7 @@ def test_retrieve_with_on_market_flag(
 
 
 @patch("parcllabs.services.properties.property_search.PropertySearch._get")
-def test_retrieve_with_has_pool(
-    mock_get: Mock, property_search_service: PropertySearch
-) -> None:
+def test_retrieve_with_has_pool(mock_get: Mock, property_search_service: PropertySearch) -> None:
     """Test retrieve method with has_pool parameter."""
     mock_response = MagicMock()
     mock_response.json.return_value = json.loads(sample_search_response)
