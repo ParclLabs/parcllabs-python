@@ -131,7 +131,10 @@ class PropertyV2RetrieveParams(BaseModel):
     # Property features
     has_pool: bool | None = Field(
         default=None,
-        description="Whether to filter by pool. True returns properties with a pool. False returns properties where pool data is not available.",
+        description=(
+            "Whether to filter by pool. True returns properties with a pool. "
+            "False returns properties where pool data is not available."
+        ),
     )
 
     current_entity_owner_name: str | None = Field(
