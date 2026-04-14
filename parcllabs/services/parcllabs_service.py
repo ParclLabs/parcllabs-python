@@ -94,9 +94,13 @@ class ParclLabsService:
             if method == GET_METHOD:
                 params = kwargs.get("params", {})
                 kwargs["params"] = params
-
-            kwargs.setdefault("timeout", self.client.timeout)
-            response = requests.request(method, url, headers=self.headers, **kwargs)
+            response = requests.request(
+                method,
+                url,
+                headers=self.headers,
+                timeout=self.client.timeout,
+                **kwargs,
+            )
             response.raise_for_status()
         except requests.exceptions.HTTPError:
             self.error_handling(response)
