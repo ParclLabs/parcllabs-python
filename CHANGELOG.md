@@ -1,3 +1,6 @@
+### v1.17.1
+- Fix mutable default parameters in `property.search.retrieve` and `property_v2.search.retrieve` functions.
+
 ### v1.17.0
 - Added `has_pool` parameter to `property.search.retrieve` and `property_v2.search.retrieve` to filter properties by pool availability.
 
