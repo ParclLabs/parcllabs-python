@@ -1,4 +1,3 @@
-from collections.abc import Mapping
 from typing import Any
 
 import pandas as pd
@@ -14,12 +13,15 @@ class PortfolioSizeService(ParclLabsService):
         end_date: str | None = None,
         portfolio_size: str | None = None,
         limit: int | None = None,
-        params: Mapping[str, Any] | None = {},
+        params: dict[str, Any] | None = None,
         auto_paginate: bool = False,
     ) -> pd.DataFrame:
         """
         Retrieve portfolio size metrics for given parameters.
         """
+        if params is None:
+            params = {}
+
         if portfolio_size:
             params["portfolio_size"] = portfolio_size.upper()
 
