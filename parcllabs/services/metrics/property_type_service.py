@@ -1,4 +1,3 @@
-from collections.abc import Mapping
 from typing import Any
 
 import pandas as pd
@@ -14,12 +13,15 @@ class PropertyTypeService(ParclLabsService):
         end_date: str | None = None,
         property_type: str | None = None,
         limit: int | None = None,
-        params: Mapping[str, Any] | None = {},
+        params: dict[str, Any] | None = None,
         auto_paginate: bool = False,
     ) -> pd.DataFrame:
         """
         Retrieve property type metrics for given parameters.
         """
+        if params is None:
+            params = {}
+
         if property_type:
             params["property_type"] = property_type.upper()
 

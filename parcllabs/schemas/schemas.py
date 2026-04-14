@@ -5,7 +5,7 @@ Pydantic schemas for PropertyV2Service input parameters.
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, Field, ValidationInfo, field_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
 
 from parcllabs.enums import PropertyTypes, RequestLimits
 
@@ -328,12 +328,11 @@ class PropertyV2RetrieveParams(BaseModel):
                     )
         return v
 
-    class Config:
-        """Pydantic configuration."""
-
-        extra = "forbid"  # Reject any extra fields
-        validate_assignment = True  # Validate on assignment
-        str_strip_whitespace = True  # Strip whitespace from strings
+    model_config = ConfigDict(
+        extra="forbid",
+        validate_assignment=True,
+        str_strip_whitespace=True,
+    )
 
 
 class PropertyV2RetrieveParamCategories(BaseModel):

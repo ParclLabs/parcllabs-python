@@ -1,5 +1,4 @@
 from collections import deque
-from collections.abc import Mapping
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any
 
@@ -67,11 +66,14 @@ class PropertyEventsService(ParclLabsService):
         entity_owner_name: str | None = None,
         record_updated_date_start: str | None = None,
         record_updated_date_end: str | None = None,
-        params: Mapping[str, Any] | None = {},
+        params: dict[str, Any] | None = None,
     ) -> pd.DataFrame:
         """
         Retrieve property events for given parameters.
         """
+        if params is None:
+            params = {}
+
         params = self._prepare_params(
             event_type=event_type,
             start_date=start_date,
