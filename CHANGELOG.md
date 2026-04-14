@@ -1,3 +1,6 @@
+### v1.17.2
+- Added configurable request timeout to `ParclLabsClient`. Defaults to 10s connect / 90s read. Customizable via the `timeout` parameter on client instantiation.
+
 ### v1.17.1
 - Fix mutable default parameters in `property.search.retrieve` and `property_v2.search.retrieve` functions.
 
