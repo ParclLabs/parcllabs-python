@@ -44,6 +44,7 @@ class ParclLabsClient:
         api_url: str = api_base,
         limit: int | None = None,
         num_workers: int | None = None,
+        timeout: tuple[float, float] | float | None = (10, 90),
     ) -> None:
         if not api_key:
             raise ValueError(NO_API_KEY_ERROR)
@@ -53,6 +54,7 @@ class ParclLabsClient:
         self.account_info = {"est_session_credits_used": 0}
         self.num_workers = num_workers
         self.limit = limit
+        self.timeout = timeout
 
         self._initialize_services()
 

@@ -18,6 +18,7 @@ class TestParclLabsService:
         mock_client.api_key = "test_api_key"
         mock_client.turbo_mode = False
         mock_client.estimated_session_credit_usage = 0
+        mock_client.timeout = (10, 90)
         return ParclLabsService("/test", mock_client)
 
     def test_init(self, service: ParclLabsService) -> None:
@@ -53,6 +54,7 @@ class TestParclLabsService:
             "https://api.example.com/test",
             headers=service.headers,
             params={},
+            timeout=(10, 90),
         )
 
     @patch("requests.request")
@@ -71,6 +73,7 @@ class TestParclLabsService:
             "https://api.example.com/test",
             headers=service.headers,
             json={"data": "test"},
+            timeout=(10, 90),
         )
 
     @patch("requests.request")

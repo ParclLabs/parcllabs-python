@@ -11,6 +11,7 @@ class MockClient:
         self.api_url = "https://api.example.com/"
         self.api_key = "test_api_key"
         self.account_info = {"est_session_credits_used": 0}
+        self.timeout = (10, 90)
 
 
 @pytest.fixture

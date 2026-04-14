@@ -94,8 +94,13 @@ class ParclLabsService:
             if method == GET_METHOD:
                 params = kwargs.get("params", {})
                 kwargs["params"] = params
-
-            response = requests.request(method, url, headers=self.headers, **kwargs)  # noqa: S113
+            response = requests.request(
+                method,
+                url,
+                headers=self.headers,
+                timeout=self.client.timeout,
+                **kwargs,
+            )
             response.raise_for_status()
         except requests.exceptions.HTTPError:
             self.error_handling(response)
@@ -174,8 +179,6 @@ class ParclLabsService:
 
             data = {"parcl_id": [str(pid) for pid in parcl_ids], **params}
             params = {"limit": params["limit"]} if params.get("limit") else {}
-
-            print(f"data: {data}, params: {params}")
 
             return self._fetch_post(params, data, auto_paginate)
         if params.get("limit"):
