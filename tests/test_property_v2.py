@@ -441,6 +441,27 @@ def test_failed_pages_suppress_contradictory_truncation_warning(
 
 
 @patch.object(PropertyV2Service, "_post")
+def test_no_truncation_warning_when_no_limit_was_set(
+    mock_post: Mock, property_v2_service: PropertyV2Service
+) -> None:
+    """A shortfall with no cap in play must not be blamed on `limit`.
+
+    Regression: the early-return path gated on `retrieved < total_available`, so an
+    uncapped request whose server response ended pagination early (has_more=False
+    while more properties matched) warned "because `limit` capped the result" -- advice
+    the caller cannot act on, and it consumed the once-per-session budget.
+    """
+    mock_post.return_value = _page(1, total_available=100, returned_count=50, has_more=False)
+
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        property_v2_service._fetch_post(params={"limit": 1000}, data={}, max_results=None)
+
+    assert not [w for w in caught if w.category is parcllabs_warnings.ParclLabsTruncationWarning]
+    assert parcllabs_warnings._truncation_warned is False
+
+
+@patch.object(PropertyV2Service, "_post")
 def test_truncation_reports_actual_not_requested_count(
     mock_post: Mock, property_v2_service: PropertyV2Service
 ) -> None:

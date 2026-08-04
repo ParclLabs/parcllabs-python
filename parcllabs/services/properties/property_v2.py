@@ -93,8 +93,12 @@ class PropertyV2Service(ParclLabsService):
         target = total_available if max_results is None else min(max_results, total_available)
 
         if retrieved >= target or not pagination.get("has_more"):
-            # Report what was actually returned, not what was requested.
-            if retrieved < total_available:
+            # Gate on whether a cap actually withheld data (`target`), but report the
+            # count actually returned (`retrieved`). Gating on `retrieved` instead would
+            # also fire when no cap was set and the server merely ended pagination early,
+            # blaming `limit` for a shortfall it did not cause -- and burning the
+            # once-per-session budget on advice the caller cannot act on.
+            if target < total_available:
                 warn_truncation(retrieved, total_available)
             return all_data
 
