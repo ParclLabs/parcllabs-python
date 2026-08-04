@@ -480,6 +480,24 @@ Gets a list of unique properties and their associated metadata and events based 
 
 **NOTE:** Use the `limit` parameter to specify the number of matched properties to return. If `limit` is not provided, all matched properties will be returned. Conceptually, you should set the `limit` to retrieve a sample of properties, and then if you want to retrieve all properties, make the same request again without the `limit` parameter.
 
+`limit` is a cap on the total number of **properties** returned, and pagination is handled for you — values larger than the API's 50,000 per-request maximum are fetched across multiple pages rather than rejected. Two things to keep in mind:
+
+- **Credits are charged per property returned, not per event.**
+- The returned DataFrame is event-level, so `len(df)` is *not* bounded by `limit` — a single property can contribute many rows.
+
+If `limit` caps the result below the number of matching properties, a `ParclLabsTruncationWarning` is emitted (once per session) and both counts are available in the returned metadata. To check for this programmatically:
+
+```python
+results, metadata = client.property_v2.search.retrieve(parcl_ids=[2900187], limit=1000)
+
+counts = metadata["results"]
+assert counts["returned_count"] == counts["total_available"], (
+    f"Truncated: got {counts['returned_count']:,} of {counts['total_available']:,} properties"
+)
+```
+
+If any page fails after retries, the data is still returned but a `ParclLabsIncompleteResultWarning` is raised and the failed offsets are listed in `metadata["incomplete_pages"]`. Treat a non-empty `incomplete_pages` as an incomplete dataset. Both warning types live in `parcllabs.warnings` and can be silenced or escalated with standard `warnings` filters.
+
 
 Example request, note that only one of `parcl_ids`, `parcl_property_ids`, or `geo_coordinates` can be provided per request:
 
