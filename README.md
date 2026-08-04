@@ -485,18 +485,40 @@ Gets a list of unique properties and their associated metadata and events based 
 - **Credits are charged per property returned, not per event.**
 - The returned DataFrame is event-level, so `len(df)` is *not* bounded by `limit` — a single property can contribute many rows.
 
-If `limit` caps the result below the number of matching properties, a `ParclLabsTruncationWarning` is emitted (once per session) and both counts are available in the returned metadata. To check for this programmatically:
+If `limit` caps the result below the number of matching properties, a `ParclLabsTruncationWarning` is emitted (once per session) and both counts are available in the returned metadata. If any page fails after retries, the data is still returned but a `ParclLabsIncompleteResultWarning` is raised and the failed offsets are listed in `metadata["incomplete_pages"]`.
+
+Both conditions are worth checking programmatically, especially in a loop over many markets where a warning is easy to miss:
 
 ```python
-results, metadata = client.property_v2.search.retrieve(parcl_ids=[2900187], limit=1000)
+results, metadata = client.property_v2.search.retrieve(parcl_ids=[2900187], limit=5)
 
 counts = metadata["results"]
-assert counts["returned_count"] == counts["total_available"], (
-    f"Truncated: got {counts['returned_count']:,} of {counts['total_available']:,} properties"
-)
+if counts["returned_count"] < counts["total_available"]:
+    print(
+        f"Truncated: got {counts['returned_count']:,} of "
+        f"{counts['total_available']:,} properties. Raise `limit`, or omit it entirely."
+    )
+
+if metadata.get("incomplete_pages"):
+    print(f"Incomplete: pages failed at offsets {metadata['incomplete_pages']}")
 ```
 
-If any page fails after retries, the data is still returned but a `ParclLabsIncompleteResultWarning` is raised and the failed offsets are listed in `metadata["incomplete_pages"]`. Treat a non-empty `incomplete_pages` as an incomplete dataset. Both warning types live in `parcllabs.warnings` and can be silenced or escalated with standard `warnings` filters.
+If a short result should be fatal for your pipeline, make those checks `assert`s or raise your own exception — treat a non-empty `incomplete_pages` as an incomplete dataset either way. Both warning types live in `parcllabs.warnings` and can be silenced or escalated with standard `warnings` filters:
+
+```python
+import warnings
+
+from parcllabs.warnings import ParclLabsIncompleteResultWarning, ParclLabsTruncationWarning
+
+with warnings.catch_warnings():
+    # Intentionally sampling? Silence the truncation notice.
+    warnings.filterwarnings("ignore", category=ParclLabsTruncationWarning)
+
+    # Never accept a partial page silently -- make it raise instead.
+    warnings.filterwarnings("error", category=ParclLabsIncompleteResultWarning)
+
+    results, metadata = client.property_v2.search.retrieve(parcl_ids=[2900187], limit=5)
+```
 
 
 Example request, note that only one of `parcl_ids`, `parcl_property_ids`, or `geo_coordinates` can be provided per request:
