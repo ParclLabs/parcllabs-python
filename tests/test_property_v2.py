@@ -404,6 +404,55 @@ def test_incomplete_pages_warn_every_call(
         assert result[0]["_parcllabs"]["incomplete_pages"] == [1]
 
 
+@patch.object(PropertyV2Service, "_post")
+def test_failed_pages_suppress_contradictory_truncation_warning(
+    mock_post: Mock, property_v2_service: PropertyV2Service
+) -> None:
+    """A capped request whose pages fail must not also claim the cap was met.
+
+    Regression: _fetch_post emitted the incomplete warning with the real retrieved
+    count and *then* warned truncation with `target`, claiming the full cap was
+    returned. The two messages contradicted each other, and the truncation notice --
+    which fires only once per session -- was burned on the misleading one.
+    """
+    first = _page(1, total_available=108_295, limit=1, offset=0, has_more=True)
+    mock_post.side_effect = [first, *[RequestException("boom")] * 3]
+
+    with (
+        patch("parcllabs.services.properties.property_v2.time.sleep"),
+        warnings.catch_warnings(record=True) as caught,
+    ):
+        warnings.simplefilter("always")
+        property_v2_service._fetch_post(params={"limit": 1}, data={}, max_results=2)
+
+    incomplete = [
+        w for w in caught if w.category is parcllabs_warnings.ParclLabsIncompleteResultWarning
+    ]
+    truncation = [w for w in caught if w.category is parcllabs_warnings.ParclLabsTruncationWarning]
+
+    assert len(incomplete) == 1
+    assert "1 of an expected 2" in str(incomplete[0].message)
+    # Capping information is preserved in the incomplete message instead.
+    assert "108,295" in str(incomplete[0].message)
+    assert not truncation, "truncation warning must not contradict the incomplete warning"
+
+    # The once-per-session budget must be intact for a later, legitimate truncation.
+    assert parcllabs_warnings._truncation_warned is False
+
+
+@patch.object(PropertyV2Service, "_post")
+def test_truncation_reports_actual_not_requested_count(
+    mock_post: Mock, property_v2_service: PropertyV2Service
+) -> None:
+    """The truncation message must state what was returned, not what was asked for."""
+    mock_post.return_value = _page(1, total_available=500, limit=1, offset=0, has_more=True)
+
+    with pytest.warns(parcllabs_warnings.ParclLabsTruncationWarning) as caught:
+        property_v2_service._fetch_post(params={"limit": 1}, data={}, max_results=1)
+
+    assert "Returned 1 of 500" in str(caught[0].message)
+
+
 def test_incomplete_pages_surfaced_in_metadata(property_v2_service: PropertyV2Service) -> None:
     results = [
         {

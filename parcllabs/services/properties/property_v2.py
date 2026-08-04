@@ -93,8 +93,9 @@ class PropertyV2Service(ParclLabsService):
         target = total_available if max_results is None else min(max_results, total_available)
 
         if retrieved >= target or not pagination.get("has_more"):
-            if target < total_available:
-                warn_truncation(target, total_available)
+            # Report what was actually returned, not what was requested.
+            if retrieved < total_available:
+                warn_truncation(retrieved, total_available)
             return all_data
 
         page_size = pagination.get("limit") or params.get("limit") or retrieved
@@ -126,19 +127,31 @@ class PropertyV2Service(ParclLabsService):
                 except Exception:  # surfaced as a warning below
                     failed_offsets.append(page_offset)
 
+        actually_retrieved = self._total_returned(all_data)
+
         if failed_offsets:
+            # Report the shortfall and stop. Deliberately no truncation warning here:
+            # we did NOT return `target`, so claiming we did would contradict this
+            # warning, and the truncation notice is once-per-session -- burning it on a
+            # misleading message would suppress a legitimate one later in the run.
+            # `total_available` is included so capping information is not lost.
             failed_offsets.sort()
-            actually_retrieved = sum(
-                (page.get("metadata") or {}).get("results", {}).get("returned_count", 0)
-                for page in all_data
-            )
-            warn_incomplete_pages(failed_offsets, target, actually_retrieved)
+            warn_incomplete_pages(failed_offsets, target, actually_retrieved, total_available)
             all_data[0].setdefault("_parcllabs", {})["incomplete_pages"] = failed_offsets
+            return all_data
 
         if target < total_available:
-            warn_truncation(target, total_available)
+            warn_truncation(actually_retrieved, total_available)
 
         return all_data
+
+    @staticmethod
+    def _total_returned(pages: list[dict]) -> int:
+        """Sum the properties actually returned across assembled pages."""
+        return sum(
+            (page.get("metadata") or {}).get("results", {}).get("returned_count", 0)
+            for page in pages
+        )
 
     def _fetch_post_parcl_property_ids(
         self,

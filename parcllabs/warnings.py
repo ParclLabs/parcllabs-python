@@ -64,15 +64,26 @@ def warn_truncation(returned_count: int, total_available: int, stacklevel: int =
 
 
 def warn_incomplete_pages(
-    failed_offsets: list[int], expected: int, retrieved: int, stacklevel: int = 4
+    failed_offsets: list[int],
+    expected: int,
+    retrieved: int,
+    total_available: int | None = None,
+    stacklevel: int = 4,
 ) -> None:
-    """Warn that pagination could not fetch every page. Fires on every occurrence."""
+    """Warn that pagination could not fetch every page. Fires on every occurrence.
+
+    This supersedes the truncation warning when both would apply: the result is short
+    because pages failed, not because the caller asked for less.
+    """
+    matched = ""
+    if total_available is not None and total_available > expected:
+        matched = f" ({total_available:,} properties matched the query in total.)"
     warnings.warn(
         f"Incomplete result: {len(failed_offsets)} page(s) failed after retries, so "
         f"{retrieved:,} of an expected {expected:,} properties were retrieved. Failed "
         f"offsets are listed in metadata['incomplete_pages']. Re-run those offsets or "
-        f"retry the query before treating this data as complete. Failed offsets: "
-        f"{failed_offsets}",
+        f"retry the query before treating this data as complete.{matched} Failed "
+        f"offsets: {failed_offsets}",
         ParclLabsIncompleteResultWarning,
         stacklevel=stacklevel,
     )
