@@ -1,3 +1,4 @@
+import copy
 import time
 from collections.abc import Mapping
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -10,6 +11,15 @@ from parcllabs.enums import RequestLimits
 from parcllabs.schemas.schemas import PropertyV2RetrieveParamCategories, PropertyV2RetrieveParams
 from parcllabs.services.parcllabs_service import ParclLabsService
 from parcllabs.services.validators import Validators
+from parcllabs.warnings import (
+    warn_incomplete_pages,
+    warn_integrity_mismatch,
+    warn_truncation,
+)
+
+# Transient page failures are retried before a page is abandoned.
+PAGE_FETCH_ATTEMPTS = 3
+PAGE_FETCH_BACKOFF_SECONDS = 1.0
 
 
 class PropertyV2Service(ParclLabsService):
@@ -26,52 +36,107 @@ class PropertyV2Service(ParclLabsService):
     def _raise_empty_response_error(chunk_num: int) -> None:
         raise RuntimeError(f"Chunk {chunk_num} failed: Empty response from API")
 
-    def _fetch_post(self, params: dict[str, Any], data: dict[str, Any]) -> list[dict]:
-        """Fetch data using POST request with pagination support."""
+    def _fetch_page(
+        self,
+        data: dict[str, Any],
+        params: dict[str, Any],
+        offset: int,
+        limit: int,
+    ) -> dict:
+        """Fetch a single page, retrying transient failures with exponential backoff.
+
+        Raises the last exception if every attempt fails.
+        """
+        page_params = dict(params)
+        page_params["limit"] = limit
+        page_params["offset"] = offset
+
+        last_exc: Exception | None = None
+        for attempt in range(PAGE_FETCH_ATTEMPTS):
+            try:
+                return self._post(url=self.full_post_url, data=data, params=page_params).json()
+            except Exception as exc:  # retried below, then re-raised
+                last_exc = exc
+                if attempt < PAGE_FETCH_ATTEMPTS - 1:
+                    time.sleep(PAGE_FETCH_BACKOFF_SECONDS * (2**attempt))
+        raise last_exc  # type: ignore[misc]
+
+    def _fetch_post(
+        self,
+        params: dict[str, Any],
+        data: dict[str, Any],
+        max_results: int | None = None,
+    ) -> list[dict]:
+        """Fetch data using POST, paginating until ``max_results`` is satisfied.
+
+        Args:
+            params: Request params. ``params["limit"]`` is the page size.
+            data: POST body containing the search criteria and filters.
+            max_results: Maximum number of properties to return in total. ``None``
+                retrieves every matching property.
+
+        Returns:
+            List of raw page payloads. Failed pages are omitted and reported via a
+            ``ParclLabsIncompleteResultWarning``.
+        """
+        params = dict(params)
         response = self._post(url=self.full_post_url, data=data, params=params)
         result = response.json()
-
         all_data = [result]
 
-        if params["auto_paginate"] is False:
+        pagination = result.get("pagination") or {}
+        results_meta = (result.get("metadata") or {}).get("results") or {}
+        total_available = results_meta.get("total_available", 0)
+        retrieved = results_meta.get("returned_count", 0)
+
+        # How many properties do we actually want? Never more than exist.
+        target = total_available if max_results is None else min(max_results, total_available)
+
+        if retrieved >= target or not pagination.get("has_more"):
+            if target < total_available:
+                warn_truncation(target, total_available)
             return all_data
 
-        # If we need to paginate, use concurrent requests
-        pagination = result.get("pagination")
-        if pagination.get("has_more"):
-            print("More pages to fetch, paginating additional pages...")
+        page_size = pagination.get("limit") or params.get("limit") or retrieved
+        offset = pagination.get("offset", 0)
 
-            limit = pagination.get("limit")
-            offset = pagination.get("offset")
-            metadata = result.get("metadata")
-            total_available = metadata.get("results", {}).get("total_available", 0)
+        # Request exactly the pages needed to reach `target` -- the final page is
+        # trimmed so an explicit `limit` is honoured precisely rather than overshot.
+        pages: list[tuple[int, int]] = []
+        current_offset = offset + retrieved
+        remaining = target - retrieved
+        while remaining > 0:
+            this_limit = min(page_size, remaining)
+            pages.append((current_offset, this_limit))
+            current_offset += this_limit
+            remaining -= this_limit
 
-            # Calculate how many more pages we need
-            remaining_pages = (total_available - limit) // limit
-            if (total_available - limit) % limit > 0:
-                remaining_pages += 1
+        failed_offsets: list[int] = []
+        with ThreadPoolExecutor(max_workers=self.client.num_workers) as executor:
+            future_to_offset = {
+                executor.submit(
+                    self._fetch_page, data, params, page_offset, page_limit
+                ): page_offset
+                for page_offset, page_limit in pages
+            }
+            for future in as_completed(future_to_offset):
+                page_offset = future_to_offset[future]
+                try:
+                    all_data.append(future.result())
+                except Exception:  # surfaced as a warning below
+                    failed_offsets.append(page_offset)
 
-            # Generate all the URLs we need to fetch
-            urls = []
-            current_offset = offset + limit
-            for _ in range(remaining_pages):
-                urls.append(f"{self.full_post_url}?limit={limit}&offset={current_offset}")
-                current_offset += limit
+        if failed_offsets:
+            failed_offsets.sort()
+            actually_retrieved = sum(
+                (page.get("metadata") or {}).get("results", {}).get("returned_count", 0)
+                for page in all_data
+            )
+            warn_incomplete_pages(failed_offsets, target, actually_retrieved)
+            all_data[0].setdefault("_parcllabs", {})["incomplete_pages"] = failed_offsets
 
-            # Use ThreadPoolExecutor to make concurrent requests
-            with ThreadPoolExecutor(max_workers=self.client.num_workers) as executor:
-                future_to_url = {
-                    executor.submit(self._post, url=url, data=data, params=params): url
-                    for url in urls
-                }
-
-                for future in as_completed(future_to_url):
-                    try:
-                        response = future.result()
-                        page_result = response.json()
-                        all_data.append(page_result)
-                    except Exception as exc:
-                        print(f"Request failed: {exc}")
+        if target < total_available:
+            warn_truncation(target, total_available)
 
         return all_data
 
@@ -241,8 +306,9 @@ class PropertyV2Service(ParclLabsService):
         if not results:
             return {}
 
-        # Start with a copy of the first result's metadata
-        metadata = results[0].get("metadata", {}).copy()
+        # Deep copy: a shallow .copy() leaves metadata["results"] aliased to the raw
+        # first page, so assigning returned_count below would mutate the response.
+        metadata = copy.deepcopy(results[0].get("metadata", {}))
 
         # Calculate total returned_count
         total_returned = sum(
@@ -251,6 +317,11 @@ class PropertyV2Service(ParclLabsService):
         )
         if "results" in metadata:
             metadata["results"]["returned_count"] = total_returned
+
+        # Surface any pages that could not be fetched (see _fetch_post).
+        incomplete = (results[0].get("_parcllabs") or {}).get("incomplete_pages")
+        if incomplete:
+            metadata["incomplete_pages"] = incomplete
 
         return metadata
 
@@ -430,20 +501,30 @@ class PropertyV2Service(ParclLabsService):
 
         return owner_filters
 
-    def _set_limit_pagination(self, limit: int | None) -> tuple[int, bool]:
-        """Validate and set limit and auto pagination."""
+    def _set_limit_pagination(self, limit: int | None) -> tuple[int, int | None]:
+        """Resolve the caller's ``limit`` into a page size and a total cap.
+
+        ``limit`` is the maximum number of *properties* to return in total, not a
+        page size. Pagination is an internal detail of satisfying it.
+
+        Args:
+            limit: Maximum properties to return. ``None`` (or ``0``) means no cap.
+
+        Returns:
+            ``(page_size, max_results)`` where ``max_results`` is ``None`` when
+            unbounded.
+        """
         max_limit = RequestLimits.PROPERTY_V2_MAX.value
 
-        # If no limit is provided, use maximum limit and auto paginate
+        # `0` is treated as "no cap" defensively only. Callers cannot reach this via
+        # retrieve(): PropertyV2RetrieveParams enforces ge=1, so 0 and negatives are
+        # already rejected at validation time.
         if limit == 0 or limit is None:
-            auto_paginate = True
-            print(f"""No limit provided. Using max limit of {max_limit}.
-                Auto pagination is {auto_paginate}""")
-            return max_limit, auto_paginate
+            return max_limit, None
 
-        auto_paginate = False
-        print(f"Limit is set at {limit}. Auto pagiation is {auto_paginate}")
-        return limit, auto_paginate
+        # A limit above the API's per-request ceiling is satisfied by paginating,
+        # rather than by letting the server reject the request outright.
+        return min(limit, max_limit), limit
 
     def _build_param_categories(
         self, params: PropertyV2RetrieveParams
@@ -539,7 +620,16 @@ class PropertyV2Service(ParclLabsService):
             current_entity_owner_name: Current entity owner name to filter by.
             include_events: Whether to include events in the response.
             include_full_event_history: Whether to include full event history in the response.
-            limit: Number of results to return.
+            limit: Maximum number of *properties* to return in total. Pagination is
+                handled internally to satisfy it, so values above the API's
+                per-request ceiling (50,000) are fetched across several pages rather
+                than rejected. Omit (or pass None) to retrieve every matching
+                property. Two things to note: credits are charged per property
+                returned, not per event; and because the returned DataFrame is
+                event-level, ``len(df)`` is NOT bounded by ``limit`` -- one property
+                may contribute many rows. If ``limit`` withholds matching data, a
+                ParclLabsTruncationWarning is emitted and
+                ``metadata["results"]`` reports both counts.
             params: Additional parameters to pass to the request.
         Returns:
             A tuple containing (pandas DataFrame, metadata dictionary).
@@ -604,19 +694,22 @@ class PropertyV2Service(ParclLabsService):
         # Update data with categories
         data.update(param_categories.model_dump(exclude_none=True))
 
-        # Set limit
+        # Set limit. `auto_paginate` is deliberately NOT placed in request_params --
+        # it is an internal concern and was previously leaking into the query string.
         request_params = input_params.params.copy()
-        request_params["auto_paginate"] = False  # auto_paginate is False by default
 
         # Make request with params
         if data.get(PARCL_PROPERTY_IDS):
+            # Querying by explicit property IDs: the ID list bounds the result, so a
+            # single page of PARCL_PROPERTY_IDS_LIMIT can always hold it, and >that
+            # many IDs are chunked in _fetch_post_parcl_property_ids. The caller's
+            # `limit` is not honoured on this path (breaking change -> DAT-122).
             request_params["limit"] = PARCL_PROPERTY_IDS_LIMIT
             results = self._fetch_post_parcl_property_ids(params=request_params, data=data)
         else:
-            request_params["limit"], request_params["auto_paginate"] = self._set_limit_pagination(
-                input_params.limit
-            )
-            results = self._fetch_post(params=request_params, data=data)
+            page_size, max_results = self._set_limit_pagination(input_params.limit)
+            request_params["limit"] = page_size
+            results = self._fetch_post(params=request_params, data=data, max_results=max_results)
 
         # Get metadata from results
         metadata = self._get_metadata(results)
@@ -624,4 +717,28 @@ class PropertyV2Service(ParclLabsService):
         # Process results
         final_df = self._as_pd_dataframe(results)
 
+        self._check_pagination_integrity(final_df, metadata)
+
         return final_df, metadata
+
+    @staticmethod
+    def _check_pagination_integrity(final_df: pd.DataFrame, metadata: dict[str, Any]) -> None:
+        """Warn if assembled pages did not yield the expected property count.
+
+        Offset pagination is only safe while the server applies a stable sort. This
+        is a cheap guard so an upstream ordering change surfaces here rather than as
+        silently duplicated or missing rows in a customer's dataset.
+        """
+        if final_df.empty or "parcl_property_id" not in final_df.columns:
+            return
+        # Pages that failed outright are already reported; don't double-warn.
+        if metadata.get("incomplete_pages"):
+            return
+
+        expected = (metadata.get("results") or {}).get("returned_count")
+        if not expected:
+            return
+
+        unique_properties = final_df["parcl_property_id"].nunique()
+        if unique_properties != expected:
+            warn_integrity_mismatch(unique_properties, expected)

@@ -142,11 +142,21 @@ class PropertyV2RetrieveParams(BaseModel):
     )
 
     # Pagination
+    #
+    # No upper bound: `limit` is a cap on the total number of properties returned,
+    # and values above the API's per-request ceiling
+    # (RequestLimits.PROPERTY_V2_MAX) are satisfied by paginating rather than
+    # rejected. Omit to retrieve every matching property.
     limit: int | None = Field(
         default=None,
         ge=1,
-        le=RequestLimits.PROPERTY_V2_MAX.value,
-        description=f"Number of results to return (max: {RequestLimits.PROPERTY_V2_MAX.value})",
+        description=(
+            "Maximum number of properties to return in total. Values above "
+            f"{RequestLimits.PROPERTY_V2_MAX.value} are fetched across multiple pages. "
+            "Omit to retrieve all matching properties. Credits are charged per property "
+            "returned; the returned DataFrame is event-level, so len(df) is not bounded "
+            "by this value."
+        ),
     )
 
     # Additional parameters

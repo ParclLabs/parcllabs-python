@@ -1,7 +1,11 @@
+import warnings
 from unittest.mock import MagicMock, Mock, patch
 
+import pandas as pd
 import pytest
+from requests.exceptions import RequestException
 
+from parcllabs import warnings as parcllabs_warnings
 from parcllabs.common import PARCL_PROPERTY_IDS
 from parcllabs.enums import RequestLimits
 from parcllabs.schemas.schemas import GeoCoordinates, PropertyV2RetrieveParams
@@ -209,12 +213,70 @@ def test_schema_with_none_values() -> None:
     assert params.params == {}
 
 
-def test_validate_limit(property_v2_service: PropertyV2Service) -> None:
-    assert property_v2_service._set_limit_pagination(limit=None) == (
+def test_set_limit_pagination_resolves_page_size_and_cap(
+    property_v2_service: PropertyV2Service,
+) -> None:
+    max_limit = RequestLimits.PROPERTY_V2_MAX.value
+
+    # No limit -> max page size, no cap (retrieve everything).
+    assert property_v2_service._set_limit_pagination(limit=None) == (max_limit, None)
+
+    # An explicit limit is a TOTAL CAP; page size matches it while under the ceiling.
+    assert property_v2_service._set_limit_pagination(limit=100) == (100, 100)
+
+    # A limit above the API ceiling is satisfied by paginating, not by erroring.
+    assert property_v2_service._set_limit_pagination(limit=120_000) == (max_limit, 120_000)
+
+
+def test_limit_zero_treated_as_unbounded_defensively(
+    property_v2_service: PropertyV2Service,
+) -> None:
+    """0 falls back to 'no cap' in the helper, but callers cannot reach it."""
+    assert property_v2_service._set_limit_pagination(limit=0) == (
         RequestLimits.PROPERTY_V2_MAX.value,
-        True,
+        None,
     )
-    assert property_v2_service._set_limit_pagination(limit=100) == (100, False)
+
+
+@pytest.mark.parametrize("bad_limit", [0, -1, -5000])
+def test_non_positive_limit_rejected_at_validation(bad_limit: int) -> None:
+    """The schema rejects 0 and negatives, so a computed zero cannot trigger an
+    unbounded pull."""
+    with pytest.raises(ValueError, match="greater than or equal to 1"):
+        PropertyV2RetrieveParams(limit=bad_limit)
+
+
+def test_limit_above_api_ceiling_is_accepted() -> None:
+    """Values above the per-request ceiling must validate; pagination satisfies them."""
+    assert PropertyV2RetrieveParams(limit=120_000).limit == 120_000
+
+
+def _page(
+    parcl_property_id: int,
+    *,
+    total_available: int,
+    returned_count: int = 1,
+    limit: int = 1,
+    offset: int = 0,
+    has_more: bool = False,
+) -> Mock:
+    """Build a mock page response."""
+    response = Mock()
+    response.json.return_value = {
+        "data": [{"parcl_property_id": parcl_property_id}],
+        "metadata": {
+            "results": {"total_available": total_available, "returned_count": returned_count}
+        },
+        "pagination": {"limit": limit, "offset": offset, "has_more": has_more},
+        "account_info": {"credits_used": returned_count, "credits_remaining": 999},
+    }
+    return response
+
+
+@pytest.fixture(autouse=True)
+def _reset_truncation_flag() -> None:
+    """Truncation warns once per session; reset between tests."""
+    parcllabs_warnings._reset_truncation_warning()
 
 
 @patch.object(PropertyV2Service, "_post")
@@ -222,7 +284,7 @@ def test_fetch_post_single_page(
     mock_post: Mock, property_v2_service: PropertyV2Service, mock_response: Mock
 ) -> None:
     mock_post.return_value = mock_response
-    result = property_v2_service._fetch_post(params={"auto_paginate": False}, data={})
+    result = property_v2_service._fetch_post(params={"limit": 100}, data={})
 
     assert len(result) == 1
     assert result[0] == mock_response.json()
@@ -231,32 +293,162 @@ def test_fetch_post_single_page(
 
 @patch.object(PropertyV2Service, "_post")
 def test_fetch_post_pagination(mock_post: Mock, property_v2_service: PropertyV2Service) -> None:
-    # First response with pagination
-    first_response = Mock()
-    first_response.json.return_value = {
-        "data": [{"parcl_id": 123}],
-        "metadata": {"results": {"total_available": 2, "returned_count": 1}},
-        "pagination": {"limit": 1, "offset": 0, "has_more": True},
-        "account_info": {"credits_used": 1, "credits_remaining": 999},
-    }
+    """Unbounded fetch must actually walk every page and merge the results."""
+    mock_post.side_effect = [
+        _page(123, total_available=2, limit=1, offset=0, has_more=True),
+        _page(456, total_available=2, limit=1, offset=1, has_more=False),
+    ]
 
-    # Second response for pagination
-    second_response = Mock()
-    second_response.json.return_value = {
-        "data": [{"parcl_id": 456}],
-        "metadata": {"results": {"total_available": 2, "returned_count": 1}},
-        "pagination": {"limit": 1, "offset": 1, "has_more": False},
-        "account_info": {"credits_used": 1, "credits_remaining": 998},
-    }
+    result = property_v2_service._fetch_post(params={"limit": 1}, data={}, max_results=None)
 
-    # Set up the mock to return different responses
-    mock_post.side_effect = [first_response, second_response]
+    assert mock_post.call_count == 2
+    assert [page["data"][0]["parcl_property_id"] for page in result] == [123, 456]
 
-    result = property_v2_service._fetch_post(params={"limit": 1, "auto_paginate": False}, data={})
 
-    assert len(result) == 1
-    assert result[0]["data"][0]["parcl_id"] == 123
+@patch.object(PropertyV2Service, "_post")
+def test_fetch_post_stops_at_max_results(
+    mock_post: Mock, property_v2_service: PropertyV2Service
+) -> None:
+    """An explicit cap must not keep paginating toward total_available."""
+    mock_post.return_value = _page(123, total_available=100, limit=1, offset=0, has_more=True)
+
+    result = property_v2_service._fetch_post(params={"limit": 1}, data={}, max_results=1)
+
     assert mock_post.call_count == 1
+    assert len(result) == 1
+
+
+@patch.object(PropertyV2Service, "_post")
+def test_fetch_post_trims_final_page_to_cap(
+    mock_post: Mock, property_v2_service: PropertyV2Service
+) -> None:
+    """A cap that is not a multiple of the page size must not overshoot."""
+    mock_post.side_effect = [
+        _page(1, total_available=100, returned_count=10, limit=10, offset=0, has_more=True),
+        _page(2, total_available=100, returned_count=5, limit=5, offset=10, has_more=True),
+    ]
+
+    property_v2_service._fetch_post(params={"limit": 10}, data={}, max_results=15)
+
+    assert mock_post.call_count == 2
+    # Second call asks for only the outstanding 5, at the correct offset.
+    second_params = mock_post.call_args_list[1][1]["params"]
+    assert second_params["limit"] == 5
+    assert second_params["offset"] == 10
+
+
+@patch.object(PropertyV2Service, "_post")
+def test_truncation_warning_fires_once_per_session(
+    mock_post: Mock, property_v2_service: PropertyV2Service
+) -> None:
+    mock_post.return_value = _page(1, total_available=108_288, limit=1, offset=0, has_more=True)
+
+    with pytest.warns(parcllabs_warnings.ParclLabsTruncationWarning, match="108,288"):
+        property_v2_service._fetch_post(params={"limit": 1}, data={}, max_results=1)
+
+    # Second identical call is silent -- once per session.
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        property_v2_service._fetch_post(params={"limit": 1}, data={}, max_results=1)
+    assert not [w for w in caught if w.category is parcllabs_warnings.ParclLabsTruncationWarning]
+
+
+@patch.object(PropertyV2Service, "_post")
+def test_no_truncation_warning_when_complete(
+    mock_post: Mock, property_v2_service: PropertyV2Service
+) -> None:
+    mock_post.return_value = _page(1, total_available=1, limit=1, offset=0, has_more=False)
+
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        property_v2_service._fetch_post(params={"limit": 1}, data={}, max_results=1)
+
+    assert not [w for w in caught if w.category is parcllabs_warnings.ParclLabsTruncationWarning]
+
+
+@patch.object(PropertyV2Service, "_post")
+def test_page_retry_recovers_from_transient_failure(
+    mock_post: Mock, property_v2_service: PropertyV2Service
+) -> None:
+    mock_post.side_effect = [
+        _page(1, total_available=2, limit=1, offset=0, has_more=True),
+        RequestException("boom"),
+        _page(2, total_available=2, limit=1, offset=1, has_more=False),
+    ]
+
+    with patch("parcllabs.services.properties.property_v2.time.sleep"):
+        result = property_v2_service._fetch_post(params={"limit": 1}, data={}, max_results=None)
+
+    assert mock_post.call_count == 3
+    assert len(result) == 2
+
+
+@patch.object(PropertyV2Service, "_post")
+def test_incomplete_pages_warn_every_call(
+    mock_post: Mock, property_v2_service: PropertyV2Service
+) -> None:
+    """Exhausted retries must warn on EVERY call and record the failed offsets."""
+    first = _page(1, total_available=2, limit=1, offset=0, has_more=True)
+
+    def responses() -> list[object]:
+        return [first, *[RequestException("boom")] * 3]
+
+    for _ in range(2):
+        mock_post.reset_mock()
+        mock_post.side_effect = responses()
+        with (
+            patch("parcllabs.services.properties.property_v2.time.sleep"),
+            pytest.warns(parcllabs_warnings.ParclLabsIncompleteResultWarning),
+        ):
+            result = property_v2_service._fetch_post(params={"limit": 1}, data={}, max_results=None)
+        assert result[0]["_parcllabs"]["incomplete_pages"] == [1]
+
+
+def test_incomplete_pages_surfaced_in_metadata(property_v2_service: PropertyV2Service) -> None:
+    results = [
+        {
+            "metadata": {"results": {"returned_count": 1, "total_available": 2}},
+            "_parcllabs": {"incomplete_pages": [1]},
+        }
+    ]
+    assert property_v2_service._get_metadata(results)["incomplete_pages"] == [1]
+
+
+def test_get_metadata_does_not_mutate_response(property_v2_service: PropertyV2Service) -> None:
+    """A shallow copy would rewrite returned_count on the caller's raw page."""
+    results = [
+        {"metadata": {"results": {"returned_count": 2, "total_available": 5}}},
+        {"metadata": {"results": {"returned_count": 3, "total_available": 5}}},
+    ]
+
+    metadata = property_v2_service._get_metadata(results)
+
+    assert metadata["results"]["returned_count"] == 5
+    assert results[0]["metadata"]["results"]["returned_count"] == 2
+
+
+def test_integrity_check_warns_on_property_count_mismatch(
+    property_v2_service: PropertyV2Service,
+) -> None:
+    # Two rows but only one distinct property, against a reported count of 2.
+    final_df = pd.DataFrame({"parcl_property_id": [1, 1]})
+    metadata = {"results": {"returned_count": 2, "total_available": 2}}
+
+    with pytest.warns(parcllabs_warnings.ParclLabsIncompleteResultWarning, match="integrity"):
+        property_v2_service._check_pagination_integrity(final_df, metadata)
+
+
+def test_integrity_check_silent_when_counts_agree(
+    property_v2_service: PropertyV2Service,
+) -> None:
+    final_df = pd.DataFrame({"parcl_property_id": [1, 1, 2]})
+    metadata = {"results": {"returned_count": 2, "total_available": 2}}
+
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        property_v2_service._check_pagination_integrity(final_df, metadata)
+
+    assert not caught
 
 
 def test_as_pd_dataframe(property_v2_service: PropertyV2Service, mock_response: Mock) -> None:
@@ -310,9 +502,12 @@ def test_retrieve(
     # check that the metadata is returned
     assert metadata == mock_response.json()["metadata"]
 
-    # check that the correct data was passed to _fetch_post
+    # `limit` is the page size here; `auto_paginate` must NOT leak into the query
+    # string (it previously did, and was asserted as correct).
     call_args = mock_fetch_post.call_args[1]
-    assert call_args["params"] == {"limit": 10, "auto_paginate": False}
+    assert call_args["params"] == {"limit": 10}
+    assert "auto_paginate" not in call_args["params"]
+    assert call_args["max_results"] == 10
 
     data = call_args["data"]
     assert data["parcl_ids"] == [123]
