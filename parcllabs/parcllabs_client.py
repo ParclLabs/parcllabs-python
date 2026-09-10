@@ -20,7 +20,7 @@ class ServiceGroup:
     def add_service(
         self,
         name: str,
-        url: str,
+        url: str | None,
         service_class: ParclLabsService,
         post_url: str | None = None,
         alias: str | None = None,
@@ -60,6 +60,7 @@ class ParclLabsClient:
 
     def _initialize_services(self) -> None:
         self.price_feed = self._create_price_feed_services()
+        self.price_feed_v2 = self._create_price_feed_v2_services()
         self.investor_metrics = self._create_investor_metrics_services()
         self.market_metrics = self._create_market_metrics_services()
         self.new_construction_metrics = self._create_new_construction_metrics_services()
@@ -92,6 +93,23 @@ class ParclLabsClient:
                 "url": "/v1/price_feed/{parcl_id}/rental_price_feed",
                 "post_url": "/v1/price_feed/rental_price_feed",
                 "service_class": ParclLabsService,
+            },
+        }
+        self._add_services_to_group(group, services)
+        return group
+
+    def _create_price_feed_v2_services(self) -> ServiceGroup:
+        group = self._create_service_group()
+        services = {
+            "price_feed": {
+                "url": None,  # POST-only endpoint
+                "post_url": "/v2/price_feed/price_feed",
+                "service_class": PropertyTypeService,
+            },
+            "price_feed_smoothed": {
+                "url": None,  # POST-only endpoint
+                "post_url": "/v2/price_feed/price_feed_smoothed",
+                "service_class": PropertyTypeService,
             },
         }
         self._add_services_to_group(group, services)

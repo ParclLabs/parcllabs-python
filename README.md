@@ -348,6 +348,14 @@ Gets the daily price feed for a specified `parcl_id`.
 ##### Rental Price Feed
 Gets the daily updated Parcl Labs Rental Price Feed for a given `parcl_id`.
 
+##### Price Feed V2
+Gets the daily price feed for the given `parcl_ids`, filtered by `property_type`: `ALL` (default), `SINGLE_FAMILY`, or `NEW_CONSTRUCTION`.
+
+##### Price Feed V2 Smoothed
+Gets the smoothed price feed, the median of the last 30 daily prints for each market, which removes day-to-day noise. Covers the 112 core Parcl Labs markets from 2011-01-30 and accepts the same `property_type` filter.
+
+For both v2 endpoints, `limit` is the page size (up to 10,000 rows per request) and a call returns a single page unless `auto_paginate=True` is passed, which follows the pagination links until the full date range is returned. Invalid `property_type` values are rejected by the API.
+
 ```python
 # get 2 price feeds trading on the Parcl Exchange
 pricefeed_markets = client.search.markets.retrieve(
@@ -366,6 +374,17 @@ price_feeds = client.price_feed.price_feed.retrieve(
     end_date=end_date
 )
 rental_price_feeds = client.price_feed.rental_price_feed.retrieve(
+    parcl_ids=pricefeed_ids,
+    start_date=start_date,
+    end_date=end_date
+)
+price_feeds_v2 = client.price_feed_v2.price_feed.retrieve(
+    parcl_ids=pricefeed_ids,
+    start_date=start_date,
+    end_date=end_date,
+    property_type='ALL'
+)
+price_feeds_v2_smoothed = client.price_feed_v2.price_feed_smoothed.retrieve(
     parcl_ids=pricefeed_ids,
     start_date=start_date,
     end_date=end_date

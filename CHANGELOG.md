@@ -1,3 +1,9 @@
+### v1.19.0
+- Added `client.price_feed_v2.price_feed.retrieve` and `client.price_feed_v2.price_feed_smoothed.retrieve`, wrapping the new `POST /v2/price_feed/price_feed` and `POST /v2/price_feed/price_feed_smoothed` endpoints. Both accept `parcl_ids`, `start_date`, `end_date`, `limit`, `auto_paginate`, and a `property_type` filter (`ALL`, `SINGLE_FAMILY`, or `NEW_CONSTRUCTION`; defaults to `ALL`). The smoothed series is the median of the last 30 daily prints per market.
+- `ParclLabsService` accepts `url=None` for POST-only endpoints when `post_url` is provided.
+- POST requests now send `limit` and `offset` as query parameters only. Previously an `offset` passed through `params` was misrouted into the JSON body, and `limit` was duplicated there. Auto-pagination no longer re-applies a caller-supplied `offset` to subsequent pages.
+- `PropertyTypeService` and `PortfolioSizeService` no longer mutate the caller's `params` dictionary.
+
 ### v1.18.0
 - **`property_v2.search.retrieve`: `limit` is now a cap on the total number of properties returned, not a page size.** Pagination is handled internally to satisfy it. Previously, passing *any* explicit `limit` silently disabled auto-pagination, so `limit=1000` returned one page of 1,000 and discarded every remaining match with no error or warning. Calls with `limit <= 50000` are unaffected — same request, same results.
 - **`limit` above 50,000 now paginates instead of failing.** Previously the request was rejected by the API with `422 limit input should be less than or equal to 50000`.

@@ -19,8 +19,7 @@ class PropertyTypeService(ParclLabsService):
         """
         Retrieve property type metrics for given parameters.
         """
-        if params is None:
-            params = {}
+        params = dict(params or {})
 
         if property_type:
             params["property_type"] = property_type.upper()

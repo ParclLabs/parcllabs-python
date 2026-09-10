@@ -19,8 +19,7 @@ class PortfolioSizeService(ParclLabsService):
         """
         Retrieve portfolio size metrics for given parameters.
         """
-        if params is None:
-            params = {}
+        params = dict(params or {})
 
         if portfolio_size:
             params["portfolio_size"] = portfolio_size.upper()
