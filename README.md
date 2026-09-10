@@ -382,7 +382,7 @@ price_feeds_v2 = client.price_feed_v2.price_feed.retrieve(
     parcl_ids=pricefeed_ids,
     start_date=start_date,
     end_date=end_date,
-    property_type='SINGLE_FAMILY'
+    property_type='ALL'
 )
 price_feeds_v2_smoothed = client.price_feed_v2.price_feed_smoothed.retrieve(
     parcl_ids=pricefeed_ids,
