@@ -176,36 +176,43 @@ def test_price_feed_v2_post_request(client: ParclLabsClient) -> None:
     assert results["date"].max().date() == pd.to_datetime(end_date).date()
 
 
-def test_price_feed_v2_property_type(client: ParclLabsClient) -> None:
+@pytest.mark.parametrize("service_name", ["price_feed", "price_feed_smoothed"])
+def test_price_feed_v2_forced_pagination(client: ParclLabsClient, service_name: str) -> None:
     test_pid = [5826765]  # US parcl id
     start_date = "2024-01-01"
-    end_date = "2024-01-31"
+    end_date = "2024-01-05"
     days = (pd.to_datetime(end_date) - pd.to_datetime(start_date)).days + 1
 
-    results = client.price_feed_v2.price_feed.retrieve(
+    results = getattr(client.price_feed_v2, service_name).retrieve(
         parcl_ids=test_pid,
         start_date=start_date,
         end_date=end_date,
-        property_type="SINGLE_FAMILY",
+        limit=2,  # forces 3 pages for a 5 day window
+        auto_paginate=True,
     )
 
-    assert results["parcl_id"].unique() == test_pid[0]
     assert results.shape[0] == days
-
-
-def test_price_feed_v2_smoothed_post_request(client: ParclLabsClient) -> None:
-    test_pid = [5826765]  # US parcl id
-    start_date = "2024-01-01"
-    end_date = "2024-01-31"
-    days = (pd.to_datetime(end_date) - pd.to_datetime(start_date)).days + 1
-
-    results = client.price_feed_v2.price_feed_smoothed.retrieve(
-        parcl_ids=test_pid,
-        start_date=start_date,
-        end_date=end_date,
-    )
-
-    assert results["parcl_id"].unique() == test_pid[0]
-    assert results.shape[0] == days
+    assert results["date"].is_unique
     assert results["date"].min().date() == pd.to_datetime(start_date).date()
     assert results["date"].max().date() == pd.to_datetime(end_date).date()
+
+
+@pytest.mark.parametrize("service_name", ["price_feed", "price_feed_smoothed"])
+@pytest.mark.parametrize("property_type", ["ALL", "SINGLE_FAMILY", "NEW_CONSTRUCTION"])
+def test_price_feed_v2_property_types(
+    client: ParclLabsClient, service_name: str, property_type: str
+) -> None:
+    test_pid = [5826765]  # US parcl id
+    start_date = "2024-01-01"
+    end_date = "2024-01-05"
+    days = (pd.to_datetime(end_date) - pd.to_datetime(start_date)).days + 1
+
+    results = getattr(client.price_feed_v2, service_name).retrieve(
+        parcl_ids=test_pid,
+        start_date=start_date,
+        end_date=end_date,
+        property_type=property_type,
+    )
+
+    assert results["parcl_id"].unique() == test_pid[0]
+    assert results.shape[0] == days

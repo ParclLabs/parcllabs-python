@@ -20,8 +20,8 @@ class ServiceGroup:
     def add_service(
         self,
         name: str,
+        url: str | None,
         service_class: ParclLabsService,
-        url: str | None = None,
         post_url: str | None = None,
         alias: str | None = None,
     ) -> None:
@@ -102,10 +102,12 @@ class ParclLabsClient:
         group = self._create_service_group()
         services = {
             "price_feed": {
+                "url": None,  # POST-only endpoint
                 "post_url": "/v2/price_feed/price_feed",
                 "service_class": PropertyTypeService,
             },
             "price_feed_smoothed": {
+                "url": None,  # POST-only endpoint
                 "post_url": "/v2/price_feed/price_feed_smoothed",
                 "service_class": PropertyTypeService,
             },

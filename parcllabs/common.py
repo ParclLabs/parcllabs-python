@@ -10,6 +10,11 @@ VALID_US_STATE_ABBREV = get_enum_values(USStateAbbreviations)
 ID_COLUMNS = [ResponseColumns.PARCL_ID.value, ResponseColumns.PARCL_PROPERTY_ID.value]
 DATE_COLUMNS = [ResponseColumns.DATE.value, ResponseColumns.EVENT_DATE.value]
 
+POST_QUERY_PARAMS = [
+    ResponseColumns.LIMIT.value,
+    ResponseColumns.OFFSET.value,
+]
+
 DELETE_FROM_OUTPUT = [
     ResponseColumns.TOTAL.value,
     ResponseColumns.LIMIT.value,

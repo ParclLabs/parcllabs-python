@@ -354,6 +354,8 @@ Gets the daily price feed for the given `parcl_ids`, filtered by `property_type`
 ##### Price Feed V2 Smoothed
 Gets the smoothed price feed, the median of the last 30 daily prints for each market, which removes day-to-day noise. Covers the 112 core Parcl Labs markets from 2011-01-30 and accepts the same `property_type` filter.
 
+For both v2 endpoints, `limit` is the page size (up to 10,000 rows per request) and a call returns a single page unless `auto_paginate=True` is passed, which follows the pagination links until the full date range is returned. Invalid `property_type` values are rejected by the API.
+
 ```python
 # get 2 price feeds trading on the Parcl Exchange
 pricefeed_markets = client.search.markets.retrieve(

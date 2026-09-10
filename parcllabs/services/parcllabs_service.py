@@ -9,7 +9,12 @@ import requests
 from requests.exceptions import RequestException
 
 from parcllabs.__version__ import VERSION
-from parcllabs.common import DELETE_FROM_OUTPUT, GET_METHOD, POST_METHOD
+from parcllabs.common import (
+    DELETE_FROM_OUTPUT,
+    GET_METHOD,
+    POST_METHOD,
+    POST_QUERY_PARAMS,
+)
 from parcllabs.enums import RequestLimits, RequestMethods, ResponseCodes
 from parcllabs.exceptions import NotFoundError
 from parcllabs.services.data_utils import safe_concat_and_format_dtypes
@@ -174,15 +179,20 @@ class ParclLabsService:
             params["limit"] = self.client.limit
 
         if self.full_post_url:
-            # convert the list of parcl_ids into post body params, formatted
-            # as strings
             if params.get("limit"):
                 params["limit"] = self._validate_limit(POST_METHOD, params["limit"])
 
-            data = {"parcl_id": [str(pid) for pid in parcl_ids], **params}
-            params = {"limit": params["limit"]} if params.get("limit") else {}
+            # limit/offset travel in the query string; everything else, plus the
+            # parcl_ids formatted as strings, goes in the JSON body
+            query_params = {
+                k: v for k, v in params.items() if k in POST_QUERY_PARAMS and v is not None
+            }
+            data = {
+                "parcl_id": [str(pid) for pid in parcl_ids],
+                **{k: v for k, v in params.items() if k not in POST_QUERY_PARAMS},
+            }
 
-            return self._fetch_post(params, data, auto_paginate)
+            return self._fetch_post(query_params, data, auto_paginate)
         if params.get("limit"):
             params["limit"] = self._validate_limit(GET_METHOD, params["limit"])
 
@@ -261,12 +271,15 @@ class ParclLabsService:
 
         if auto_paginate and "links" in result and result["links"].get("next") is not None:
             all_items = result["items"]
+            # each next link already carries its own offset; re-sending the
+            # caller's initial offset would override it and repeat pages
+            next_params = {k: v for k, v in original_params.items() if k != "offset"}
             while result["links"].get("next") is not None:
                 next_url = result["links"]["next"]
                 if referring_method == "post":
-                    next_response = self._post(next_url, data=data, params=original_params)
+                    next_response = self._post(next_url, data=data, params=next_params)
                 else:
-                    next_response = self._get(next_url, params=original_params)
+                    next_response = self._get(next_url, params=next_params)
                 next_response.raise_for_status()
                 result = next_response.json()
                 all_items.extend(result["items"])
