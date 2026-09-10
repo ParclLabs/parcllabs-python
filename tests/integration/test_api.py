@@ -155,3 +155,57 @@ def test_multiple_post_requests_with_bad_parcl_ids(client: ParclLabsClient) -> N
 
     assert results.shape[0] == len(TEST_PIDS) * 12
     assert results.groupby("parcl_id").size().unique() == 12
+
+
+def test_price_feed_v2_post_request(client: ParclLabsClient) -> None:
+    test_pids = PRICEFEED_MARKETS[:3]
+    start_date = "2024-01-01"
+    end_date = "2024-01-31"
+    days = (pd.to_datetime(end_date) - pd.to_datetime(start_date)).days + 1
+
+    results = client.price_feed_v2.price_feed.retrieve(
+        parcl_ids=test_pids,
+        start_date=start_date,
+        end_date=end_date,
+        auto_paginate=True,
+    )
+
+    assert set(results["parcl_id"].unique()) == set(test_pids)
+    assert results.shape[0] == len(test_pids) * days
+    assert results["date"].min().date() == pd.to_datetime(start_date).date()
+    assert results["date"].max().date() == pd.to_datetime(end_date).date()
+
+
+def test_price_feed_v2_property_type(client: ParclLabsClient) -> None:
+    test_pid = [5826765]  # US parcl id
+    start_date = "2024-01-01"
+    end_date = "2024-01-31"
+    days = (pd.to_datetime(end_date) - pd.to_datetime(start_date)).days + 1
+
+    results = client.price_feed_v2.price_feed.retrieve(
+        parcl_ids=test_pid,
+        start_date=start_date,
+        end_date=end_date,
+        property_type="SINGLE_FAMILY",
+    )
+
+    assert results["parcl_id"].unique() == test_pid[0]
+    assert results.shape[0] == days
+
+
+def test_price_feed_v2_smoothed_post_request(client: ParclLabsClient) -> None:
+    test_pid = [5826765]  # US parcl id
+    start_date = "2024-01-01"
+    end_date = "2024-01-31"
+    days = (pd.to_datetime(end_date) - pd.to_datetime(start_date)).days + 1
+
+    results = client.price_feed_v2.price_feed_smoothed.retrieve(
+        parcl_ids=test_pid,
+        start_date=start_date,
+        end_date=end_date,
+    )
+
+    assert results["parcl_id"].unique() == test_pid[0]
+    assert results.shape[0] == days
+    assert results["date"].min().date() == pd.to_datetime(start_date).date()
+    assert results["date"].max().date() == pd.to_datetime(end_date).date()

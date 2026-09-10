@@ -21,14 +21,16 @@ class ParclLabsService:
     Base class for working with data from the Parcl Labs API.
     """
 
-    def __init__(self, url: str, client: object, post_url: str | None = None) -> None:
+    def __init__(self, url: str | None, client: object, post_url: str | None = None) -> None:
         self.url = url
         self.post_url = post_url
         self.client = client
         if client is None:
             raise ValueError("Missing required client object.")
+        if url is None and post_url is None:
+            raise ValueError("At least one of url or post_url must be provided.")
         self.api_url = client.api_url
-        self.full_url = self.api_url + self.url
+        self.full_url = self.api_url + self.url if url else None
         self.full_post_url = self.api_url + self.post_url if post_url else None
         self.api_key = client.api_key
         self.headers = self._get_headers()
