@@ -1,3 +1,13 @@
+### v1.18.0
+- **`property_v2.search.retrieve`: `limit` is now a cap on the total number of properties returned, not a page size.** Pagination is handled internally to satisfy it. Previously, passing *any* explicit `limit` silently disabled auto-pagination, so `limit=1000` returned one page of 1,000 and discarded every remaining match with no error or warning. Calls with `limit <= 50000` are unaffected — same request, same results.
+- **`limit` above 50,000 now paginates instead of failing.** Previously the request was rejected by the API with `422 limit input should be less than or equal to 50000`.
+- **Partial results now warn instead of passing silently.** When `limit` withholds matching data, a `ParclLabsTruncationWarning` reports how many properties were returned versus how many matched (emitted once per session). Note credits are charged per *property* returned, not per event, and because the returned DataFrame is event-level, `len(df)` is not bounded by `limit`.
+- **Failed pages during pagination are now retried and reported.** Pages are retried up to 3 times with exponential backoff; if any still fail the result is returned with a `ParclLabsIncompleteResultWarning` and the failed offsets are listed in `metadata["incomplete_pages"]`. Previously a failed page was printed and skipped, returning short data indistinguishable from complete data.
+- Added a pagination integrity check that warns if the assembled pages do not yield the expected number of distinct properties.
+- New warning categories in `parcllabs.warnings` (`ParclLabsWarning`, `ParclLabsTruncationWarning`, `ParclLabsIncompleteResultWarning`) so callers can silence or escalate these via standard `warnings` filters.
+- Fixed an internal `auto_paginate` flag leaking into the request query string.
+- Fixed `_get_metadata` mutating the caller's raw first-page response via a shallow copy.
+
 ### v1.17.2
 - Added configurable request timeout to `ParclLabsClient`. Defaults to 10s connect / 90s read. Customizable via the `timeout` parameter on client instantiation.
 
